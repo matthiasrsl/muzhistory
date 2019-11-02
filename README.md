@@ -1,4 +1,4 @@
-# DeezHistory
+# Muzhistory
 
 ## Upcoming models schema
 
