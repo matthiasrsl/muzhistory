@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'musicdata',
+    'deezerdata',
 ]
 
 # False if not in os.environ

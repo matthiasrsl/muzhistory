@@ -6,6 +6,12 @@ class ImpossibleMerge(Exception):
         
     def __str__(self):
         return "Unable to merge objects."
+        
+
+class Market(models.Model):
+    code = models.CharField(max_length=2)  # ISO 3166-1 alpha-2.
+    english_name = models.CharField(max_length=100);
+
 
 class Artist(models.Model):
     """
@@ -79,11 +85,12 @@ class Release(models.Model):
             ('none', "No barcode"),
             ('undef', "Undefined"),
     ]
-    release_group = models.ForeignKey('ReleaseGroup', on_delete=models.PROTECT)
+    release_group = models.ForeignKey('musicdata.ReleaseGroup', on_delete=models.PROTECT)
     barcode = models.CharField(max_length=30, null=True, blank=True)
     barcode_type = models.CharField(max_length=30, 
             choices=barcode_type_choices, default='none')
     release_date = models.DateField()
+    label_name = models.CharField(max_length=1000)
     
     class Meta:
         abstract = True
@@ -115,10 +122,18 @@ class Track(models.Model):
     model.
     It corresponds to a MusicBrainz's Track.
     """
-    recording = models.ForeignKey('Recording', on_delete=models.PROTECT)
+    recording = models.ForeignKey('musicdata.Recording', on_delete=models.PROTECT)
+    disc_number = models.IntegerField()
+    track_number = models.IntegerField()  # Position on the disc.
+    available_markets = models.ManyToManyField('musicdata.Market')
     
     class Meta:
         abstract = True
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=100)
+    dz_id = models.IntegerField(null=True, blank=True)
 
     
 class Contribution(models.Model):

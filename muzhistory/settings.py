@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'json_field',
     'musicdata',
+    'deezerdata',
 ]
 
 MIDDLEWARE = [
