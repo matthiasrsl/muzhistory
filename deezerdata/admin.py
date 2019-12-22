@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import *
-'''
+
 class DeezerAlbumAdmin(admin.ModelAdmin):
     list_display = ('release_group', 'dz_id', 'available', 'version')
     list_display_links = ('release_group', )
@@ -21,4 +21,4 @@ class DeezerMp3Admin(admin.ModelAdmin):
     
 admin.site.register(DeezerAlbum, DeezerAlbumAdmin)
 admin.site.register(DeezerTrack, DeezerTrackAdmin)
-admin.site.register(DeezerMp3, DeezerMp3Admin)'''
+admin.site.register(DeezerMp3, DeezerMp3Admin)

@@ -51,7 +51,7 @@ class Artist(models.Model):
     @classmethod
     def retrieve_from_deezer(cls, dz_id):
         """
-        Retrieves an artist from the Deezer database with the given id, or,
+        Retrieves an artist from the database with the given id, or,
         if not in the database, makes a request to the Deezer API and creates
         the instance.
         """
@@ -98,17 +98,18 @@ class ReleaseGroup(models.Model):
     Corresponds to a MusicBrainz release group.
     """
     version = models.IntegerField(default=settings.MH_VERSION)
-    album_type_choices = [
-            ('single', "single"),
-            ('album', "album"),
-            ('EP', "EP"),
-            ('compilation', "compilation"),
-            ('undef', "undefined"),
-    ]
+    class AlbumTypeChoices(models.TextChoices):
+        SINGLE = 'single', "single"
+        ALBUM = 'album', "album"
+        EP = 'EP', "EP"
+        COMPILATION = 'compilation', "compilation"
+        UNDEF = 'undef', "undefined"
 
     title = models.CharField(max_length=1000)
-    album_type = models.CharField(max_length=100, choices=album_type_choices)  
-            # Better as ChoiceField ?
+    album_type = models.CharField(max_length=100,
+            choices=AlbumTypeChoices.choices,
+            default=AlbumTypeChoices.UNDEF)  
+
     contributors = models.ManyToManyField('Artist',
             through='ReleaseGroupContribution')
     
@@ -127,16 +128,16 @@ class Release(models.Model):
     rather a Release plus a Medium.
     """
     version = models.IntegerField(default=settings.MH_VERSION)
-    barcode_type_choices = [
-            ('upc', "UPC"),
-            ('none', "No barcode"),
-            ('undef', "Undefined"),
-    ]
+    class BarcodeTypeChoices(models.TextChoices):
+            UPC = ('upc', "UPC")
+            NONE = ('none', "No barcode")
+            UNDEF = ('undef', "Undefined")
+
     release_group = models.ForeignKey('musicdata.ReleaseGroup',
-            on_delete=models.PROTECT)
+            on_delete=models.PROTECT, null=True, blank=True)
     barcode = models.CharField(max_length=30)
     barcode_type = models.CharField(max_length=30, 
-            choices=barcode_type_choices, default='none')
+            choices=BarcodeTypeChoices.choices, default='none')
     release_date = models.DateField(null=True, blank=True)
     label_name = models.CharField(max_length=1000)
     
@@ -171,7 +172,8 @@ class Track(models.Model):
     It corresponds to a MusicBrainz's Track.
     """
     version = models.IntegerField(default=settings.MH_VERSION)
-    recording = models.ForeignKey('musicdata.Recording', on_delete=models.PROTECT)
+    recording = models.ForeignKey('musicdata.Recording',
+            on_delete=models.PROTECT, null=True, blank=True)
     disc_number = models.IntegerField(null=True, blank=True)
     track_number = models.IntegerField(null=True, blank=True)  # Position on the disc.
     available_markets = models.ManyToManyField('musicdata.Market')
