@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+class ArtistAdmin(admin.ModelAdmin):
+    list_display = ('name', 'deezer_id', 'spotify_id', 'version')
+    list_filter = ('version',)
+    search_fields = ('name', 'dz_id')

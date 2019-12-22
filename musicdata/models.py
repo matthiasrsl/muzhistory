@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 class ImpossibleMerge(Exception):
     def __init__(self):
@@ -9,6 +10,7 @@ class ImpossibleMerge(Exception):
         
 
 class Market(models.Model):
+    version = models.IntegerField(default=settings.MH_VERSION)
     code = models.CharField(max_length=2)  # ISO 3166-1 alpha-2.
     english_name = models.CharField(max_length=100);
 
@@ -18,6 +20,7 @@ class Artist(models.Model):
     Represents an artist. 
     Not platform-dependent.
     """
+    version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=500)
     deezer_id = models.BigIntegerField(null=True, blank=True)
     soptify_id = models.BigIntegerField(null=True, blank=True)
@@ -52,6 +55,7 @@ class ReleaseGroup(models.Model):
     Therefore, it is not platform-dependent.
     Corresponds to a MusicBrainz release group.
     """
+    version = models.IntegerField(default=settings.MH_VERSION)
     album_type_choices = [
             ('single', "single"),
             ('album', "album"),
@@ -80,6 +84,7 @@ class Release(models.Model):
     This model does not exactly corresponds to a MusicBrainz Release, but
     rather a Release plus a Medium.
     """
+    version = models.IntegerField(default=settings.MH_VERSION)
     barcode_type_choices = [
             ('upc', "UPC"),
             ('none', "No barcode"),
@@ -103,7 +108,7 @@ class Recording(models.Model):
     A Recording can be uniquely identified by its ISRC.
     It corresponds to a MusicBrainz's Recording.
     """
-    
+    version = models.IntegerField(default=settings.MH_VERSION)
     isrc = models.CharField(max_length=12)
     title = models.CharField(max_length=1000)
     audio_features = models.TextField(null=True, blank=True)
@@ -122,6 +127,7 @@ class Track(models.Model):
     model.
     It corresponds to a MusicBrainz's Track.
     """
+    version = models.IntegerField(default=settings.MH_VERSION)
     recording = models.ForeignKey('musicdata.Recording', on_delete=models.PROTECT)
     disc_number = models.IntegerField()
     track_number = models.IntegerField()  # Position on the disc.
@@ -132,6 +138,7 @@ class Track(models.Model):
 
 
 class Genre(models.Model):
+    version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=100)
     dz_id = models.IntegerField(null=True, blank=True)
 
@@ -141,6 +148,7 @@ class Contribution(models.Model):
     Intermediary model for M2M between a Artist and either a Recording or a
     ReleaseGroup.
     """
+    version = models.IntegerField(default=settings.MH_VERSION)
     role_choices = [
             ('main', "main"),
             ('feat', "featured"),

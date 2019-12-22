@@ -140,6 +140,12 @@ STATICFILES_DIRS = (
 LOGIN_URL = '/login/'
 
 
+
+# Custom settings
+
+MH_VERSION = 2
+
+
 try:
     from .local_settings import *  # Developpement settings.
 except ImportError as e:
