@@ -1,5 +1,9 @@
+import requests
 from django.db import models
 from django.conf import settings
+from django.utils import timezone as tz
+
+from platform_apis.models import DeezerApiError
 
 class ImpossibleMerge(Exception):
     def __init__(self):
@@ -23,7 +27,7 @@ class Artist(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=500)
     deezer_id = models.BigIntegerField(null=True, blank=True)
-    soptify_id = models.BigIntegerField(null=True, blank=True)
+    spotify_id = models.BigIntegerField(null=True, blank=True)
     image_url_deezer_xl = models.URLField(max_length=2000, 
             null=True, blank=True)
     image_url_deezer_large = models.URLField(max_length=2000, 
@@ -36,6 +40,7 @@ class Artist(models.Model):
             null=True, blank=True)  # The sizes vary on Spotify.
     image_url_spotify_medium = models.URLField(max_length=2000, 
             null=True, blank=True)
+    nb_fans_deezer = models.BigIntegerField()
             
     
     def __str__(self):
@@ -46,6 +51,8 @@ class Artist(models.Model):
             raise ImpossibleMerge
         else:
             pass  #for rg in self.releasegroup_set.all()
+            
+    
         
         
 
