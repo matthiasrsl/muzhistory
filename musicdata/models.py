@@ -1,5 +1,11 @@
 from django.db import models
 
+class ImpossibleMerge(Exception):
+    def __init__(self):
+        pass
+        
+    def __str__(self):
+        return "Unable to merge objects."
 
 class Artist(models.Model):
     """
@@ -27,7 +33,11 @@ class Artist(models.Model):
         return f"{self.name} (Artist)"
         
     def merge(self, artist):
-        pass
+        if self.name != artist.name:
+            raise ImpossibleMerge
+        else:
+            pass  #for rg in self.releasegroup_set.all()
+        
         
 
 class ReleaseGroup(models.Model):
@@ -60,7 +70,7 @@ class ReleaseGroup(models.Model):
 class Release(models.Model):
     """
     Represents a release of an "album" (i.e. ReleaseGroup).
-    It is therefore platform-dependent, that's way this is an abstract model.
+    It is therefore platform-dependent, that's why this is an abstract model.
     This model does not exactly corresponds to a MusicBrainz Release, but
     rather a Release plus a Medium.
     """
@@ -71,7 +81,8 @@ class Release(models.Model):
     ]
     release_group = models.ForeignKey('ReleaseGroup', on_delete=models.PROTECT)
     barcode = models.CharField(max_length=30, null=True, blank=True)
-    barcode_type = models.CharField(max_length=30, default='none')
+    barcode_type = models.CharField(max_length=30, 
+            choices=barcode_type_choices, default='none')
     release_date = models.DateField()
     
     class Meta:
