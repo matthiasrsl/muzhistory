@@ -36,3 +36,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+
+# Custom settings
+
+LOG_RETRIEVAL = True

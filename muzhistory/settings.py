@@ -151,6 +151,8 @@ OLDEST_DATE = tz.make_aware(dt.datetime(year=1970, month=1, day=1))
 
 MH_VERSION = 2
 
+LOG_RETRIEVAL = False
+
 ALWAYS_UPDATE_DEEZER_DATA = False
 
 OPENWEATHER_API_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"

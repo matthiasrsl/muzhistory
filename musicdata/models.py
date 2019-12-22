@@ -28,19 +28,14 @@ class Artist(models.Model):
     name = models.CharField(max_length=500)
     deezer_id = models.BigIntegerField(null=True, blank=True)
     spotify_id = models.BigIntegerField(null=True, blank=True)
-    image_url_deezer_xl = models.URLField(max_length=2000, 
-            null=True, blank=True)
-    image_url_deezer_large = models.URLField(max_length=2000, 
-            null=True, blank=True)
-    image_url_deezer_medium = models.URLField(max_length=2000, 
-            null=True, blank=True)
-    image_url_deezer_small = models.URLField(max_length=2000, 
-            null=True, blank=True)
-    image_url_spotify_largest = models.URLField(max_length=2000, 
-            null=True, blank=True)  # The sizes vary on Spotify.
-    image_url_spotify_medium = models.URLField(max_length=2000, 
-            null=True, blank=True)
-    nb_fans_deezer = models.BigIntegerField()
+    image_url_deezer_xl = models.URLField(max_length=2000)
+    image_url_deezer_large = models.URLField(max_length=2000)
+    image_url_deezer_medium = models.URLField(max_length=2000)
+    image_url_deezer_small = models.URLField(max_length=2000)
+    image_url_spotify_largest = models.URLField(max_length=2000)
+        # The sizes vary on Spotify.
+    image_url_spotify_medium = models.URLField(max_length=2000)
+    nb_fans_deezer = models.BigIntegerField(null=True, blank=True)
             
     
     def __str__(self):
@@ -52,7 +47,46 @@ class Artist(models.Model):
         else:
             pass  #for rg in self.releasegroup_set.all()
             
-    
+    @classmethod
+    def retrieve_from_deezer(cls, dz_id):
+        """
+        Retrieves an artist from the Deezer database with the given id, or,
+        if not in the database, makes a request to the Deezer API and creates
+        the instance.
+        """
+        instance, created = cls.objects.get_or_create(
+                deezer_id=dz_id)
+        if created or settings.ALWAYS_UPDATE_DEEZER_DATA:
+                # Fields other than id are set only if a new Artist instance
+                # was created, or if settings.ALWAYS_UPDATE_DEEZER_DATA
+                # is set to True.
+            r_artist = requests.get(
+                settings.DEEZER_API_ARTIST_URL.format(
+                instance.deezer_id)
+            )
+            json_artist = json.loads(r_artist.text)
+            
+            try:
+                error_type = json_artist['error']['type']
+                message = json_artist['error']['message']
+                code = json_artist['error']['code']
+                instance.delete() # Otherwise, a blank artist will stay in
+                                  # the database.
+                raise DeezerApiError(error_type, message, code)
+            except KeyError:
+                # No API-related error occured.
+                pass
+                
+            instance.name = json_artist['name']
+            instance.image_url_deezer_small = json_artist['picture_small']
+            instance.image_url_deezer_medium = json_artist['picture_medium']
+            instance.image_url_deezer_big = json_artist['picture_big']
+            instance.image_url_deezer_xl = json_artist['picture_xl']
+            instance.nb_fans_deezer = json_artist['nb_fan']
+        instance.save()
+        if (created and settings.LOG_RETRIEVAL):
+            print("retrieved artist {}.".format(instance))
+        return (instance, created)
         
         
 
@@ -97,11 +131,12 @@ class Release(models.Model):
             ('none', "No barcode"),
             ('undef', "Undefined"),
     ]
-    release_group = models.ForeignKey('musicdata.ReleaseGroup', on_delete=models.PROTECT)
-    barcode = models.CharField(max_length=30, null=True, blank=True)
+    release_group = models.ForeignKey('musicdata.ReleaseGroup',
+            on_delete=models.PROTECT)
+    barcode = models.CharField(max_length=30)
     barcode_type = models.CharField(max_length=30, 
             choices=barcode_type_choices, default='none')
-    release_date = models.DateField()
+    release_date = models.DateField(null=True, blank=True)
     label_name = models.CharField(max_length=1000)
     
     class Meta:
@@ -118,8 +153,8 @@ class Recording(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     isrc = models.CharField(max_length=12)
     title = models.CharField(max_length=1000)
-    audio_features = models.TextField(null=True, blank=True)
-    audio_analysis = models.TextField(null=True, blank=True)
+    audio_features = models.TextField()
+    audio_analysis = models.TextField()
     # spotify_track  # Spotify track from which audio_analysis and 
                      # audio_features come.
     duration = models.FloatField(default=-1.0)
@@ -136,8 +171,8 @@ class Track(models.Model):
     """
     version = models.IntegerField(default=settings.MH_VERSION)
     recording = models.ForeignKey('musicdata.Recording', on_delete=models.PROTECT)
-    disc_number = models.IntegerField()
-    track_number = models.IntegerField()  # Position on the disc.
+    disc_number = models.IntegerField(null=True, blank=True)
+    track_number = models.IntegerField(null=True, blank=True)  # Position on the disc.
     available_markets = models.ManyToManyField('musicdata.Market')
     
     class Meta:
