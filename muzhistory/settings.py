@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'management',
+    'tools',
     'platform_apis',
     'musicdata',
     'deezerdata',

@@ -151,7 +151,7 @@ class DeezerTrack(Track):
     gain = models.FloatField(null=True, blank=True)
     alternative_id = models.BigIntegerField(null=True, blank=True)
     
-    
+        
 class DeezerMp3(DeezerTrack):
     title = models.CharField(max_length=1000)
     artist_name = models.CharField(max_length=500)

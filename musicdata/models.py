@@ -154,6 +154,10 @@ class Recording(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     isrc = models.CharField(max_length=12)
     title = models.CharField(max_length=1000)
+    title_short = models.CharField(max_length=1000)  # Title without 
+                                                     # additional information.
+    title_refine = models.CharField(max_length=1000)  # Additional information
+                                                      # for the title.
     audio_features = models.TextField()
     audio_analysis = models.TextField()
     # spotify_track  # Spotify track from which audio_analysis and 
