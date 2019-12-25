@@ -27,7 +27,7 @@ class DeezerAlbum(Release):
     explicit_content_cover = models.IntegerField(null=True, blank=True)
 
     @classmethod
-    def retrieve(cls, dz_id):
+    def retrieve(cls, dz_id, update=False):
         """
         Retrieves an album from the database with the given id, or,
         if not in the database, makes a request to the Deezer API and creates
@@ -36,20 +36,19 @@ class DeezerAlbum(Release):
         instance, created = cls.objects.get_or_create(
                 dz_id=dz_id) 
                 
-        if created or settings.ALWAYS_UPDATE_DEEZER_DATA:
+        if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
             # Fields other than id are set only if a new DeezerAlbum
-            # instance was created, or if settings.ALWAYS_UPDATE_DEEZER_DATA
-            # is set to True.
+            # instance was created, or if the instance should be updated.
             r_album = requests.get(
                 settings.DEEZER_API_ALBUM_URL.format(
                 instance.dz_id)
             )
-            json_album = json.loads(r_album.text)
+            json_object = json.loads(r_album.text)
             
             try:
-                error_type = json_album['error']['type']
-                message = json_album['error']['message']
-                code = json_album['error']['code']
+                error_type = json_object['error']['type']
+                message = json_object['error']['message']
+                code = json_object['error']['code']
                 instance.delete() # Otherwise, a blank album will stay in
                                   # the database.
                 raise DeezerApiError(error_type, message, code)
@@ -57,42 +56,77 @@ class DeezerAlbum(Release):
                 # No API-related error occured.
                 pass
                 
-            try:
-                artist = Artist.retrieve_from_deezer(
-                        json_album['artist']['id']
-                )[0]
-            except DeezerApiError:
-                pass  # ??
+#            try:
+#                artist = Artist.retrieve_from_deezer(
+#                        json_object['artist']['id']
+#                )[0]
+#            except DeezerApiError:
+#                pass  # ??
             
             # Creation of the ReleaseGroup. A new ReleaseGroup is created
             # each time, we assume that the duplicates will be merged by a
             # cron task.
-            if (json_album['record_type'] not in \
+            if (json_object['record_type'] not in \
                     ReleaseGroup.AlbumTypeChoices.values):
                 album_type = ReleaseGroup.AlbumTypeChoices.UNDEF
             else:
-                album_type=json_album['record_type']
+                album_type=json_object['record_type']
                 
             release_group = ReleaseGroup.objects.create(
-                title=json_album['title'],
-                album_type=album_type
+                title=json_object['title'],
+                album_type=album_type,
             )
             
-            #for contributor in release_group.contrib
                     
             
-            instance.cover_small = json_album['cover_small']
-            instance.cover_medium = json_album['cover_medium']
-            instance.cover_big = json_album['cover_big']
-            instance.cover_xl = json_album['cover_xl']
-            release_date_list = json_album['release_date'].split('-')
+            instance.cover_small = json_object['cover_small']
+            instance.cover_medium = json_object['cover_medium']
+            instance.cover_big = json_object['cover_big']
+            instance.cover_xl = json_object['cover_xl']
+            release_date_list = json_object['release_date'].split('-')
             release_date_list = [int(elt) for elt in release_date_list]
             instance.release_date = dt.date(*release_date_list)
-            instance.label_name = json_album['label']
+            instance.label_name = json_object['label']
             instance.barcode_type = Release.BarcodeTypeChoices.UPC
-            instance.barcode = json_album['upc']
+            instance.barcode = json_object['upc']
+            instance.link = json_object['link']
+            instance.share = json_object['share']
+            instance.nb_tracks = json_object['nb_tracks']
+            instance.nb_fans = json_object['fans']
+            instance.rating = json_object['rating']
+            instance.duration = json_object['duration']
+            instance.available = json_object['available']
+            if not instance.available:
+                instance.alternative_id = json_object['alternative']['id']
+            instance.tracklist_url = json_object['tracklist']
+            instance.explicit_lyrics = json_object['explicit_lyrics']
+            instance.explicit_content_lyrics = json_object[
+                    'explicit_content_lyrics'
+            ]
+            instance.explicit_content_cover = json_object[
+                    'explicit_content_cover'
+            ]
+            
             instance.release_group = release_group
             instance.save()
+            
+            for json_contrib in json_object['contributors']:
+                contributor = Artist.retrieve_from_deezer(
+                        json_contrib['id']
+                )[0]
+                if json_contrib['role'] == "Main":
+                    role = 'main'
+                elif json_contrib['role'] == "Featured":
+                    role = 'feat'
+                else:
+                    role = 'undef'
+                contrib = ReleaseGroupContribution.objects.create(
+                        artist=contributor,
+                        release_group=release_group,
+                        role=role                            
+                )
+                contrib.save()
+                
         if (created and settings.LOG_RETRIEVAL):
             print("retrieved album {}.".format(instance))
         return (instance, created)

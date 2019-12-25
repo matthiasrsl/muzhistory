@@ -49,7 +49,7 @@ class Artist(models.Model):
             pass  #for rg in self.releasegroup_set.all()
             
     @classmethod
-    def retrieve_from_deezer(cls, dz_id):
+    def retrieve_from_deezer(cls, dz_id, update=False):
         """
         Retrieves an artist from the database with the given id, or,
         if not in the database, makes a request to the Deezer API and creates
@@ -57,10 +57,9 @@ class Artist(models.Model):
         """
         instance, created = cls.objects.get_or_create(
                 deezer_id=dz_id)
-        if created or settings.ALWAYS_UPDATE_DEEZER_DATA:
+        if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
                 # Fields other than id are set only if a new Artist instance
-                # was created, or if settings.ALWAYS_UPDATE_DEEZER_DATA
-                # is set to True.
+                # was created, or if the instance should be updated.
             r_artist = requests.get(
                 settings.DEEZER_API_ARTIST_URL.format(
                 instance.deezer_id)
