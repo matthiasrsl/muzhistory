@@ -18,7 +18,7 @@ class ImpossibleMerge(Exception):
 class Market(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     code = models.CharField(max_length=2)  # ISO 3166-1 alpha-2.
-    english_name = models.CharField(max_length=100);
+    english_name = models.CharField(max_length=100, null=True);
 
 
 class Artist(models.Model):
@@ -76,14 +76,21 @@ class Artist(models.Model):
                 raise DeezerApiError(error_type, message, code)
             except KeyError:
                 pass  # No API-related error occured.
+            
+            try:    
+                instance.name = json_artist['name']
+                instance.image_url_deezer_small = json_artist['picture_small']
+                instance.image_url_deezer_medium = json_artist['picture_medium']
+                instance.image_url_deezer_big = json_artist['picture_big']
+                instance.image_url_deezer_xl = json_artist['picture_xl']
+                instance.nb_fans_deezer = json_artist['nb_fan']
+                instance.save()
                 
-            instance.name = json_artist['name']
-            instance.image_url_deezer_small = json_artist['picture_small']
-            instance.image_url_deezer_medium = json_artist['picture_medium']
-            instance.image_url_deezer_big = json_artist['picture_big']
-            instance.image_url_deezer_xl = json_artist['picture_xl']
-            instance.nb_fans_deezer = json_artist['nb_fan']
-        instance.save()
+            except:  # If an unexpected error happens, we don't want a
+                     # corrupted object to pollute the database.
+                instance.delete()
+                raise 
+                
         if (created and settings.LOG_RETRIEVAL):
             print("retrieved artist {}.".format(instance))
         return (instance, created)
