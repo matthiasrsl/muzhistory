@@ -53,15 +53,8 @@ class DeezerAlbum(Release):
                                   # the database.
                 raise DeezerApiError(error_type, message, code)
             except KeyError:
-                # No API-related error occured.
-                pass
+                pass  # No API-related error occured.
                 
-#            try:
-#                artist = Artist.retrieve_from_deezer(
-#                        json_object['artist']['id']
-#                )[0]
-#            except DeezerApiError:
-#                pass  # ??
             
             # Creation of the ReleaseGroup. A new ReleaseGroup is created
             # each time, we assume that the duplicates will be merged by a
@@ -133,13 +126,14 @@ class DeezerAlbum(Release):
     
 class DeezerTrack(Track):
     dz_id = models.BigIntegerField()
+    duration = models.IntegerField(null=True, blank=True)    
     release = models.ForeignKey('DeezerAlbum', on_delete=models.PROTECT,
-        related_name='tracks')
+        related_name='tracks', null=True, blank=True)
     readable = models.BooleanField(null=True, blank=True)
-    title_short = models.CharField(max_length=1000)
-    title_version = models.CharField(max_length=1000)
-    unseen = models.BooleanField(null=True, blank=True)
+    title_short = models.CharField(max_length=1000)  
+    title_version = models.CharField(max_length=1000)  
     link = models.URLField(max_length=2000)
+    share = models.URLField(max_length=2000)
     rank = models.BigIntegerField(null=True, blank=True)
     release_date = models.DateField(null=True, blank=True)
     explicit_lyrics = models.BooleanField(null=True, blank=True)
@@ -151,6 +145,105 @@ class DeezerTrack(Track):
     gain = models.FloatField(null=True, blank=True)
     alternative_id = models.BigIntegerField(null=True, blank=True)
     
+    @classmethod
+    def retrieve(cls, dz_id, update=False):
+        """
+        Retrieves a track from the database with the given id, or, if not
+        in the database, makes a request to the Deezer API and creates
+        the instance.
+        """
+        instance, created = cls.objects.get_or_create(
+                dz_id=dz_id)
+        if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
+            # Fields other than id are set only if a new DeezerAlbum
+            # instance was created, or if the instance should be updated.
+            r_track = requests.get(
+                settings.DEEZER_API_TRACK_URL.format(
+                instance.dz_id)
+            )
+            json_object = json.loads(r_track.text)
+            
+            try:
+                error_type = json_object['error']['type']
+                message = json_object['error']['message']
+                code = json_object['error']['code']
+                instance.delete()  # Otherwise, a blank track would stay in
+                                   # the database.
+                raise DeezerApiError(error_type, message, code)
+            except KeyError:
+                pass  # No API-related error occured.
+            
+            recording, recording_created = Recording.objects.get_or_create(
+                    isrc=json_object['isrc']
+            )
+            instance.recording = recording
+            
+            if (recording_created or update or 
+                    settings.ALWAYS_UPDATE_DEEZER_DATA):
+            
+                recording.title = json_object['title']
+                recording.deezer_track = instance
+            recording.save()
+            
+            try:
+                track_title_version = json_object['title_version']
+            except KeyError:
+                track_title_refine = ""
+            instance.title_version = track_title_version
+            instance.title_short = json_object['title_short']
+            instance.duration = json_object['duration']
+            instance.readable = json_object['readable']
+            instance.link = json_object['link']
+            instance.share = json_object['share']
+            instance.rank = json_object['rank']
+            release_date_list = json_object['release_date'].split('-')
+            release_date_list = [int(elt) for elt in release_date_list]
+            instance.release_date = dt.date(*release_date_list)
+            instance.disc_number = json_object['disk_number']
+            instance.track_number = json_object['track_position']
+            instance.explicit_lyrics = json_object['explicit_lyrics']
+            instance.explicit_content_lyrics = json_object[
+                    'explicit_content_lyrics'
+            ]
+            instance.explicit_content_cover = json_object[
+                    'explicit_content_cover'
+            ]
+            instance.preview = json_object['preview']
+            instance.bpm = json_object['bpm']
+            instance.gain = json_object['gain']
+            
+            if not instance.readable:
+                instance.alternative_id = json_object['alternative']['id']
+                
+            try:
+                instance.release = DeezerAlbum.retrieve(
+                        json_object['album']['id']
+                )[0]
+            except DeezerApiError:
+                pass  # Orphan track, not a problem.
+                
+            for json_contrib in json_object['contributors']:
+                contributor = Artist.retrieve_from_deezer(
+                        json_contrib['id']
+                )[0]
+                if json_contrib['role'] == "Main":
+                    role = 'main'
+                elif json_contrib['role'] == "Featured":
+                    role = 'feat'
+                else:
+                    role = 'undef'
+                contrib = RecordingContribution.objects.create(
+                        artist=contributor,
+                        recording=recording,
+                        role=role                            
+                )
+                contrib.save()
+                
+            instance.save()
+            
+        if (created and settings.LOG_RETRIEVAL):
+            print("retrieved album {}.".format(instance))
+        return (instance, created)
         
 class DeezerMp3(DeezerTrack):
     title = models.CharField(max_length=1000)

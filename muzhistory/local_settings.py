@@ -12,20 +12,6 @@ env.read_env(env.str('ENV_PATH', os.path.join(BASE_DIR, '.env')))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 
-INSTALLED_APPS = [
-    'django.contrib.auth',
-    'django.contrib.admin',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    'tools',
-    'platform_apis',
-    'musicdata',
-    'deezerdata',
-]
-
 # False if not in os.environ
 DEBUG = env('DEBUG')
 

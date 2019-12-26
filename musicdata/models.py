@@ -5,6 +5,7 @@ from django.conf import settings
 from django.utils import timezone as tz
 
 from platform_apis.models import DeezerApiError
+#from deezerdata import DeezerTrack
 
 class ImpossibleMerge(Exception):
     def __init__(self):
@@ -30,7 +31,7 @@ class Artist(models.Model):
     deezer_id = models.BigIntegerField(null=True, blank=True)
     spotify_id = models.BigIntegerField(null=True, blank=True)
     image_url_deezer_xl = models.URLField(max_length=2000)
-    image_url_deezer_large = models.URLField(max_length=2000)
+    image_url_deezer_big = models.URLField(max_length=2000)
     image_url_deezer_medium = models.URLField(max_length=2000)
     image_url_deezer_small = models.URLField(max_length=2000)
     image_url_spotify_largest = models.URLField(max_length=2000)
@@ -46,7 +47,7 @@ class Artist(models.Model):
         if self.name != artist.name:
             raise ImpossibleMerge
         else:
-            pass  #for rg in self.releasegroup_set.all()
+            pass  
             
     @classmethod
     def retrieve_from_deezer(cls, dz_id, update=False):
@@ -74,8 +75,7 @@ class Artist(models.Model):
                                   # the database.
                 raise DeezerApiError(error_type, message, code)
             except KeyError:
-                # No API-related error occured.
-                pass
+                pass  # No API-related error occured.
                 
             instance.name = json_artist['name']
             instance.image_url_deezer_small = json_artist['picture_small']
@@ -154,15 +154,17 @@ class Recording(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     isrc = models.CharField(max_length=12)
     title = models.CharField(max_length=1000)
-    title_short = models.CharField(max_length=1000)  # Title without 
-                                                     # additional information.
-    title_refine = models.CharField(max_length=1000)  # Additional information
-                                                      # for the title.
-    audio_features = models.TextField()
-    audio_analysis = models.TextField()
-    # spotify_track  # Spotify track from which audio_analysis and 
-                     # audio_features come.
-    duration = models.FloatField(default=-1.0)
+    
+    # Tracks from which the platform-specific data come from.
+    deezer_track = models.ForeignKey('deezerdata.DeezerTrack', 
+            on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
+            # If the Track is deleted, the platform-specific information will
+            # no longer be available. As this data is not critically
+            # important, we allow this behaviour (which is better than having
+            # tracks - and so potentially history entries - that have no
+            # recording.
+    #spotify_track = models.ForeignKey(...)
+                     
     contributors = models.ManyToManyField('Artist',
             through='RecordingContribution')
             

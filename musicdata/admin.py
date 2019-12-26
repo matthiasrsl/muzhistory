@@ -18,7 +18,7 @@ class ReleaseGroupAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     
 class RecordingAdmin(admin.ModelAdmin):
-    list_display = ('title', 'isrc', 'duration', 'version')
+    list_display = ('title', 'isrc', 'version')
     list_filter = ('version',)
     search_fields = ('name', 'isrc')
     

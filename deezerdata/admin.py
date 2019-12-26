@@ -9,8 +9,8 @@ class DeezerAlbumAdmin(admin.ModelAdmin):
     search_fields = ('release_group__title',)
     
 class DeezerTrackAdmin(admin.ModelAdmin):
-    list_display = ('recording', 'dz_id', 'readable', 'version')
-    list_display_links = ('recording',)
+    list_display = ('title_short', 'recording', 'dz_id', 'readable', 'version')
+    list_display_links = ('title_short',)
     list_filter = ('readable', 'version',)
     search_fields = ('recording__title', 'dz_id')
     
