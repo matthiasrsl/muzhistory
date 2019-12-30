@@ -26,6 +26,9 @@ class DeezerAlbum(Release):
     explicit_content_lyrics = models.IntegerField(null=True, blank=True)
     explicit_content_cover = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return f"{self.release_group.title} (Deezer)"
+    
     @classmethod
     def retrieve(cls, dz_id, update=False):
         """
@@ -151,6 +154,9 @@ class DeezerTrack(Track):
                                             # as it is part of audio features.
     gain = models.FloatField(null=True, blank=True)
     alternative_id = models.BigIntegerField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.recording.title} (Deezer)"
     
     @classmethod
     def retrieve(cls, dz_id, update=False):
@@ -279,4 +285,7 @@ class DeezerMp3(DeezerTrack):
     title = models.CharField(max_length=1000)
     artist_name = models.CharField(max_length=500)
     album_name = models.CharField(max_length=1000)
+    
+    def __str__(self):
+        return f"{self.title} (Deezer Mp3)"
     

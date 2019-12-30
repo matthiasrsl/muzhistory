@@ -175,6 +175,10 @@ class Recording(models.Model):
     contributors = models.ManyToManyField('Artist',
             through='RecordingContribution')
             
+    
+    def __str__(self):
+        return f"{self.title} ({self.isrc})"
+            
             
 class Track(models.Model):
     """
@@ -199,6 +203,8 @@ class Genre(models.Model):
     name = models.CharField(max_length=100)
     dz_id = models.IntegerField(null=True, blank=True)
 
+    def __str__(self):
+        return self.name
     
 class Contribution(models.Model):
     """
@@ -225,9 +231,16 @@ class ReleaseGroupContribution(Contribution):
     """
     release_group = models.ForeignKey('ReleaseGroup', on_delete=models.CASCADE)
     
+    def __str__(self):
+        return (f"{self.artist.name} as {self.role} on RG "
+                f"{self.release_group.title}")
     
 class RecordingContribution(Contribution):
     """
     Intermediary model for M2M between a Artist and a Recording.
     """
     recording = models.ForeignKey('Recording', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return (f"{self.artist.name} as {self.role} on Rec. "
+                "{self.recording.title}")
