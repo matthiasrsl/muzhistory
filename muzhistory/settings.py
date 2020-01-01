@@ -37,15 +37,18 @@ ALLOWED_HOSTS = ['deezhistory.pythonanywhere.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'admin_reorder',
+    'muzhistory.apps.MyAdminConfig',
     'tools',
     'platform_apis',
+    'accounts',
+    'history',
     'musicdata',
     'deezerdata',
 ]
@@ -58,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'admin_reorder.middleware.ModelAdminReorder',
 ]
 
 ROOT_URLCONF = 'muzhistory.urls'
@@ -143,7 +147,15 @@ STATICFILES_DIRS = (
 
 LOGIN_URL = '/login/'
 
+# Third-party modules
 
+ADMIN_REORDER = (
+    'auth',
+    'accounts',
+    'platform_apis',
+    'musicdata',
+    'deezerdata',
+)
 
 # Custom settings
 

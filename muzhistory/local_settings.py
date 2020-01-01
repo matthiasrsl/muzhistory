@@ -18,15 +18,18 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = ['deezhistory.pythonanywhere.com', 'localhost']
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'admin_reorder',
+    'muzhistory.apps.MyAdminConfig',
     'tools',
     'platform_apis',
+    'accounts',
+    'history',
     'musicdata',
     'deezerdata',
     # Debugging, testing and documentation tools.
