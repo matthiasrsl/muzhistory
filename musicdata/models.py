@@ -13,12 +13,6 @@ class ImpossibleMerge(Exception):
         
     def __str__(self):
         return "Unable to merge objects."
-        
-
-class Market(models.Model):
-    version = models.IntegerField(default=settings.MH_VERSION)
-    code = models.CharField(max_length=2)  # ISO 3166-1 alpha-2.
-    english_name = models.CharField(max_length=100, null=True);
 
 
 class Artist(models.Model):
@@ -192,7 +186,7 @@ class Track(models.Model):
             on_delete=models.PROTECT, null=True, blank=True)
     disc_number = models.IntegerField(null=True, blank=True)
     track_number = models.IntegerField(null=True, blank=True)  # Position on the disc.
-    available_markets = models.ManyToManyField('musicdata.Market')
+    available_markets = models.ManyToManyField('platform_apis.Market')
     
     class Meta:
         abstract = True
