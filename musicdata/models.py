@@ -29,7 +29,7 @@ class Artist(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=500)
     deezer_id = models.BigIntegerField(null=True, blank=True)
-    spotify_id = models.BigIntegerField(null=True, blank=True)
+    spotify_id = models.CharField(max_length=50)
     image_url_deezer_xl = models.URLField(max_length=2000)
     image_url_deezer_big = models.URLField(max_length=2000)
     image_url_deezer_medium = models.URLField(max_length=2000)
