@@ -29,7 +29,7 @@ env.read_env(env.str('ENV_PATH', os.path.join(BASE_DIR, '.env')))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['deezhistory.pythonanywhere.com']
 
