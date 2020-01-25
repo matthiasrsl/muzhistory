@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block body %}
+
+  <h1>{{ profile.user.username }}</h1>
+  
+  <p>We
+    {% if profile.track_location %}
+      are
+    {% else %}
+      are not
+    {% endif %}
+    tracking your location.
+  </p>
+  
+{% endblock %}

@@ -29,7 +29,7 @@ env.read_env(env.str('ENV_PATH', os.path.join(BASE_DIR, '.env')))
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['deezhistory.pythonanywhere.com']
 
@@ -69,7 +69,9 @@ ROOT_URLCONF = 'muzhistory.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
