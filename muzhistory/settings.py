@@ -137,6 +137,27 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Authentication
+
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# Email sending
+
+EMAIL_HOST = "smtp.gmail.com"
+
+EMAIL_HOST_USER = "contact.muzhistory@gmail.com"
+
+EMAIL_HOST_PASSWORD = '6M6VteJDkbRqDh8'
+
+EMAIL_PORT = 587
+
+EMAIL_USE_TLS = True
+
+EMAIL_USE_SSL = False
+
+# Misc
+
+APPEND_SLASH = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
@@ -146,8 +167,6 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "static"),
 )
-
-LOGIN_URL = '/login/'
 
 # Third-party modules
 
