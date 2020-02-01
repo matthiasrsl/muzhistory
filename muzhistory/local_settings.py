@@ -59,6 +59,13 @@ NOSE_ARGS = [
             deezerdata.models, deezerdata.admin',
 ]
 '''
+
 # Custom settings
+
+# Deezer credentials
+
+DEEZER_API_APP_ID = "393284"
+
+DEEZER_API_SECRET_KEY = "a69981757b976a038ca934ed8d80e784"
 
 LOG_RETRIEVAL = True
