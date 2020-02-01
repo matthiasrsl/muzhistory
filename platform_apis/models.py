@@ -19,7 +19,7 @@ class DeezerOAuthError(Exception):
     To be raised when OAuth authentication fails.
     """
     def __init__(self, message):
-        self.message = messages
+        self.message = message
         
     def __str__(self):
         return self.message
