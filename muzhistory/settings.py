@@ -194,7 +194,11 @@ OPENWEATHER_API_FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast
 
 OPENWEATHER_API_KEY = env('OPENWEATHER_API_KEY')
 
+DEEZER_AUTH_REDIRECT_URI = "https://vocab.pythonanywhere.com"
+
 DEEZER_ACCESS_TOKEN_URL = "https://connect.deezer.com/oauth/access_token.php"
+
+DEEZER_OAUTH_URL = "https://connect.deezer.com/oauth/auth.php?app_id={}&redirect_uri={}&perms=basic_access,email,offline_access,listening_history"
 
 DEEZER_API_USER_URL = "https://api.deezer.com/user/me"
         
