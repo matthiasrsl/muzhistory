@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone as tz
 from django.conf import settings
+from django.core.exceptions import PermissionDenied
 
 import requests
 
@@ -34,11 +35,45 @@ class Profile(models.Model):
             raise DeezerOAuthError(response.text)
         else:
             response_data = response.json()
-            deezer_account = DeezerAccount.objects.create(
-                    profile=self,
-                    access_token=response_data['access_token'],
-            )
-            deezer_account.save()
+            return response_data['access_token']
+            
+    
+    def add_deezer_account(self, access_token):
+        # We retrieve the Deezer user id to check if it is already
+        # in the database.
+        url_deezer_user = settings.DEEZER_API_USER_URL
+        params_deezer_user = {
+                'access_token': access_token
+        }
+        response_deezer_user = requests.get(url_deezer_user,
+                params=params_deezer_user)
+        r_data_deezer_user = response_deezer_user.json()
+        
+        try:
+            error_type = r_data_deezer_user['error']['type']
+            message = r_data_deezer_user['error']['message']
+            code = r_data_deezer_user['error']['code']
+            raise DeezerApiError(error_type, message, code)
+        except KeyError:
+            pass  # No API-related error occured.
+        
+        deezer_user_id = r_data_deezer_user['id']
+        
+        
+        
+        deezer_account, created = DeezerAccount.objects.get_or_create(
+                user_id=deezer_user_id,
+        )
+        
+        if created:
+            deezer_account.profile = self
+        else:   
+            if deezer_account.profile != self:
+                raise PermissionDenied
+            
+        deezer_account.access_token = access_token
+        deezer_account.update()
+        deezer_account.save()
                     
 
 
@@ -47,7 +82,7 @@ class PlatformAccount(models.Model):
     A user account on a music streaming platform.
     """
     version = models.IntegerField(default=settings.MH_VERSION)
-    profile = models.ForeignKey('Profile', on_delete=models.CASCADE)
+    profile = models.ForeignKey('Profile', on_delete=models.CASCADE, null=True)
     user_id = models.CharField(max_length=100)
     access_token = models.CharField(max_length=150, null=True, blank=True)
     email = models.EmailField()
