@@ -193,6 +193,10 @@ OPENWEATHER_API_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 OPENWEATHER_API_FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 
 OPENWEATHER_API_KEY = env('OPENWEATHER_API_KEY')
+
+DEEZER_ACCESS_TOKEN_URL = "https://connect.deezer.com/oauth/access_token.php"
+
+DEEZER_API_USER_URL = "https://api.deezer.com/user/me"
         
 DEEZER_API_HISTORY_URL = "https://api.deezer.com/user/{}/history"
 
