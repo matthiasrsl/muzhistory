@@ -8,7 +8,9 @@ from django.core.exceptions import PermissionDenied
 
 import requests
 
-from platform_apis.models import DeezerOAuthError, Market
+
+from platform_apis.models import (DeezerOAuthError, DeezerRefusedAccessError, 
+        Market)
 
 class Profile(models.Model):
     """
@@ -31,11 +33,22 @@ class Profile(models.Model):
         }
         response = requests.get(url, params=params)
         
-        if response.status_code != 200 or response.text == 'wrong code':
+        response.raise_for_status()
+        
+        if response.text == 'wrong code':
             raise DeezerOAuthError(response.text)
         else:
             response_data = response.json()
-            return response_data['access_token']
+            
+            if 'access_token' in response_data:
+                return response_data['access_token']
+            elif 'error_reason' in response_data:
+                if response_data['error_reason'] == 'user_denied':
+                    raise DeezerRefusedAccessError()
+                else:
+                    raise DeezerOAuthError(response_data['error_reason'])
+            else:
+                raise DeezerOAuthError("Unknown error.")
             
     
     def add_deezer_account(self, access_token):
