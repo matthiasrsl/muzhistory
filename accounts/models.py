@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 
 import requests
 
+
 from platform_apis.models import (DeezerOAuthError, DeezerRefusedAccessError, 
         Market)
 

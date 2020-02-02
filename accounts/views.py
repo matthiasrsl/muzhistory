@@ -9,6 +9,7 @@ from django.conf import settings
 
 from platform_apis.models import DeezerOAuthError
 
+
 @login_required
 def display_profile(request):
     profile = request.user.profile
@@ -52,5 +53,5 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
                     "de la connexion à Deezer. Votre compte Deezer n'a pas "
                     "pu être lié."
             )
-                
+            
         return redirect(display_profile)
