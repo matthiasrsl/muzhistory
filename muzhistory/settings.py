@@ -159,6 +159,8 @@ EMAIL_USE_SSL = False
 
 APPEND_SLASH = True
 
+SESSION_COOKIE_AGE = 365*24*3600
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
