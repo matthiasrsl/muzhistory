@@ -14,9 +14,22 @@ class DeezerApiError(Exception):
     def __str__(self):
         return "{} ({}): {}".format(self.error_type, self.code, self.message)
         
+        
 class DeezerOAuthError(Exception):
     """
     To be raised when OAuth authentication fails.
+    """
+    def __init__(self, message):
+        self.message = message
+        
+    def __str__(self):
+        return self.message
+        
+
+class DeezerRefusedAccessError(Exception):
+    """
+    To be raised when the user doesn't allow access to their Deezer
+    account during the OAuth process.
     """
     def __init__(self, message):
         self.message = message
