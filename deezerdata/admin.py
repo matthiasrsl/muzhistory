@@ -23,6 +23,15 @@ class DeezerMp3Admin(admin.ModelAdmin):
     list_filter = ('version',)
     search_fields = ('title', 'dz_id')
     
+    
+class DeezerAccountAdmin(admin.ModelAdmin):
+    list_display = ('name', 'profile', 'user_id', 'last_history_request',
+            'version')
+    list_filter = ('version', )
+    date_hierarchy = 'inscription_date'
+    search_fields = ('name', 'firstname', 'lastname')
+    
 admin.site.register(DeezerAlbum, DeezerAlbumAdmin)
 admin.site.register(DeezerTrack, DeezerTrackAdmin)
 admin.site.register(DeezerMp3, DeezerMp3Admin)
+admin.site.register(DeezerAccount, DeezerAccountAdmin)
