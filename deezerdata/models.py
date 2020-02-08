@@ -8,6 +8,7 @@ class DeezerAlbum(Release):
     """
     Represents an album in Deezer's database.
     """
+    models.IntegerField(default=settings.MH_VERSION)
     dz_id = models.BigIntegerField()
     link = models.URLField(max_length=2000)
     share = models.URLField(max_length=2000)
@@ -135,6 +136,7 @@ class DeezerAlbum(Release):
         return (instance, created)
     
 class DeezerTrack(Track):
+    version = models.IntegerField(default=settings.MH_VERSION)
     dz_id = models.BigIntegerField()
     duration = models.IntegerField(null=True, blank=True)    
     release = models.ForeignKey('DeezerAlbum', on_delete=models.PROTECT,
