@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
-from musicdata.models import *
+
 from deezerdata.models import *
+from musicdata.models import *
+
 
 class Command(BaseCommand):
     help = 'Clear database tables except Profile and LocationRecord'
-
 
     def handle(self, *args, **options):
 

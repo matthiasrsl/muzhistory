@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
 import datetime as dt
+import os
+
+from django.utils import timezone as tz
 
 import environ
-from django.utils import timezone as tz
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -144,7 +145,6 @@ STATICFILES_DIRS = (
 LOGIN_URL = '/login/'
 
 
-
 # Custom settings
 
 OLDEST_DATE = tz.make_aware(dt.datetime(year=1970, month=1, day=1))
@@ -160,7 +160,7 @@ OPENWEATHER_API_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 OPENWEATHER_API_FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
 
 OPENWEATHER_API_KEY = env('OPENWEATHER_API_KEY')
-        
+
 DEEZER_API_HISTORY_URL = "https://api.deezer.com/user/{}/history"
 
 DEEZER_API_TRACK_URL = "https://api.deezer.com/track/{}"
@@ -168,7 +168,7 @@ DEEZER_API_TRACK_URL = "https://api.deezer.com/track/{}"
 DEEZER_API_ALBUM_URL = "https://api.deezer.com/album/{}"
 
 DEEZER_API_ARTIST_URL = "https://api.deezer.com/artist/{}"
-        
+
 DEFAULT_ALBUM_COVER_URL = "https://e-cdns-images.dzcdn.net/images/cover/d41d8cd98f00b204e9800998ecf8427e/380x380-000000-80-0-0.jpg"
 
 
