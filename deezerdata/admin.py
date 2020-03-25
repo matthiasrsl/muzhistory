@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import *
+
 '''
 class DeezerAlbumAdmin(admin.ModelAdmin):
     list_display = ('release_group', 'dz_id', 'available', 'version')

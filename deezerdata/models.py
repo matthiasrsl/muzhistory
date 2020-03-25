@@ -2,6 +2,7 @@ from django.db import models
 
 from musicdata.models import *
 
+
 class DeezerAlbum(Release):
     """
     Represents an album in Deezer's database.
@@ -23,12 +24,12 @@ class DeezerAlbum(Release):
     explicit_lyrics = models.BooleanField(null=True, blank=True)
     explicit_content_lyrics = models.IntegerField(null=True, blank=True)
     explicit_content_cover = models.IntegerField(null=True, blank=True)
-    
-    
+
+
 class DeezerTrack(Track):
     dz_id = models.BigIntegerField()
     release = models.ForeignKey('DeezerAlbum', on_delete=models.PROTECT,
-        related_name='tracks')
+                                related_name='tracks')
     readable = models.BooleanField(null=True, blank=True)
     title_short = models.CharField(max_length=1000)
     title_version = models.CharField(max_length=1000)
@@ -41,13 +42,12 @@ class DeezerTrack(Track):
     explicit_content_cover = models.IntegerField(null=True, blank=True)
     preview = models.URLField(max_length=2000)
     bpm = models.FloatField(null=True, blank=True)  # Not included in Recording
-                                            # as it is part of audio features.
+    # as it is part of audio features.
     gain = models.FloatField(null=True, blank=True)
     alternative_id = models.BigIntegerField(null=True, blank=True)
-    
-    
+
+
 class DeezerMp3(DeezerTrack):
     title = models.CharField(max_length=1000)
     artist_name = models.CharField(max_length=500)
     album_name = models.CharField(max_length=1000)
-    
