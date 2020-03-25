@@ -19,6 +19,9 @@ class Profile(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     track_location = models.BooleanField(default=False)
+    last_history_request = models.DateTimeField(null=True, blank=True,
+            default=settings.OLDEST_DATE)
+    
 
     def get_deezer_access_token(self, code):
         """

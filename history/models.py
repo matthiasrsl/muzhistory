@@ -10,9 +10,28 @@ from django.utils import timezone as tz
 from deezerdata.models import *
 
 
+class SpecialHistoryEntryChoices(models.TextChoices):
+    """
+    Choices for the different types of HistoryEntry in case of a
+    non-track related HistoryEntry (such as retrieval errors, etc.)
+    """
+    LISTENING = 'listening', "Track listening"  # Regular
+    DEEZER_ERROR = 'err_deezer', "Deezer error"
+    DEEZER_ELLIPSIS = 'ellipsis', "History Ellipsis (Deezer)"
+
+
 class HistoryEntry(models.Model):
+    """
+    An entry in a profile's listening history, generally corresponding
+    to the listening of a track.
+    """
     version = models.IntegerField(default=settings.MH_VERSION)
     profile = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE)
+    entry_type = models.CharField(
+        max_length=100,
+        choices=SpecialHistoryEntryChoices.choices,
+        default=SpecialHistoryEntryChoices.LISTENING
+    )
     track_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     track = GenericForeignKey('track_type', 'object_id')
@@ -37,31 +56,30 @@ class HistoryEntry(models.Model):
         if entry_listening_datetime > profile.last_history_request:
             db_entry = HistoryEntry(
                 profile=profile,
-                dz_timestamp=entry_json['timestamp'],
+                timestamp=entry_json['timestamp'],
                 listening_datetime=entry_listening_datetime,
             )
             try:
                 if track_id > 0:  # Deezer track.
-                    track = DeezerTrack.retrieve_from_deezer(track_id)[0]
-                    db_entry.entry_type = 'deezer_track'
+                    track = DeezerTrack.retrieve(track_id)[0]
 
                 else:  # User's mp3
-                    track, created = DeezerTrack.objects.get_or_create(
+                    mp3, created = DeezerMp3.objects.get_or_create(
                         dz_id=track_id)
                     if created:
-                        track.title = track.title_short = entry_json['title']
-                        track.dz_artist_name = entry_json['artist']['name']
-                        track.dz_album_title = entry_json['album']['title']
-                        track.save()
-                    db_entry.entry_type = 'deezer_mp3'
+                        mp3.title = track.title_short = entry_json['title']
+                        mp3.artist_name = entry_json['artist']['name']
+                        mp3.album_title = entry_json['album']['title']
+                        mp3.save()
 
-                db_entry.dz_track = track
+                db_entry.track = track
 
             except DeezerApiError:
-                db_entry.entry_type = 'deezer_error'
+                db_entry.entry_type = SpecialHistoryEntryChoices.LISTENING
+
 
             db_entry.save()
         else:
             ignored = True
 
-        return (ignored, entry_listening_datetime)
+        return ignored, entry_listening_datetime

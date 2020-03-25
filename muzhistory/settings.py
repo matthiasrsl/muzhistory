@@ -177,6 +177,7 @@ STATICFILES_DIRS = (
 ADMIN_REORDER = (
     'auth',
     'accounts',
+    'history',
     'platform_apis',
     'musicdata',
     'deezerdata',
@@ -186,7 +187,7 @@ ADMIN_REORDER = (
 
 OLDEST_DATE = tz.make_aware(dt.datetime(year=1970, month=1, day=1))
 
-MH_VERSION = 9
+MH_VERSION = 10
 
 LOG_RETRIEVAL = False
 
