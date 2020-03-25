@@ -1,16 +1,19 @@
-import requests
 import json
-from django.db import models
+
 from django.conf import settings
+from django.db import models
 from django.utils import timezone as tz
 
+import requests
 from platform_apis.models import DeezerApiError
+
 #from deezerdata import DeezerTrack
+
 
 class ImpossibleMerge(Exception):
     def __init__(self):
         pass
-        
+
     def __str__(self):
         return "Unable to merge objects."
 
@@ -29,20 +32,19 @@ class Artist(models.Model):
     image_url_deezer_medium = models.URLField(max_length=2000)
     image_url_deezer_small = models.URLField(max_length=2000)
     image_url_spotify_largest = models.URLField(max_length=2000)
-        # The sizes vary on Spotify.
+    # The sizes vary on Spotify.
     image_url_spotify_medium = models.URLField(max_length=2000)
     nb_fans_deezer = models.BigIntegerField(null=True, blank=True)
-            
-    
+
     def __str__(self):
         return f"{self.name} (Artist)"
-        
+
     def merge(self, artist):
         if self.name != artist.name:
             raise ImpossibleMerge
         else:
-            pass  
-            
+            pass
+
     @classmethod
     def retrieve_from_deezer(cls, dz_id, update=False):
         """
@@ -51,27 +53,27 @@ class Artist(models.Model):
         the instance.
         """
         instance, created = cls.objects.get_or_create(
-                deezer_id=dz_id)
+            deezer_id=dz_id)
         if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
-                # Fields other than id are set only if a new Artist instance
-                # was created, or if the instance should be updated.
+            # Fields other than id are set only if a new Artist instance
+            # was created, or if the instance should be updated.
             r_artist = requests.get(
                 settings.DEEZER_API_ARTIST_URL.format(
-                instance.deezer_id)
+                    instance.deezer_id)
             )
             json_artist = json.loads(r_artist.text)
-            
+
             try:
                 error_type = json_artist['error']['type']
                 message = json_artist['error']['message']
                 code = json_artist['error']['code']
-                instance.delete() # Otherwise, a blank artist will stay in
-                                  # the database.
+                instance.delete()  # Otherwise, a blank artist will stay in
+                # the database.
                 raise DeezerApiError(error_type, message, code)
             except KeyError:
                 pass  # No API-related error occured.
-            
-            try:    
+
+            try:
                 instance.name = json_artist['name']
                 instance.image_url_deezer_small = json_artist['picture_small']
                 instance.image_url_deezer_medium = json_artist['picture_medium']
@@ -79,17 +81,16 @@ class Artist(models.Model):
                 instance.image_url_deezer_xl = json_artist['picture_xl']
                 instance.nb_fans_deezer = json_artist['nb_fan']
                 instance.save()
-                
+
             except:  # If an unexpected error happens, we don't want a
-                     # corrupted object to pollute the database.
+                # corrupted object to pollute the database.
                 instance.delete()
-                raise 
-                
+                raise
+
         if (created and settings.LOG_RETRIEVAL):
             print("retrieved artist {}.".format(instance))
         return (instance, created)
-        
-        
+
 
 class ReleaseGroup(models.Model):
     """
@@ -98,6 +99,7 @@ class ReleaseGroup(models.Model):
     Corresponds to a MusicBrainz release group.
     """
     version = models.IntegerField(default=settings.MH_VERSION)
+
     class AlbumTypeChoices(models.TextChoices):
         SINGLE = 'single', "single"
         ALBUM = 'album', "album"
@@ -107,15 +109,15 @@ class ReleaseGroup(models.Model):
 
     title = models.CharField(max_length=1000)
     album_type = models.CharField(max_length=100,
-            choices=AlbumTypeChoices.choices,
-            default=AlbumTypeChoices.UNDEF)  
+                                  choices=AlbumTypeChoices.choices,
+                                  default=AlbumTypeChoices.UNDEF)
 
     contributors = models.ManyToManyField('Artist',
-            through='ReleaseGroupContribution')
-    
+                                          through='ReleaseGroupContribution')
+
     def __str__(self):
         return f"{self.title} (Release group)"
-        
+
     def merge(self, release_group):
         pass
 
@@ -128,23 +130,24 @@ class Release(models.Model):
     rather a Release plus a Medium.
     """
     version = models.IntegerField(default=settings.MH_VERSION)
+
     class BarcodeTypeChoices(models.TextChoices):
-            UPC = ('upc', "UPC")
-            NONE = ('none', "No barcode")
-            UNDEF = ('undef', "Undefined")
+        UPC = ('upc', "UPC")
+        NONE = ('none', "No barcode")
+        UNDEF = ('undef', "Undefined")
 
     release_group = models.ForeignKey('musicdata.ReleaseGroup',
-            on_delete=models.PROTECT, null=True, blank=True)
+                                      on_delete=models.PROTECT, null=True, blank=True)
     barcode = models.CharField(max_length=30)
-    barcode_type = models.CharField(max_length=30, 
-            choices=BarcodeTypeChoices.choices, default='none')
+    barcode_type = models.CharField(max_length=30,
+                                    choices=BarcodeTypeChoices.choices, default='none')
     release_date = models.DateField(null=True, blank=True)
     label_name = models.CharField(max_length=1000)
-    
+
     class Meta:
         abstract = True
-        
-        
+
+
 class Recording(models.Model):
     """
     Represents a piece of music, independently of the album (i.e. Release) on
@@ -155,25 +158,24 @@ class Recording(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     isrc = models.CharField(max_length=12)
     title = models.CharField(max_length=1000)
-    
+
     # Tracks from which the platform-specific data come from.
-    deezer_track = models.ForeignKey('deezerdata.DeezerTrack', 
-            on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
-            # If the Track is deleted, the platform-specific information will
-            # no longer be available. As this data is not critically
-            # important, we allow this behaviour (which is better than having
-            # tracks - and so potentially history entries - that have no
-            # recording.
+    deezer_track = models.ForeignKey('deezerdata.DeezerTrack',
+                                     on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
+    # If the Track is deleted, the platform-specific information will
+    # no longer be available. As this data is not critically
+    # important, we allow this behaviour (which is better than having
+    # tracks - and so potentially history entries - that have no
+    # recording.
     #spotify_track = models.ForeignKey(...)
-                     
+
     contributors = models.ManyToManyField('Artist',
-            through='RecordingContribution')
-            
-    
+                                          through='RecordingContribution')
+
     def __str__(self):
         return f"{self.title} ({self.isrc})"
-            
-            
+
+
 class Track(models.Model):
     """
     A Track represents the way a Recording is included on a Release.
@@ -183,11 +185,12 @@ class Track(models.Model):
     """
     version = models.IntegerField(default=settings.MH_VERSION)
     recording = models.ForeignKey('musicdata.Recording',
-            on_delete=models.PROTECT, null=True, blank=True)
+                                  on_delete=models.PROTECT, null=True, blank=True)
     disc_number = models.IntegerField(null=True, blank=True)
-    track_number = models.IntegerField(null=True, blank=True)  # Position on the disc.
+    # Position on the disc.
+    track_number = models.IntegerField(null=True, blank=True)
     available_markets = models.ManyToManyField('platform_apis.Market')
-    
+
     class Meta:
         abstract = True
 
@@ -199,7 +202,8 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
-    
+
+
 class Contribution(models.Model):
     """
     Intermediary model for M2M between a Artist and either a Recording or a
@@ -207,34 +211,35 @@ class Contribution(models.Model):
     """
     version = models.IntegerField(default=settings.MH_VERSION)
     role_choices = [
-            ('main', "main"),
-            ('feat', "featured"),
-            ('undef', "undefined")
+        ('main', "main"),
+        ('feat', "featured"),
+        ('undef', "undefined")
     ]
     artist = models.ForeignKey('Artist', on_delete=models.CASCADE)
     role = models.CharField(max_length=20, choices=role_choices,
-            default='undef')
-    
+                            default='undef')
+
     class Meta:
         abstract = True
 
-        
+
 class ReleaseGroupContribution(Contribution):
     """
     Intermediary model for M2M between a Artist and a ReleaseGroup.
     """
     release_group = models.ForeignKey('ReleaseGroup', on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return (f"{self.artist.name} as {self.role} on RG "
                 f"{self.release_group.title}")
-    
+
+
 class RecordingContribution(Contribution):
     """
     Intermediary model for M2M between a Artist and a Recording.
     """
     recording = models.ForeignKey('Recording', on_delete=models.CASCADE)
-    
+
     def __str__(self):
         return (f"{self.artist.name} as {self.role} on Rec. "
                 "{self.recording.title}")

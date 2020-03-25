@@ -1,6 +1,7 @@
-# -*- mode: python; indent-tabs-mode: nil; tab-width: 4 -*- 
+# -*- mode: python; indent-tabs-mode: nil; tab-width: 4 -*-
 
 import os
+
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -33,7 +34,7 @@ INSTALLED_APPS = [
     'musicdata',
     'deezerdata',
     # Debugging, testing and documentation tools.
-    #'django_nose',
+    # 'django_nose',
     'django_extensions',
 ]
 

@@ -1,8 +1,10 @@
-from django.db import models
 import datetime as dt
+
+from django.db import models
 
 from musicdata.models import *
 from platform_apis.models import *
+
 
 class DeezerAlbum(Release):
     """
@@ -29,7 +31,7 @@ class DeezerAlbum(Release):
 
     def __str__(self):
         return f"{self.release_group.title} (Deezer)"
-    
+
     @classmethod
     def retrieve(cls, dz_id, update=False):
         """
@@ -38,45 +40,42 @@ class DeezerAlbum(Release):
         the instance.
         """
         instance, created = cls.objects.get_or_create(
-                dz_id=dz_id) 
-                
+            dz_id=dz_id)
+
         if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
             # Fields other than id are set only if a new DeezerAlbum
             # instance was created, or if the instance should be updated.
             r_album = requests.get(
                 settings.DEEZER_API_ALBUM_URL.format(
-                instance.dz_id)
+                    instance.dz_id)
             )
             json_object = json.loads(r_album.text)
-            
+
             try:
                 error_type = json_object['error']['type']
                 message = json_object['error']['message']
                 code = json_object['error']['code']
-                instance.delete() # Otherwise, a blank album will stay in
-                                  # the database.
+                instance.delete()  # Otherwise, a blank album will stay in
+                # the database.
                 raise DeezerApiError(error_type, message, code)
             except KeyError:
                 pass  # No API-related error occured.
-                
-            
+
             try:
                 # Creation of the ReleaseGroup. A new ReleaseGroup is created
                 # each time, we assume that the duplicates will be merged by a
                 # cron task.
-                if (json_object['record_type'] not in \
+                if (json_object['record_type'] not in
                         ReleaseGroup.AlbumTypeChoices.values):
                     album_type = ReleaseGroup.AlbumTypeChoices.UNDEF
                 else:
-                    album_type=json_object['record_type']
-                    
+                    album_type = json_object['record_type']
+
                 release_group = ReleaseGroup.objects.create(
                     title=json_object['title'],
                     album_type=album_type,
                 )
-                
-                        
-                
+
                 instance.cover_small = json_object['cover_small']
                 instance.cover_medium = json_object['cover_medium']
                 instance.cover_big = json_object['cover_big']
@@ -99,18 +98,18 @@ class DeezerAlbum(Release):
                 instance.tracklist_url = json_object['tracklist']
                 instance.explicit_lyrics = json_object['explicit_lyrics']
                 instance.explicit_content_lyrics = json_object[
-                        'explicit_content_lyrics'
+                    'explicit_content_lyrics'
                 ]
                 instance.explicit_content_cover = json_object[
-                        'explicit_content_cover'
+                    'explicit_content_cover'
                 ]
-                
+
                 instance.release_group = release_group
                 instance.save()
-                
+
                 for json_contrib in json_object['contributors']:
                     contributor = Artist.retrieve_from_deezer(
-                            json_contrib['id']
+                        json_contrib['id']
                     )[0]
                     if json_contrib['role'] == "Main":
                         role = 'main'
@@ -119,31 +118,31 @@ class DeezerAlbum(Release):
                     else:
                         role = 'undef'
                     contrib = ReleaseGroupContribution.objects.create(
-                            artist=contributor,
-                            release_group=release_group,
-                            role=role                            
+                        artist=contributor,
+                        release_group=release_group,
+                        role=role
                     )
                     contrib.save()
-               
+
             except:  # If an unexpected error happens, we don't want a
-                     # corrupted object to pollute the database.
+                # corrupted object to pollute the database.
                 instance.delete()
-                raise      
-            
-                
+                raise
+
         if (created and settings.LOG_RETRIEVAL):
             print("retrieved album {}.".format(instance))
         return (instance, created)
-    
+
+
 class DeezerTrack(Track):
     version = models.IntegerField(default=settings.MH_VERSION)
     dz_id = models.BigIntegerField()
-    duration = models.IntegerField(null=True, blank=True)    
+    duration = models.IntegerField(null=True, blank=True)
     release = models.ForeignKey('DeezerAlbum', on_delete=models.PROTECT,
-        related_name='tracks', null=True, blank=True)
+                                related_name='tracks', null=True, blank=True)
     readable = models.BooleanField(null=True, blank=True)
-    title_short = models.CharField(max_length=1000)  
-    title_version = models.CharField(max_length=1000)  
+    title_short = models.CharField(max_length=1000)
+    title_version = models.CharField(max_length=1000)
     link = models.URLField(max_length=2000)
     share = models.URLField(max_length=2000)
     rank = models.BigIntegerField(null=True, blank=True)
@@ -153,13 +152,13 @@ class DeezerTrack(Track):
     explicit_content_cover = models.IntegerField(null=True, blank=True)
     preview = models.URLField(max_length=2000)
     bpm = models.FloatField(null=True, blank=True)  # Not included in Recording
-                                            # as it is part of audio features.
+    # as it is part of audio features.
     gain = models.FloatField(null=True, blank=True)
     alternative_id = models.BigIntegerField(null=True, blank=True)
-    
+
     def __str__(self):
         return f"{self.recording.title} (Deezer)"
-    
+
     @classmethod
     def retrieve(cls, dz_id, update=False):
         """
@@ -168,39 +167,39 @@ class DeezerTrack(Track):
         the instance.
         """
         instance, created = cls.objects.get_or_create(
-                dz_id=dz_id)
+            dz_id=dz_id)
         if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
             # Fields other than id are set only if a new DeezerAlbum
             # instance was created, or if the instance should be updated.
             r_track = requests.get(
                 settings.DEEZER_API_TRACK_URL.format(
-                instance.dz_id)
+                    instance.dz_id)
             )
             json_object = json.loads(r_track.text)
-            
+
             try:
                 error_type = json_object['error']['type']
                 message = json_object['error']['message']
                 code = json_object['error']['code']
                 instance.delete()  # Otherwise, a blank track would stay in
-                                   # the database.
+                # the database.
                 raise DeezerApiError(error_type, message, code)
             except KeyError:
                 pass  # No API-related error occured.
-            
+
             try:
                 recording, recording_created = Recording.objects.get_or_create(
-                        isrc=json_object['isrc']
+                    isrc=json_object['isrc']
                 )
                 instance.recording = recording
-                
-                if (recording_created or update or 
+
+                if (recording_created or update or
                         settings.ALWAYS_UPDATE_DEEZER_DATA):
-                
+
                     recording.title = json_object['title']
                     recording.deezer_track = instance
                 recording.save()
-                
+
                 try:
                     track_title_version = json_object['title_version']
                 except KeyError:
@@ -219,35 +218,35 @@ class DeezerTrack(Track):
                 instance.track_number = json_object['track_position']
                 instance.explicit_lyrics = json_object['explicit_lyrics']
                 instance.explicit_content_lyrics = json_object[
-                        'explicit_content_lyrics'
+                    'explicit_content_lyrics'
                 ]
                 instance.explicit_content_cover = json_object[
-                        'explicit_content_cover'
+                    'explicit_content_cover'
                 ]
                 instance.preview = json_object['preview']
                 instance.bpm = json_object['bpm']
                 instance.gain = json_object['gain']
-                
+
                 if not instance.readable:
-                    try:  # Even when the track is not readable, the 
-                          # alternative track is not always present in the
-                          # API response.
+                    try:  # Even when the track is not readable, the
+                        # alternative track is not always present in the
+                        # API response.
                         instance.alternative_id = json_object[
-                                'alternative'
+                            'alternative'
                         ]['id']
                     except:
                         pass  # The field is set to NULL.
-                    
+
                 try:
                     instance.release = DeezerAlbum.retrieve(
-                            json_object['album']['id']
+                        json_object['album']['id']
                     )[0]
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
-                    
+
                 for json_contrib in json_object['contributors']:
                     contributor = Artist.retrieve_from_deezer(
-                            json_contrib['id']
+                        json_contrib['id']
                     )[0]
                     if json_contrib['role'] == "Main":
                         role = 'main'
@@ -256,38 +255,39 @@ class DeezerTrack(Track):
                     else:
                         role = 'undef'
                     contrib = RecordingContribution.objects.create(
-                            artist=contributor,
-                            recording=recording,
-                            role=role                            
+                        artist=contributor,
+                        recording=recording,
+                        role=role
                     )
                     contrib.save()
-                    
+
                 available_markets = []
                 for market_code in json_object['available_countries']:
                     market, market_created = Market.objects.get_or_create(
-                            code=market_code
+                        code=market_code
                     )
                     print(f"Market {market.code} created: {market_created}")
                     available_markets.append(market)
                 instance.available_markets.add(*available_markets)
-                    # Bulk-add to reduce database access.
-                    
+                # Bulk-add to reduce database access.
+
                 instance.save()
-                
+
             except:  # If an unexpected error happens, we don't want a
-                     # corrupted object to pollute the database.
+                # corrupted object to pollute the database.
                 instance.delete()
                 raise
-            
+
         if (created and settings.LOG_RETRIEVAL):
             print("retrieved album {}.".format(instance))
         return (instance, created)
-        
+
+
 class DeezerMp3(DeezerTrack):
     title = models.CharField(max_length=1000)
     artist_name = models.CharField(max_length=500)
     album_name = models.CharField(max_length=1000)
-    
+
     def __str__(self):
         return f"{self.title} (Deezer Mp3)"
 
@@ -312,13 +312,13 @@ class DeezerAccount(PlatformAccount):
     is_kid = models.BooleanField(null=True)
     explicit_content_level = models.CharField(max_length=100)
     flow_url = models.URLField(max_length=2000)
-    
+
     def update(self):
         url = settings.DEEZER_API_USER_URL
         params = {'access_token': self.access_token}
         response = requests.get(url, params=params)
         r_data = response.json()
-        
+
         try:
             error_type = r_data['error']['type']
             message = r_data['error']['message']
@@ -326,7 +326,7 @@ class DeezerAccount(PlatformAccount):
             raise DeezerApiError(error_type, message, code)
         except KeyError:
             pass  # No API-related error occured.
-            
+
         self.user_id = r_data['id']
         self.name = r_data['name']
         self.lastname = r_data['lastname']
@@ -353,5 +353,3 @@ class DeezerAccount(PlatformAccount):
         self.is_kid = r_data['is_kid']
         self.explicit_content_level = r_data['explicit_content_level']
         self.flow_url = r_data['tracklist']
-        
-    

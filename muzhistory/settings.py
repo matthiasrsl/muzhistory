@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
-import os
 import datetime as dt
+import os
+
+from django.utils import timezone as tz
 
 import environ
-from django.utils import timezone as tz
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -204,7 +205,7 @@ DEEZER_ACCESS_TOKEN_URL = "https://connect.deezer.com/oauth/access_token.php"
 DEEZER_OAUTH_URL = "https://connect.deezer.com/oauth/auth.php?app_id={}&redirect_uri={}&perms=basic_access,email,offline_access,listening_history"
 
 DEEZER_API_USER_URL = "https://api.deezer.com/user/me"
-        
+
 DEEZER_API_HISTORY_URL = "https://api.deezer.com/user/{}/history"
 
 DEEZER_API_TRACK_URL = "https://api.deezer.com/track/{}"
@@ -212,7 +213,7 @@ DEEZER_API_TRACK_URL = "https://api.deezer.com/track/{}"
 DEEZER_API_ALBUM_URL = "https://api.deezer.com/album/{}"
 
 DEEZER_API_ARTIST_URL = "https://api.deezer.com/artist/{}"
-        
+
 DEFAULT_ALBUM_COVER_URL = "https://e-cdns-images.dzcdn.net/images/cover/d41d8cd98f00b204e9800998ecf8427e/380x380-000000-80-0-0.jpg"
 
 
