@@ -6,19 +6,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0003_deezertrack_release'),
+        ("deezerdata", "0003_deezertrack_release"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deezeralbum',
-            name='explicit_lyrics',
+            model_name="deezeralbum",
+            name="explicit_lyrics",
             field=models.BooleanField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='deezertrack',
-            name='explicit_lyrics',
+            model_name="deezertrack",
+            name="explicit_lyrics",
             field=models.BooleanField(default=False),
             preserve_default=False,
         ),

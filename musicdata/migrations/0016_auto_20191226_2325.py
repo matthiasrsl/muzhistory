@@ -6,48 +6,42 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicdata', '0015_auto_20191226_2316'),
+        ("musicdata", "0015_auto_20191226_2316"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='artist',
-            old_name='image_url_deezer_large',
-            new_name='image_url_deezer_big',
+            model_name="artist",
+            old_name="image_url_deezer_large",
+            new_name="image_url_deezer_big",
         ),
         migrations.AlterField(
-            model_name='artist',
-            name='version',
+            model_name="artist", name="version", field=models.IntegerField(default=9),
+        ),
+        migrations.AlterField(
+            model_name="genre", name="version", field=models.IntegerField(default=9),
+        ),
+        migrations.AlterField(
+            model_name="market", name="version", field=models.IntegerField(default=9),
+        ),
+        migrations.AlterField(
+            model_name="recording",
+            name="version",
             field=models.IntegerField(default=9),
         ),
         migrations.AlterField(
-            model_name='genre',
-            name='version',
+            model_name="recordingcontribution",
+            name="version",
             field=models.IntegerField(default=9),
         ),
         migrations.AlterField(
-            model_name='market',
-            name='version',
+            model_name="releasegroup",
+            name="version",
             field=models.IntegerField(default=9),
         ),
         migrations.AlterField(
-            model_name='recording',
-            name='version',
-            field=models.IntegerField(default=9),
-        ),
-        migrations.AlterField(
-            model_name='recordingcontribution',
-            name='version',
-            field=models.IntegerField(default=9),
-        ),
-        migrations.AlterField(
-            model_name='releasegroup',
-            name='version',
-            field=models.IntegerField(default=9),
-        ),
-        migrations.AlterField(
-            model_name='releasegroupcontribution',
-            name='version',
+            model_name="releasegroupcontribution",
+            name="version",
             field=models.IntegerField(default=9),
         ),
     ]

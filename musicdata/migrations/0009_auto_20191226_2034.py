@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicdata', '0008_auto_20191225_1754'),
+        ("musicdata", "0008_auto_20191225_1754"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='recording',
-            name='explicit_content_cover',
+            model_name="recording",
+            name="explicit_content_cover",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='recording',
-            name='explicit_content_lyrics',
+            model_name="recording",
+            name="explicit_content_lyrics",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='recording',
-            name='explicit_lyrics',
+            model_name="recording",
+            name="explicit_lyrics",
             field=models.BooleanField(blank=True, null=True),
         ),
     ]

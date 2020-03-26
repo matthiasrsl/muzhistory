@@ -6,11 +6,9 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_auto_20200201_1908'),
+        ("accounts", "0002_auto_20200201_1908"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='DeezerAccount',
-        ),
+        migrations.DeleteModel(name="DeezerAccount",),
     ]

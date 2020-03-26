@@ -14,10 +14,9 @@ def display_profile(request):
     profile = request.user.profile
     deezer_accounts = profile.deezeraccount_set.all()
     deezer_link_account_url = settings.DEEZER_OAUTH_URL.format(
-        settings.DEEZER_API_APP_ID,
-        settings.DEEZER_AUTH_REDIRECT_URI
+        settings.DEEZER_API_APP_ID, settings.DEEZER_AUTH_REDIRECT_URI
     )
-    return render(request, 'accounts/display_profile.html', locals())
+    return render(request, "accounts/display_profile.html", locals())
 
 
 class GetDeezerOAuthCode(View, LoginRequiredMixin):
@@ -30,28 +29,33 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
         profile = request.user.profile
 
         try:
-            if 'code' in request.GET:
-                code = request.GET['code']
+            if "code" in request.GET:
+                code = request.GET["code"]
                 access_token = profile.get_deezer_access_token(code)
                 profile.add_deezer_account(access_token)
-                messages.success(request, "Votre compte Deezer a été lié à votre "
-                                 "profil MuzHistory."
-                                 )
-            elif 'error_reason' in request.GET:
-                if request.GET['error_reason'] == 'user_denied':
-                    messages.error(request, "Vous avez refusé l'accès à votre "
-                                   "compte Deezer. Celui-ci n'a pas été lié à "
-                                   "MuzHistory."
-                                   )
+                messages.success(
+                    request,
+                    "Votre compte Deezer a été lié à votre " "profil MuzHistory.",
+                )
+            elif "error_reason" in request.GET:
+                if request.GET["error_reason"] == "user_denied":
+                    messages.error(
+                        request,
+                        "Vous avez refusé l'accès à votre "
+                        "compte Deezer. Celui-ci n'a pas été lié à "
+                        "MuzHistory.",
+                    )
                 else:
-                    raise DeezerOAuthError(request.GET['error_reason'])
+                    raise DeezerOAuthError(request.GET["error_reason"])
             else:
                 raise DeezerOAuthError("Unknown error.")
 
         except (RequestException, DeezerOAuthError) as error:
-            messages.error(request, "Nous avons rencontré un problème lors "
-                           "de la connexion à Deezer. Votre compte Deezer n'a pas "
-                           "pu être lié."
-                           )
+            messages.error(
+                request,
+                "Nous avons rencontré un problème lors "
+                "de la connexion à Deezer. Votre compte Deezer n'a pas "
+                "pu être lié.",
+            )
 
         return redirect(display_profile)

@@ -6,14 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('platform_apis', '0001_initial'),
-        ('deezerdata', '0017_auto_20191226_2325'),
+        ("platform_apis", "0001_initial"),
+        ("deezerdata", "0017_auto_20191226_2325"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='deezertrack',
-            name='available_markets',
-            field=models.ManyToManyField(to='platform_apis.Market'),
+            model_name="deezertrack",
+            name="available_markets",
+            field=models.ManyToManyField(to="platform_apis.Market"),
         ),
     ]

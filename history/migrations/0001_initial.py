@@ -9,24 +9,41 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('accounts', '0003_delete_deezeraccount'),
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("accounts", "0003_delete_deezeraccount"),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='HistoryEntry',
+            name="HistoryEntry",
             fields=[
-                ('id', models.AutoField(auto_created=True,
-                                        primary_key=True, serialize=False, verbose_name='ID')),
-                ('version', models.IntegerField(default=9)),
-                ('object_id', models.PositiveIntegerField()),
-                ('timestamp', models.PositiveIntegerField(blank=True, null=True)),
-                ('listening_datetime', models.DateTimeField()),
-                ('profile', models.ForeignKey(
-                    on_delete=django.db.models.deletion.CASCADE, to='accounts.Profile')),
-                ('track_type', models.ForeignKey(
-                    on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("version", models.IntegerField(default=9)),
+                ("object_id", models.PositiveIntegerField()),
+                ("timestamp", models.PositiveIntegerField(blank=True, null=True)),
+                ("listening_datetime", models.DateTimeField()),
+                (
+                    "profile",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="accounts.Profile",
+                    ),
+                ),
+                (
+                    "track_type",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
         ),
     ]

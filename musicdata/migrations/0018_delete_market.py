@@ -6,12 +6,10 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0018_auto_20200101_2233'),
-        ('musicdata', '0017_auto_20191227_0003'),
+        ("deezerdata", "0018_auto_20200101_2233"),
+        ("musicdata", "0017_auto_20191227_0003"),
     ]
 
     operations = [
-        migrations.DeleteModel(
-            name='Market',
-        ),
+        migrations.DeleteModel(name="Market",),
     ]

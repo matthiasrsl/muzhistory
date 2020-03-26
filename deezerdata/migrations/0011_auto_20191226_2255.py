@@ -7,24 +7,29 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0010_auto_20191226_2251'),
+        ("deezerdata", "0010_auto_20191226_2251"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='deezeralbum',
-            name='version',
+            model_name="deezeralbum",
+            name="version",
             field=models.IntegerField(default=5),
         ),
         migrations.AlterField(
-            model_name='deezertrack',
-            name='release',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT,
-                                    related_name='tracks', to='deezerdata.DeezerAlbum'),
+            model_name="deezertrack",
+            name="release",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="tracks",
+                to="deezerdata.DeezerAlbum",
+            ),
         ),
         migrations.AlterField(
-            model_name='deezertrack',
-            name='version',
+            model_name="deezertrack",
+            name="version",
             field=models.IntegerField(default=5),
         ),
     ]

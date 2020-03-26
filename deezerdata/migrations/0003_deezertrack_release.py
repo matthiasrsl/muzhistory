@@ -7,15 +7,19 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0002_auto_20191222_1932'),
+        ("deezerdata", "0002_auto_20191222_1932"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deezertrack',
-            name='release',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.PROTECT,
-                                    related_name='tracks', to='deezerdata.DeezerAlbum'),
+            model_name="deezertrack",
+            name="release",
+            field=models.ForeignKey(
+                default=0,
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="tracks",
+                to="deezerdata.DeezerAlbum",
+            ),
             preserve_default=False,
         ),
     ]

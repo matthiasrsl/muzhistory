@@ -6,43 +6,37 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicdata', '0012_auto_20191226_2255'),
+        ("musicdata", "0012_auto_20191226_2255"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='artist',
-            name='version',
+            model_name="artist", name="version", field=models.IntegerField(default=6),
+        ),
+        migrations.AlterField(
+            model_name="genre", name="version", field=models.IntegerField(default=6),
+        ),
+        migrations.AlterField(
+            model_name="market", name="version", field=models.IntegerField(default=6),
+        ),
+        migrations.AlterField(
+            model_name="recording",
+            name="version",
             field=models.IntegerField(default=6),
         ),
         migrations.AlterField(
-            model_name='genre',
-            name='version',
+            model_name="recordingcontribution",
+            name="version",
             field=models.IntegerField(default=6),
         ),
         migrations.AlterField(
-            model_name='market',
-            name='version',
+            model_name="releasegroup",
+            name="version",
             field=models.IntegerField(default=6),
         ),
         migrations.AlterField(
-            model_name='recording',
-            name='version',
-            field=models.IntegerField(default=6),
-        ),
-        migrations.AlterField(
-            model_name='recordingcontribution',
-            name='version',
-            field=models.IntegerField(default=6),
-        ),
-        migrations.AlterField(
-            model_name='releasegroup',
-            name='version',
-            field=models.IntegerField(default=6),
-        ),
-        migrations.AlterField(
-            model_name='releasegroupcontribution',
-            name='version',
+            model_name="releasegroupcontribution",
+            name="version",
             field=models.IntegerField(default=6),
         ),
     ]

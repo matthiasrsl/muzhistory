@@ -51,16 +51,19 @@ class PlatformAccount(models.Model):
     """
     A user account on a music streaming platform.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
-    profile = models.ForeignKey('accounts.Profile', on_delete=models.CASCADE,
-                                null=True)
+    profile = models.ForeignKey(
+        "accounts.Profile", on_delete=models.CASCADE, null=True)
     user_id = models.CharField(max_length=100)
     access_token = models.CharField(max_length=150, null=True, blank=True)
     email = models.EmailField()
-    market = models.ForeignKey('platform_apis.Market', on_delete=models.PROTECT,
-                               null=True, blank=True)
-    last_history_request = models.DateTimeField(null=True, blank=True,
-                                                default=settings.OLDEST_DATE)
+    market = models.ForeignKey(
+        "platform_apis.Market", on_delete=models.PROTECT, null=True, blank=True
+    )
+    last_history_request = models.DateTimeField(
+        null=True, blank=True, default=settings.OLDEST_DATE
+    )
     name = models.CharField(max_length=300)
     link = models.URLField(max_length=2000)
 

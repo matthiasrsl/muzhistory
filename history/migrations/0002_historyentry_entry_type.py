@@ -6,13 +6,21 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('history', '0001_initial'),
+        ("history", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='historyentry',
-            name='entry_type',
-            field=models.CharField(choices=[('listening', 'Track listening'), ('err_deezer', 'Deezer error'), ('ellipsis', 'History Ellipsis (Deezer)')], default='listening', max_length=100),
+            model_name="historyentry",
+            name="entry_type",
+            field=models.CharField(
+                choices=[
+                    ("listening", "Track listening"),
+                    ("err_deezer", "Deezer error"),
+                    ("ellipsis", "History Ellipsis (Deezer)"),
+                ],
+                default="listening",
+                max_length=100,
+            ),
         ),
     ]
