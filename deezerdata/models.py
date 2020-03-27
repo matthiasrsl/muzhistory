@@ -46,7 +46,8 @@ class DeezerAlbum(Release):
             # Fields other than id are set only if a new DeezerAlbum
             # instance was created, or if the instance should be updated.
             r_album = requests.get(
-                settings.DEEZER_API_ALBUM_URL.format(instance.dz_id))
+                settings.DEEZER_API_ALBUM_URL.format(instance.dz_id)
+            )
             json_object = json.loads(r_album.text)
 
             try:
@@ -99,14 +100,17 @@ class DeezerAlbum(Release):
                 instance.explicit_content_lyrics = json_object[
                     "explicit_content_lyrics"
                 ]
-                instance.explicit_content_cover = json_object["explicit_content_cover"]
+                instance.explicit_content_cover = json_object[
+                    "explicit_content_cover"
+                ]
 
                 instance.release_group = release_group
                 instance.save()
 
                 for json_contrib in json_object["contributors"]:
                     contributor = Artist.retrieve_from_deezer(
-                        json_contrib["id"])[0]
+                        json_contrib["id"]
+                    )[0]
                     if json_contrib["role"] == "Main":
                         role = "main"
                     elif json_contrib["role"] == "Featured":
@@ -114,7 +118,9 @@ class DeezerAlbum(Release):
                     else:
                         role = "undef"
                     contrib = ReleaseGroupContribution.objects.create(
-                        artist=contributor, release_group=release_group, role=role
+                        artist=contributor,
+                        release_group=release_group,
+                        role=role,
                     )
                     contrib.save()
 
@@ -165,12 +171,14 @@ class DeezerTrack(Track):
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
+        
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
             # Fields other than id are set only if a new DeezerAlbum
             # instance was created, or if the instance should be updated.
             r_track = requests.get(
-                settings.DEEZER_API_TRACK_URL.format(instance.dz_id))
+                settings.DEEZER_API_TRACK_URL.format(instance.dz_id)
+            )
             json_object = json.loads(r_track.text)
 
             try:
@@ -189,7 +197,11 @@ class DeezerTrack(Track):
                 )
                 instance.recording = recording
 
-                if recording_created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
+                if (
+                    recording_created
+                    or update
+                    or settings.ALWAYS_UPDATE_DEEZER_DATA
+                ):
 
                     recording.title = json_object["title"]
                     recording.deezer_track = instance
@@ -215,7 +227,9 @@ class DeezerTrack(Track):
                 instance.explicit_content_lyrics = json_object[
                     "explicit_content_lyrics"
                 ]
-                instance.explicit_content_cover = json_object["explicit_content_cover"]
+                instance.explicit_content_cover = json_object[
+                    "explicit_content_cover"
+                ]
                 instance.preview = json_object["preview"]
                 instance.bpm = json_object["bpm"]
                 instance.gain = json_object["gain"]
@@ -224,20 +238,23 @@ class DeezerTrack(Track):
                     try:  # Even when the track is not readable, the
                         # alternative track is not always present in the
                         # API response.
-                        instance.alternative_id = json_object["alternative"]["id"]
+                        instance.alternative_id = json_object["alternative"][
+                            "id"
+                        ]
                     except:
                         pass  # The field is set to NULL.
 
                 try:
-                    instance.release = DeezerAlbum.retrieve(json_object["album"]["id"])[
-                        0
-                    ]
+                    instance.release = DeezerAlbum.retrieve(
+                        json_object["album"]["id"]
+                    )[0]
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
 
                 for json_contrib in json_object["contributors"]:
                     contributor = Artist.retrieve_from_deezer(
-                        json_contrib["id"])[0]
+                        json_contrib["id"]
+                    )[0]
                     if json_contrib["role"] == "Main":
                         role = "main"
                     elif json_contrib["role"] == "Featured":
@@ -285,7 +302,6 @@ class DeezerAccount(PlatformAccount):
     A user account on Deezer.
     """
 
-    version = models.IntegerField(default=settings.MH_VERSION)
     lastname = models.CharField(max_length=300)
     firstname = models.CharField(max_length=300)
     status = models.IntegerField(null=True, blank=True)
