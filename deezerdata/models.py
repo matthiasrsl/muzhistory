@@ -171,7 +171,7 @@ class DeezerTrack(Track):
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
-        
+
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
             # Fields other than id are set only if a new DeezerAlbum

@@ -35,7 +35,8 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
                 profile.add_deezer_account(access_token)
                 messages.success(
                     request,
-                    "Votre compte Deezer a été lié à votre " "profil MuzHistory.",
+                    "Votre compte Deezer a été lié à votre "
+                    "profil MuzHistory.",
                 )
             elif "error_reason" in request.GET:
                 if request.GET["error_reason"] == "user_denied":

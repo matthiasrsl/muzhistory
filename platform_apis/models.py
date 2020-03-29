@@ -54,7 +54,8 @@ class PlatformAccount(models.Model):
 
     version = models.IntegerField(default=settings.MH_VERSION)
     profile = models.ForeignKey(
-        "accounts.Profile", on_delete=models.CASCADE, null=True)
+        "accounts.Profile", on_delete=models.CASCADE, null=True
+    )
     user_id = models.CharField(max_length=100)
     access_token = models.CharField(max_length=150, null=True, blank=True)
     email = models.EmailField()

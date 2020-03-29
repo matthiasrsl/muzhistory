@@ -66,7 +66,8 @@ class HistoryEntry(models.Model):
 
                 else:  # User's mp3
                     mp3, created = DeezerMp3.objects.get_or_create(
-                        dz_id=track_id)
+                        dz_id=track_id
+                    )
                     if created:
                         mp3.title = track.title_short = entry_json["title"]
                         mp3.artist_name = entry_json["artist"]["name"]

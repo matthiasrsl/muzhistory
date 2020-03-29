@@ -29,7 +29,8 @@ class HistoryEntryTest(TestCase):
         with the same timestamp and DeezerAccount than an already stored
         entry, the entry is not duplicated.
         """
-        entry_json = loads('''{
+        entry_json = loads(
+            """{
             "id":3464227,"readable":true,
             "title":"Radio Varsavia (Remastered)",
             "title_short":"Radio Varsavia","title_version":"(Remastered)",
@@ -54,15 +55,17 @@ class HistoryEntryTest(TestCase):
                 "tracklist":"https://api.deezer.com/album/328643/tracks",
                 "type":"album"
             },
-            "type":"track"}'''
+            "type":"track"}"""
         )
-        ignored, entry_listening_datetime = HistoryEntry.new_deezer_track_entry(
-            entry_json, self.dz_account
-        )
+        (
+            ignored,
+            entry_listening_datetime,
+        ) = HistoryEntry.new_deezer_track_entry(entry_json, self.dz_account)
         self.assertIs(ignored, False)
         self.assertIsInstance(entry_listening_datetime, dt.Datetime)
-        ignored, entry_listening_datetime = HistoryEntry.new_deezer_track_entry(
-            entry_json, self.dz_account
-        )
+        (
+            ignored,
+            entry_listening_datetime,
+        ) = HistoryEntry.new_deezer_track_entry(entry_json, self.dz_account)
         self.assertIs(ignored, True)
         self.assertIsInstance(entry_listening_datetime, dt.Datetime)

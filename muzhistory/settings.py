@@ -70,7 +70,7 @@ ROOT_URLCONF = "muzhistory.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates"), ],
+        "DIRS": [os.path.join(BASE_DIR, "templates"),],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -111,9 +111,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", },
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator", },
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator", },
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -185,7 +191,9 @@ ALWAYS_UPDATE_DEEZER_DATA = False
 
 OPENWEATHER_API_WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 
-OPENWEATHER_API_FORECAST_URL = "https://api.openweathermap.org/data/2.5/forecast"
+OPENWEATHER_API_FORECAST_URL = (
+    "https://api.openweathermap.org/data/2.5/forecast"
+)
 
 OPENWEATHER_API_KEY = env("OPENWEATHER_API_KEY")
 

@@ -30,8 +30,13 @@ class DeezerMp3Admin(admin.ModelAdmin):
 
 
 class DeezerAccountAdmin(admin.ModelAdmin):
-    list_display = ("name", "profile", "user_id",
-                    "last_history_request", "version")
+    list_display = (
+        "name",
+        "profile",
+        "user_id",
+        "last_history_request",
+        "version",
+    )
     list_filter = ("version",)
     date_hierarchy = "inscription_date"
     search_fields = ("name", "firstname", "lastname")

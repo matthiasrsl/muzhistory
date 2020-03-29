@@ -75,7 +75,9 @@ class Artist(models.Model):
             try:
                 instance.name = json_artist["name"]
                 instance.image_url_deezer_small = json_artist["picture_small"]
-                instance.image_url_deezer_medium = json_artist["picture_medium"]
+                instance.image_url_deezer_medium = json_artist[
+                    "picture_medium"
+                ]
                 instance.image_url_deezer_big = json_artist["picture_big"]
                 instance.image_url_deezer_xl = json_artist["picture_xl"]
                 instance.nb_fans_deezer = json_artist["nb_fan"]
@@ -109,11 +111,14 @@ class ReleaseGroup(models.Model):
 
     title = models.CharField(max_length=1000)
     album_type = models.CharField(
-        max_length=100, choices=AlbumTypeChoices.choices, default=AlbumTypeChoices.UNDEF
+        max_length=100,
+        choices=AlbumTypeChoices.choices,
+        default=AlbumTypeChoices.UNDEF,
     )
 
     contributors = models.ManyToManyField(
-        "Artist", through="ReleaseGroupContribution")
+        "Artist", through="ReleaseGroupContribution"
+    )
 
     def __str__(self):
         return f"{self.title} (Release group)"
@@ -138,7 +143,10 @@ class Release(models.Model):
         UNDEF = ("undef", "Undefined")
 
     release_group = models.ForeignKey(
-        "musicdata.ReleaseGroup", on_delete=models.PROTECT, null=True, blank=True
+        "musicdata.ReleaseGroup",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
     )
     barcode = models.CharField(max_length=30)
     barcode_type = models.CharField(
@@ -179,7 +187,8 @@ class Recording(models.Model):
     # spotify_track = models.ForeignKey(...)
 
     contributors = models.ManyToManyField(
-        "Artist", through="RecordingContribution")
+        "Artist", through="RecordingContribution"
+    )
 
     def __str__(self):
         return f"{self.title} ({self.isrc})"
@@ -222,11 +231,15 @@ class Contribution(models.Model):
     """
 
     version = models.IntegerField(default=settings.MH_VERSION)
-    role_choices = [("main", "main"), ("feat", "featured"),
-                    ("undef", "undefined")]
+    role_choices = [
+        ("main", "main"),
+        ("feat", "featured"),
+        ("undef", "undefined"),
+    ]
     artist = models.ForeignKey("Artist", on_delete=models.CASCADE)
     role = models.CharField(
-        max_length=20, choices=role_choices, default="undef")
+        max_length=20, choices=role_choices, default="undef"
+    )
 
     class Meta:
         abstract = True
@@ -240,7 +253,10 @@ class ReleaseGroupContribution(Contribution):
     release_group = models.ForeignKey("ReleaseGroup", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.artist.name} as {self.role} on RG " f"{self.release_group.title}"
+        return (
+            f"{self.artist.name} as {self.role} on RG "
+            f"{self.release_group.title}"
+        )
 
 
 class RecordingContribution(Contribution):
@@ -251,4 +267,7 @@ class RecordingContribution(Contribution):
     recording = models.ForeignKey("Recording", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.artist.name} as {self.role} on Rec. " "{self.recording.title}"
+        return (
+            f"{self.artist.name} as {self.role} on Rec. "
+            "{self.recording.title}"
+        )

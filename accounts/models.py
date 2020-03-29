@@ -8,7 +8,11 @@ from django.utils import timezone as tz
 
 import requests
 from deezerdata.models import *
-from platform_apis.models import DeezerOAuthError, DeezerRefusedAccessError, Market
+from platform_apis.models import (
+    DeezerOAuthError,
+    DeezerRefusedAccessError,
+    Market,
+)
 
 
 class Profile(models.Model):
@@ -59,7 +63,8 @@ class Profile(models.Model):
         url_deezer_user = settings.DEEZER_API_USER_URL
         params_deezer_user = {"access_token": access_token}
         response_deezer_user = requests.get(
-            url_deezer_user, params=params_deezer_user)
+            url_deezer_user, params=params_deezer_user
+        )
         r_data_deezer_user = response_deezer_user.json()
 
         try:
