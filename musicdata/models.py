@@ -7,7 +7,7 @@ from django.utils import timezone as tz
 import requests
 from platform_apis.models import DeezerApiError
 
-#from deezerdata import DeezerTrack
+# from deezerdata import DeezerTrack
 
 
 class ImpossibleMerge(Exception):
@@ -29,6 +29,7 @@ class Artist(models.Model):
     Represents an artist. 
     Not platform-dependent.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=500)
     deezer_id = models.BigIntegerField(null=True, blank=True)
@@ -58,21 +59,19 @@ class Artist(models.Model):
         if not in the database, makes a request to the Deezer API and creates
         the instance.
         """
-        instance, created = cls.objects.get_or_create(
-            deezer_id=dz_id)
-        if (created or update or settings.ALWAYS_UPDATE_DEEZER_DATA):
+        instance, created = cls.objects.get_or_create(deezer_id=dz_id)
+        if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
             # Fields other than id are set only if a new Artist instance
             # was created, or if the instance should be updated.
             r_artist = requests.get(
-                settings.DEEZER_API_ARTIST_URL.format(
-                    instance.deezer_id)
+                settings.DEEZER_API_ARTIST_URL.format(instance.deezer_id)
             )
             json_artist = json.loads(r_artist.text)
 
             try:
-                error_type = json_artist['error']['type']
-                message = json_artist['error']['message']
-                code = json_artist['error']['code']
+                error_type = json_artist["error"]["type"]
+                message = json_artist["error"]["message"]
+                code = json_artist["error"]["code"]
                 instance.delete()  # Otherwise, a blank artist will stay in
                 # the database.
                 raise DeezerApiError(error_type, message, code)
@@ -80,12 +79,14 @@ class Artist(models.Model):
                 pass  # No API-related error occured.
 
             try:
-                instance.name = json_artist['name']
-                instance.image_url_deezer_small = json_artist['picture_small']
-                instance.image_url_deezer_medium = json_artist['picture_medium']
-                instance.image_url_deezer_big = json_artist['picture_big']
-                instance.image_url_deezer_xl = json_artist['picture_xl']
-                instance.nb_fans_deezer = json_artist['nb_fan']
+                instance.name = json_artist["name"]
+                instance.image_url_deezer_small = json_artist["picture_small"]
+                instance.image_url_deezer_medium = json_artist[
+                    "picture_medium"
+                ]
+                instance.image_url_deezer_big = json_artist["picture_big"]
+                instance.image_url_deezer_xl = json_artist["picture_xl"]
+                instance.nb_fans_deezer = json_artist["nb_fan"]
                 instance.save()
 
             except:  # If an unexpected error happens, we don't want a
@@ -93,7 +94,7 @@ class Artist(models.Model):
                 instance.delete()
                 raise
 
-        if (created and settings.LOG_RETRIEVAL):
+        if created and settings.LOG_RETRIEVAL:
             print("retrieved artist {}.".format(instance))
         return (instance, created)
 
@@ -104,22 +105,26 @@ class ReleaseGroup(models.Model):
     Therefore, it is not platform-dependent.
     Corresponds to a MusicBrainz release group.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
 
     class AlbumTypeChoices(models.TextChoices):
-        SINGLE = 'single', "single"
-        ALBUM = 'album', "album"
-        EP = 'EP', "EP"
-        COMPILATION = 'compilation', "compilation"
-        UNDEF = 'undef', "undefined"
+        SINGLE = "single", "single"
+        ALBUM = "album", "album"
+        EP = "EP", "EP"
+        COMPILATION = "compilation", "compilation"
+        UNDEF = "undef", "undefined"
 
     title = models.CharField(max_length=1000)
-    album_type = models.CharField(max_length=100,
-                                  choices=AlbumTypeChoices.choices,
-                                  default=AlbumTypeChoices.UNDEF)
+    album_type = models.CharField(
+        max_length=100,
+        choices=AlbumTypeChoices.choices,
+        default=AlbumTypeChoices.UNDEF,
+    )
 
-    contributors = models.ManyToManyField('Artist',
-                                          through='ReleaseGroupContribution')
+    contributors = models.ManyToManyField(
+        "Artist", through="ReleaseGroupContribution"
+    )
 
     def __str__(self):
         return f"{self.title} (Release group)"
@@ -135,18 +140,24 @@ class Release(models.Model):
     This model does not exactly corresponds to a MusicBrainz Release, but
     rather a Release plus a Medium.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
 
     class BarcodeTypeChoices(models.TextChoices):
-        UPC = ('upc', "UPC")
-        NONE = ('none', "No barcode")
-        UNDEF = ('undef', "Undefined")
+        UPC = ("upc", "UPC")
+        NONE = ("none", "No barcode")
+        UNDEF = ("undef", "Undefined")
 
-    release_group = models.ForeignKey('musicdata.ReleaseGroup',
-                                      on_delete=models.PROTECT, null=True, blank=True)
+    release_group = models.ForeignKey(
+        "musicdata.ReleaseGroup",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+    )
     barcode = models.CharField(max_length=30)
-    barcode_type = models.CharField(max_length=30,
-                                    choices=BarcodeTypeChoices.choices, default='none')
+    barcode_type = models.CharField(
+        max_length=30, choices=BarcodeTypeChoices.choices, default="none"
+    )
     release_date = models.DateField(null=True, blank=True)
     label_name = models.CharField(max_length=1000)
 
@@ -161,22 +172,29 @@ class Recording(models.Model):
     A Recording can be uniquely identified by its ISRC.
     It corresponds to a MusicBrainz's Recording.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
     isrc = models.CharField(max_length=12)
     title = models.CharField(max_length=1000)
 
     # Tracks from which the platform-specific data come from.
-    deezer_track = models.ForeignKey('deezerdata.DeezerTrack',
-                                     on_delete=models.SET_NULL, null=True, blank=True, related_name='+')
-    # If the Track is deleted, the platform-specific information will
+    deezer_track = models.ForeignKey(
+        "deezerdata.DeezerTrack",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="+",
+    )
+    #  If the Track is deleted, the platform-specific information will
     # no longer be available. As this data is not critically
     # important, we allow this behaviour (which is better than having
     # tracks - and so potentially history entries - that have no
     # recording.
-    #spotify_track = models.ForeignKey(...)
+    # spotify_track = models.ForeignKey(...)
 
-    contributors = models.ManyToManyField('Artist',
-                                          through='RecordingContribution')
+    contributors = models.ManyToManyField(
+        "Artist", through="RecordingContribution"
+    )
 
     def __str__(self):
         return f"{self.title} ({self.isrc})"
@@ -189,13 +207,15 @@ class Track(models.Model):
     model.
     It corresponds to a MusicBrainz's Track.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
-    recording = models.ForeignKey('musicdata.Recording',
-                                  on_delete=models.PROTECT, null=True, blank=True)
+    recording = models.ForeignKey(
+        "musicdata.Recording", on_delete=models.PROTECT, null=True, blank=True
+    )
     disc_number = models.IntegerField(null=True, blank=True)
     # Position on the disc.
     track_number = models.IntegerField(null=True, blank=True)
-    available_markets = models.ManyToManyField('musicdata.Market')
+    available_markets = models.ManyToManyField("musicdata.Market")
 
     class Meta:
         abstract = True
@@ -215,15 +235,17 @@ class Contribution(models.Model):
     Intermediary model for M2M between a Artist and either a Recording or a
     ReleaseGroup.
     """
+
     version = models.IntegerField(default=settings.MH_VERSION)
     role_choices = [
-        ('main', "main"),
-        ('feat', "featured"),
-        ('undef', "undefined")
+        ("main", "main"),
+        ("feat", "featured"),
+        ("undef", "undefined"),
     ]
-    artist = models.ForeignKey('Artist', on_delete=models.CASCADE)
-    role = models.CharField(max_length=20, choices=role_choices,
-                            default='undef')
+    artist = models.ForeignKey("Artist", on_delete=models.CASCADE)
+    role = models.CharField(
+        max_length=20, choices=role_choices, default="undef"
+    )
 
     class Meta:
         abstract = True
@@ -233,19 +255,25 @@ class ReleaseGroupContribution(Contribution):
     """
     Intermediary model for M2M between a Artist and a ReleaseGroup.
     """
-    release_group = models.ForeignKey('ReleaseGroup', on_delete=models.CASCADE)
+
+    release_group = models.ForeignKey("ReleaseGroup", on_delete=models.CASCADE)
 
     def __str__(self):
-        return (f"{self.artist.name} as {self.role} on RG "
-                f"{self.release_group.title}")
+        return (
+            f"{self.artist.name} as {self.role} on RG "
+            f"{self.release_group.title}"
+        )
 
 
 class RecordingContribution(Contribution):
     """
     Intermediary model for M2M between a Artist and a Recording.
     """
-    recording = models.ForeignKey('Recording', on_delete=models.CASCADE)
+
+    recording = models.ForeignKey("Recording", on_delete=models.CASCADE)
 
     def __str__(self):
-        return (f"{self.artist.name} as {self.role} on Rec. "
-                "{self.recording.title}")
+        return (
+            f"{self.artist.name} as {self.role} on Rec. "
+            "{self.recording.title}"
+        )
