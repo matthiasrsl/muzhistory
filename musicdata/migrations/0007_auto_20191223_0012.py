@@ -11,18 +11,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="releasegroup",
-            name="album_type",
-            field=models.CharField(
-                choices=[
-                    ("single", "single"),
-                    ("album", "album"),
-                    ("EP", "EP"),
-                    ("compilation", "compilation"),
-                    ("undef", "undefined"),
-                ],
-                default="undef",
-                max_length=100,
-            ),
+            model_name='releasegroup',
+            name='album_type',
+            field=models.CharField(choices=[('single', 'single'), ('album', 'album'), ('EP', 'EP'), (
+                'compilation', 'compilation'), ('undef', 'undefined')], default='undef', max_length=100),
         ),
     ]

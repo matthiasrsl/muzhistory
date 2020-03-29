@@ -12,14 +12,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="deezertrack",
-            name="release",
-            field=models.ForeignKey(
-                default=0,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="tracks",
-                to="deezerdata.DeezerAlbum",
-            ),
+            model_name='deezertrack',
+            name='release',
+            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.PROTECT,
+                                    related_name='tracks', to='deezerdata.DeezerAlbum'),
             preserve_default=False,
         ),
     ]

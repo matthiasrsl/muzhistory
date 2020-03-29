@@ -17,15 +17,10 @@ class Migration(migrations.Migration):
             field=models.IntegerField(default=5),
         ),
         migrations.AlterField(
-            model_name="deezertrack",
-            name="release",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                related_name="tracks",
-                to="deezerdata.DeezerAlbum",
-            ),
+            model_name='deezertrack',
+            name='release',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT,
+                                    related_name='tracks', to='deezerdata.DeezerAlbum'),
         ),
         migrations.AlterField(
             model_name="deezertrack",

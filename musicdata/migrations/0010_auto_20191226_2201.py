@@ -13,15 +13,10 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name="recording",
-            name="deezer_track",
-            field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                related_name="+",
-                to="deezerdata.DeezerTrack",
-            ),
+            model_name='recording',
+            name='deezer_track',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                    related_name='+', to='deezerdata.DeezerTrack'),
         ),
         migrations.AlterField(
             model_name="artist", name="version", field=models.IntegerField(default=3),

@@ -6,12 +6,12 @@ from musicdata.models import *
 from platform_apis.models import *
 
 
+
 class DeezerAlbum(Release):
     """
     Represents an album in Deezer's database.
     """
 
-    models.IntegerField(default=settings.MH_VERSION)
     dz_id = models.BigIntegerField()
     link = models.URLField(max_length=2000)
     share = models.URLField(max_length=2000)
@@ -171,7 +171,6 @@ class DeezerTrack(Track):
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
-
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
             # Fields other than id are set only if a new DeezerAlbum

@@ -13,23 +13,15 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AlterField(
-            model_name="deezeralbum",
-            name="release_group",
+            model_name='deezeralbum',
+            name='release_group',
             field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                to="musicdata.ReleaseGroup",
-            ),
+                blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='musicdata.ReleaseGroup'),
         ),
         migrations.AlterField(
-            model_name="deezertrack",
-            name="recording",
+            model_name='deezertrack',
+            name='recording',
             field=models.ForeignKey(
-                blank=True,
-                null=True,
-                on_delete=django.db.models.deletion.PROTECT,
-                to="musicdata.Recording",
-            ),
+                blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, to='musicdata.Recording'),
         ),
     ]
