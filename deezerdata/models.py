@@ -6,7 +6,6 @@ from musicdata.models import *
 from platform_apis.models import *
 
 
-
 class DeezerAlbum(Release):
     """
     Represents an album in Deezer's database.
