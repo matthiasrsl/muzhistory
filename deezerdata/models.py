@@ -269,7 +269,11 @@ class DeezerTrack(Track):
                     market, market_created = Market.objects.get_or_create(
                         code=market_code
                     )
-                    print(f"Market {market.code} created: {market_created}")
+                    if settings.LOG_RETRIEVAL:
+                        print(
+                            f"Market {market.code} created: \
+                            {market_created}"
+                        )
                     available_markets.append(market)
                 instance.available_markets.add(*available_markets)
                 # Bulk-add to reduce database access.

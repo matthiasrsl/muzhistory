@@ -172,6 +172,11 @@ class Recording(models.Model):
     title = models.CharField(max_length=1000)
 
     # Tracks from which the platform-specific data come from.
+    # If the Track is deleted, the platform-specific information will
+    # no longer be available. As this data is not critically
+    # important, we allow this behaviour (which is better than having
+    # tracks - and therefore potentially history entries - having no
+    # recording.
     deezer_track = models.ForeignKey(
         "deezerdata.DeezerTrack",
         on_delete=models.SET_NULL,
@@ -179,11 +184,6 @@ class Recording(models.Model):
         blank=True,
         related_name="+",
     )
-    #  If the Track is deleted, the platform-specific information will
-    # no longer be available. As this data is not critically
-    # important, we allow this behaviour (which is better than having
-    # tracks - and so potentially history entries - that have no
-    # recording.
     # spotify_track = models.ForeignKey(...)
 
     contributors = models.ManyToManyField(
