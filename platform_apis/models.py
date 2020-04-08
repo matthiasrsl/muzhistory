@@ -66,7 +66,5 @@ class PlatformAccount(models.Model):
         null=True, blank=True, default=settings.OLDEST_DATE
     )
     name = models.CharField(max_length=300)
-    link = models.URLField(max_length=2000)
+    # link = models.URLField(max_length=2000)
 
-    class Meta:
-        abstract = True

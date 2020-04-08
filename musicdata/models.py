@@ -211,8 +211,6 @@ class Track(models.Model):
     track_number = models.IntegerField(null=True, blank=True)
     available_markets = models.ManyToManyField("platform_apis.Market")
 
-    class Meta:
-        abstract = True
 
 
 class Genre(models.Model):

@@ -4,8 +4,8 @@ from .models import *
 
 
 class HistoryEntryAdmin(admin.ModelAdmin):
-    list_display = ("profile", "track_type", "track", "listening_datetime")
-    list_filter = ("track_type", "profile")
+    list_display = ("profile", "track", "listening_datetime")
+    list_filter = ("profile",)
     search_fields = ("track", "profile")
     date_hierarchy = "listening_datetime"
 

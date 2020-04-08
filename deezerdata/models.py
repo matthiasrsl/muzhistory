@@ -134,7 +134,7 @@ class DeezerAlbum(Release):
 
 
 class DeezerTrack(Track):
-    version = models.IntegerField(default=settings.MH_VERSION)
+    # version = models.IntegerField(default=settings.MH_VERSION)
     dz_id = models.BigIntegerField()
     duration = models.IntegerField(null=True, blank=True)
     release = models.ForeignKey(

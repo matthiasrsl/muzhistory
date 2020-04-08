@@ -1,8 +1,6 @@
 import datetime as dt
 
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.utils import timezone as tz
 
@@ -33,9 +31,7 @@ class HistoryEntry(models.Model):
         choices=SpecialHistoryEntryChoices.choices,
         default=SpecialHistoryEntryChoices.LISTENING,
     )
-    track_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    track = GenericForeignKey("track_type", "object_id")
+    track = models.ForeignKey("musicdata.Track", on_delete=models.PROTECT)
     timestamp = models.PositiveIntegerField(null=True, blank=True)
     # Consistent with timestamp if it is not null.
     listening_datetime = models.DateTimeField()
