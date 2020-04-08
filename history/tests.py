@@ -9,6 +9,9 @@ from deezerdata.models import DeezerAccount
 
 from .models import *
 
+from django.conf import settings
+
+settings.LOG_RETRIEVAL = False
 
 class HistoryEntryTest(TestCase):
     @classmethod
@@ -22,6 +25,7 @@ class HistoryEntryTest(TestCase):
 
     def setUp(self):
         self.dz_account = DeezerAccount.objects.get(user_id=1)
+        self.profile = Profile.objects.get()
 
     def test_does_not_stores_same_entry_twice(self):
         """
@@ -60,12 +64,12 @@ class HistoryEntryTest(TestCase):
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(entry_json, self.dz_account)
+        ) = HistoryEntry.new_deezer_track_entry(entry_json, self.profile)
         self.assertIs(ignored, False)
-        self.assertIsInstance(entry_listening_datetime, dt.Datetime)
+        self.assertIsInstance(entry_listening_datetime, dt.datetime)
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(entry_json, self.dz_account)
+        ) = HistoryEntry.new_deezer_track_entry(entry_json, self.profile)
         self.assertIs(ignored, True)
-        self.assertIsInstance(entry_listening_datetime, dt.Datetime)
+        self.assertIsInstance(entry_listening_datetime, dt.datetime)

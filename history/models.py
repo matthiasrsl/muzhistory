@@ -7,15 +7,6 @@ from django.utils import timezone as tz
 from deezerdata.models import *
 
 
-class SpecialHistoryEntryChoices(models.TextChoices):
-    """
-    Choices for the different types of HistoryEntry in case of a
-    non-track related HistoryEntry (such as retrieval errors, etc.)
-    """
-
-    LISTENING = "listening", "Track listening"  # Regular
-    DEEZER_ERROR = "err_deezer", "Deezer error"
-    DEEZER_ELLIPSIS = "ellipsis", "History Ellipsis (Deezer)"
 
 
 class HistoryEntry(models.Model):
@@ -23,6 +14,15 @@ class HistoryEntry(models.Model):
     An entry in a profile's listening history, generally corresponding
     to the listening of a track.
     """
+    class SpecialHistoryEntryChoices(models.TextChoices):
+        """
+        Choices for the different types of HistoryEntry in case of a
+        non-track related HistoryEntry (such as retrieval errors, etc.)
+        """
+
+        LISTENING = "listening", "Track listening"  # Regular
+        DEEZER_ERROR = "err_deezer", "Deezer error"
+        DEEZER_ELLIPSIS = "ellipsis", "History Ellipsis (Deezer)"
 
     version = models.IntegerField(default=settings.MH_VERSION)
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE)
@@ -50,7 +50,12 @@ class HistoryEntry(models.Model):
         )
         track_id = entry_json["id"]
 
-        if entry_listening_datetime > profile.last_history_request:
+        existing_entries_with_this_datetime = cls.objects.filter(
+            profile=profile,
+            listening_datetime=entry_listening_datetime
+        )
+
+        if len(existing_entries_with_this_datetime) == 0:
             db_entry = HistoryEntry(
                 profile=profile,
                 timestamp=entry_json["timestamp"],

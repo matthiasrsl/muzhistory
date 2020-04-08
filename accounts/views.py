@@ -7,12 +7,20 @@ from django.views import View
 
 from platform_apis.models import DeezerOAuthError
 from requests.exceptions import RequestException
+from deezerdata.models import DeezerAccount
 
 
 @login_required
 def display_profile(request):
     profile = request.user.profile
-    deezer_accounts = profile.deezeraccount_set.all()
+    platform_accounts = profile.platformaccount_set.all()
+    deezer_accounts = []
+    for account in platform_accounts:
+        try:
+            deezer_accounts.append(account.deezeraccount)
+        except AttributeError:  # This account is not a DeezerAccount
+            pass
+            
     deezer_link_account_url = settings.DEEZER_OAUTH_URL.format(
         settings.DEEZER_API_APP_ID, settings.DEEZER_AUTH_REDIRECT_URI
     )
