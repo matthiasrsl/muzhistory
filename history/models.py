@@ -7,13 +7,12 @@ from django.utils import timezone as tz
 from deezerdata.models import *
 
 
-
-
 class HistoryEntry(models.Model):
     """
     An entry in a profile's listening history, generally corresponding
     to the listening of a track.
     """
+
     class SpecialHistoryEntryChoices(models.TextChoices):
         """
         Choices for the different types of HistoryEntry in case of a
@@ -52,9 +51,9 @@ class HistoryEntry(models.Model):
 
         existing_entries_with_this_datetime = cls.objects.filter(
             profile=profile,
-            listening_datetime=entry_listening_datetime
+            listening_datetime=entry_listening_datetime,
+            track__deezertrack__dz_id=track_id,
         )
-
         if len(existing_entries_with_this_datetime) == 0:
             db_entry = HistoryEntry(
                 profile=profile,
