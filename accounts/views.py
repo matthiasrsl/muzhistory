@@ -7,7 +7,7 @@ from django.views import View
 
 from platform_apis.models import DeezerOAuthError
 from requests.exceptions import RequestException
-from deezerdata.models import DeezerAccount
+from deezerdata.models.deezer_account import DeezerAccount
 
 
 @login_required

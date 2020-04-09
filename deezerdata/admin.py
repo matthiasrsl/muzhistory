@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import *
+from .models.deezer_account import *
+from .models.deezer_objects import *
 
 
 class DeezerAlbumAdmin(admin.ModelAdmin):

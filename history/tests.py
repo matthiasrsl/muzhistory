@@ -5,7 +5,8 @@ import datetime as dt
 from django.test import TestCase
 
 from accounts.models import Profile
-from deezerdata.models import DeezerAccount
+from deezerdata.models.deezer_account import *
+from deezerdata.models.deezer_objects import *
 
 from .models import *
 

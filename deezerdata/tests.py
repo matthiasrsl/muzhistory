@@ -2,7 +2,8 @@ from django.test import TestCase
 
 from platform_apis.models import DeezerApiError
 from musicdata.models import *
-from .models import *
+from .models.deezer_account import *
+from .models.deezer_objects import *
 
 from django.conf import settings
 
@@ -32,12 +33,11 @@ class DeezerTrackTest(TestCase):
         self.assertEqual(len(query_albums), 1)
         self.assertEqual(len(query_artists), 1)
         self.assertEqual(track.recording.title, "Get Lucky")
-        self.assertEqual(track.release.release_group.title, 
-            "Random Access Memories"
+        self.assertEqual(
+            track.release.release_group.title, "Random Access Memories"
         )
         self.assertEqual(
-            track.release.release_group.contributors.all()[0].name,
-            "Daft Punk"
+            track.release.release_group.contributors.all()[0].name, "Daft Punk"
         )  # does not doahduohqfiqdjfpqdfj
 
     def test_retrieve_no_duplicate(self):

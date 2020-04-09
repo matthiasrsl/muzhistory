@@ -4,7 +4,9 @@ from django.conf import settings
 from django.db import models
 from django.utils import timezone as tz
 
-from deezerdata.models import *
+
+from deezerdata.models.deezer_objects import *
+from platform_apis.models import DeezerApiError
 
 
 class HistoryEntry(models.Model):
@@ -34,7 +36,7 @@ class HistoryEntry(models.Model):
     timestamp = models.PositiveIntegerField(null=True, blank=True)
     # Consistent with timestamp if it is not null.
     listening_datetime = models.DateTimeField()
-
+    
     @classmethod
     def new_deezer_track_entry(cls, entry_json, profile):
         """
