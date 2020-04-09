@@ -67,4 +67,3 @@ class PlatformAccount(models.Model):
     )
     name = models.CharField(max_length=300)
     # link = models.URLField(max_length=2000)
-

@@ -20,7 +20,7 @@ def display_profile(request):
             deezer_accounts.append(account.deezeraccount)
         except AttributeError:  # This account is not a DeezerAccount
             pass
-            
+
     deezer_link_account_url = settings.DEEZER_OAUTH_URL.format(
         settings.DEEZER_API_APP_ID, settings.DEEZER_AUTH_REDIRECT_URI
     )

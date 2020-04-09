@@ -212,7 +212,6 @@ class Track(models.Model):
     available_markets = models.ManyToManyField("platform_apis.Market")
 
 
-
 class Genre(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=100)
