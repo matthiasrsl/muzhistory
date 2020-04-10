@@ -1,8 +1,9 @@
+import requests
+
 from django.conf import settings
 from django.db import models
 from django.utils import timezone as tz
 
-import requests
 from platform_apis.models import DeezerApiError
 
 # from deezerdata import DeezerTrack
@@ -44,7 +45,7 @@ class Artist(models.Model):
         else:
             pass
 
-    def download_data(self):
+    def download_data_from_deezer(self):
         r_artist = requests.get(
             settings.DEEZER_API_ARTIST_URL.format(self.deezer_id)
         )
@@ -64,7 +65,7 @@ class Artist(models.Model):
         # Fields other than id are set only if a new Artist instance
         # was created, or if the instance should be updated.
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            json_data = instance.download_data()
+            json_data = instance.download_data_from_deezer()
 
             try:
                 error_type = json_data["error"]["type"]

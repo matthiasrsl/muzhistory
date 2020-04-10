@@ -1,0 +1,1 @@
+inexistant_artist_test_response_text = """{"error":{"type":"DataException","message":"no data","code":800}}"""

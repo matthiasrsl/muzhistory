@@ -1,37 +1,70 @@
+from unittest.mock import MagicMock
+import json
+
 from django.conf import settings
 from django.test import TestCase
 
-from deezerdata.models.deezer_account import *
-from deezerdata.models.deezer_objects import *
-from musicdata.models import *
+import deezerdata.models.deezer_account as deezer_account_models
+import deezerdata.models.deezer_objects as deezer_objects_models
+import musicdata.models as musicdata_models
 from platform_apis.models import DeezerApiError
+
+from . import data
+
 
 settings.LOG_RETRIEVAL = False
 
 
 class DeezerAlbumTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        download_album = MagicMock(
+            return_value=json.loads(data.inexistant_album_response_text)
+        )
+        deezer_objects_models.DeezerAlbum.download_data = download_album
+
     def test_retrieve_non_existent(self):
         """
         Checks that the retrieval of an album with an invalid deezer id
         raises a DeezerApiError.
         """
         with self.assertRaises(DeezerApiError):
-            album, created = DeezerAlbum.get_or_retrieve(-1)
+            album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+                -1
+            )
 
 
 class DeezerTrackTest(TestCase):
-    """@classmethod
-    def setUpTestData(self):"""
-        
+    @classmethod
+    def setUpTestData(cls):
+        download_artist = MagicMock(
+            return_value=json.loads(data.artist_test_response_text)
+        )
+        musicdata_models.Artist.download_data_from_deezer = download_artist
+        download_album = MagicMock(
+            return_value=json.loads(data.album_test_response_text)
+        )
+        deezer_objects_models.DeezerAlbum.download_data = download_album
 
     def test_retrieve_existent(self):
         """
         Checks that the retrieval of an existing tracks works.
         """
-        track, created = DeezerTrack.get_or_retrieve(67238735)  # Get Lucky
-        query_tracks = DeezerTrack.objects.filter(dz_id=67238735)
-        query_albums = DeezerAlbum.objects.filter(dz_id=6575789)
-        query_artists = Artist.objects.filter(deezer_id=27)
+        download_track = MagicMock(
+            return_value=json.loads(data.track_test_response_text)
+        )
+        deezer_objects_models.DeezerTrack.download_data = download_track
+
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )  # Get Lucky
+        query_tracks = deezer_objects_models.DeezerTrack.objects.filter(
+            dz_id=67238735
+        )
+        query_albums = deezer_objects_models.DeezerAlbum.objects.filter(
+            dz_id=6575789
+        )
+        query_artists = musicdata_models.Artist.objects.filter(deezer_id=27)
         self.assertEqual(len(query_tracks), 1)
         self.assertEqual(len(query_albums), 1)
         self.assertEqual(len(query_artists), 1)
@@ -48,9 +81,20 @@ class DeezerTrackTest(TestCase):
         Checks that the retrieval of a track already in the database
         does not create a duplicate entry.
         """
-        track, created = DeezerTrack.get_or_retrieve(67238735)  # Get Lucky
-        track, created = DeezerTrack.get_or_retrieve(67238735)
-        query_tracks = DeezerTrack.objects.filter(dz_id=67238735)
+        download_track = MagicMock(
+            return_value=json.loads(data.track_test_response_text)
+        )
+        deezer_objects_models.DeezerTrack.download_data = download_track
+
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )  # Get Lucky
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )
+        query_tracks = deezer_objects_models.DeezerTrack.objects.filter(
+            dz_id=67238735
+        )
         self.assertEqual(len(query_tracks), 1)
 
     def test_retrieve_non_existent(self):
@@ -58,13 +102,27 @@ class DeezerTrackTest(TestCase):
         Checks that the retrieval of an track with an invalid deezer id
         raises a DeezerApiError.
         """
+        download_track = MagicMock(
+            return_value=json.loads(data.inexistant_track_response_text)
+        )
+        deezer_objects_models.DeezerTrack.download_data = download_track
+
         with self.assertRaises(DeezerApiError):
-            track, created = DeezerTrack.get_or_retrieve(0)
+            track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+                0
+            )
 
     def test_retrieve_not_authorized(self):
         """
         Checks that the retrieval of a user mp3 without oauth authentication
         raises a DeezerApiError.
         """
+        download_track = MagicMock(
+            return_value=json.loads(data.unauthorized_track_response_text)
+        )
+        deezer_objects_models.DeezerTrack.download_data = download_track
+
         with self.assertRaises(DeezerApiError):
-            track, created = DeezerTrack.get_or_retrieve(-2834538522)
+            track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+                -2834538522
+            )
