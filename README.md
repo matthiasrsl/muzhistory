@@ -2,4 +2,4 @@
 
 ## Upcoming models schema
 
-![Models class uml](docs/models_class_uml.png)
+![Models class uml](docs/models_class_uml_alternate.png)

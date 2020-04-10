@@ -1,10 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
-from musicdata.models import *
+
 from deezerdata.models import *
+from musicdata.models import *
+from platform_apis.models import *
+
 
 class Command(BaseCommand):
-    help = 'Clear database tables except Profile and LocationRecord'
-
+    help = "Clear database tables except Profile and LocationRecord"
 
     def handle(self, *args, **options):
 
@@ -18,4 +20,4 @@ class Command(BaseCommand):
         ReleaseGroup.objects.all().delete()
         Artist.objects.all().delete()
 
-        self.stdout.write(self.style.SUCCESS('Success'))
+        self.stdout.write(self.style.SUCCESS("Success"))

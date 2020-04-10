@@ -6,13 +6,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('musicdata', '0006_auto_20191222_2335'),
+        ("musicdata", "0006_auto_20191222_2335"),
     ]
 
     operations = [
         migrations.AlterField(
             model_name='releasegroup',
             name='album_type',
-            field=models.CharField(choices=[('single', 'single'), ('album', 'album'), ('EP', 'EP'), ('compilation', 'compilation'), ('undef', 'undefined')], default='undef', max_length=100),
+            field=models.CharField(choices=[('single', 'single'), ('album', 'album'), ('EP', 'EP'), (
+                'compilation', 'compilation'), ('undef', 'undefined')], default='undef', max_length=100),
         ),
     ]

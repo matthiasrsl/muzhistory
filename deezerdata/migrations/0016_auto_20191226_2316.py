@@ -6,24 +6,24 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0015_auto_20191226_2308'),
+        ("deezerdata", "0015_auto_20191226_2308"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deezertrack',
-            name='share',
-            field=models.URLField(default='', max_length=2000),
+            model_name="deezertrack",
+            name="share",
+            field=models.URLField(default="", max_length=2000),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='deezeralbum',
-            name='version',
+            model_name="deezeralbum",
+            name="version",
             field=models.IntegerField(default=8),
         ),
         migrations.AlterField(
-            model_name='deezertrack',
-            name='version',
+            model_name="deezertrack",
+            name="version",
             field=models.IntegerField(default=8),
         ),
     ]

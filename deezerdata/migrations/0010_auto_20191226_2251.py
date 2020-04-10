@@ -6,45 +6,45 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0009_auto_20191226_2201'),
+        ("deezerdata", "0009_auto_20191226_2201"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='deezertrack',
-            name='duration',
+            model_name="deezertrack",
+            name="duration",
             field=models.IntegerField(default=0),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='deezertrack',
-            name='explicit_content_cover',
+            model_name="deezertrack",
+            name="explicit_content_cover",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='deezertrack',
-            name='explicit_content_lyrics',
+            model_name="deezertrack",
+            name="explicit_content_lyrics",
             field=models.IntegerField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='deezertrack',
-            name='explicit_lyrics',
+            model_name="deezertrack",
+            name="explicit_lyrics",
             field=models.BooleanField(blank=True, null=True),
         ),
         migrations.AddField(
-            model_name='deezertrack',
-            name='title_short',
-            field=models.CharField(default='', max_length=1000),
+            model_name="deezertrack",
+            name="title_short",
+            field=models.CharField(default="", max_length=1000),
             preserve_default=False,
         ),
         migrations.AlterField(
-            model_name='deezeralbum',
-            name='version',
+            model_name="deezeralbum",
+            name="version",
             field=models.IntegerField(default=4),
         ),
         migrations.AlterField(
-            model_name='deezertrack',
-            name='version',
+            model_name="deezertrack",
+            name="version",
             field=models.IntegerField(default=4),
         ),
     ]

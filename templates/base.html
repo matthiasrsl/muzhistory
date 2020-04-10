@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}Welcome{% endblock %} - MuzHistory</title>
+    <meta charset="utf-8"></meta>
+  </head>
+  
+  <body>
+    <header>
+    
+    </header>
+    
+    <section>
+      {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+              <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+                {{ message }}
+              </li>
+            {% endfor %}
+        </ul>
+      {% endif %}
+    </section>
+    
+    <section>
+      {% block section %}
+      
+      {% endblock %}
+    </section>
+  </body>
+</html>

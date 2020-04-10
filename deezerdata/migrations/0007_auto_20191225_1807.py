@@ -6,16 +6,11 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('deezerdata', '0006_auto_20191223_0032'),
+        ("deezerdata", "0006_auto_20191223_0032"),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='deezertrack',
-            name='title_short',
-        ),
-        migrations.RemoveField(
-            model_name='deezertrack',
-            name='title_version',
-        ),
+        migrations.RemoveField(model_name="deezertrack", name="title_short",),
+        migrations.RemoveField(model_name="deezertrack",
+                               name="title_version",),
     ]

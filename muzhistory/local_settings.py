@@ -1,6 +1,7 @@
-# -*- mode: python; indent-tabs-mode: nil; tab-width: 4 -*- 
+# -*- mode: python; indent-tabs-mode: nil; tab-width: 4 -*-
 
 import os
+
 import environ
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -18,19 +19,22 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = ['deezhistory.pythonanywhere.com', 'localhost']
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'admin_reorder',
+    'muzhistory.apps.MyAdminConfig',
     'tools',
     'platform_apis',
+    'accounts',
+    'history',
     'musicdata',
     'deezerdata',
     # Debugging, testing and documentation tools.
-    #'django_nose',
+    # 'django_nose',
     'django_extensions',
 ]
 
@@ -56,6 +60,13 @@ NOSE_ARGS = [
             deezerdata.models, deezerdata.admin',
 ]
 '''
+
 # Custom settings
+
+# Deezer credentials
+
+DEEZER_API_APP_ID = "393284"
+
+DEEZER_API_SECRET_KEY = "a69981757b976a038ca934ed8d80e784"
 
 LOG_RETRIEVAL = True
