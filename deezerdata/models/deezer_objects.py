@@ -34,8 +34,15 @@ class DeezerAlbum(Release):
     def __str__(self):
         return f"{self.release_group.title} (Deezer)"
 
+    def download_data(self):
+        api_request = requests.get(
+                settings.DEEZER_API_ALBUM_URL.format(self.dz_id)
+            )
+        json_data = api_request.json()
+        return json_data
+
     @classmethod
-    def retrieve(cls, dz_id, update=False):
+    def get_or_retrieve(cls, dz_id, update=False):
         """
         Retrieves an album from the database with the given id, or,
         if not in the database, makes a request to the Deezer API and creates
@@ -43,18 +50,15 @@ class DeezerAlbum(Release):
         """
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
 
+        # Fields other than id are set only if a new DeezerAlbum
+        # instance was created, or if the instance should be updated.
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            # Fields other than id are set only if a new DeezerAlbum
-            # instance was created, or if the instance should be updated.
-            r_album = requests.get(
-                settings.DEEZER_API_ALBUM_URL.format(instance.dz_id)
-            )
-            json_object = r_album.json()
+            json_data = instance.download_data()
 
             try:
-                error_type = json_object["error"]["type"]
-                message = json_object["error"]["message"]
-                code = json_object["error"]["code"]
+                error_type = json_data["error"]["type"]
+                message = json_data["error"]["message"]
+                code = json_data["error"]["code"]
                 instance.delete()  # Otherwise, a blank album will stay in
                 # the database.
                 raise DeezerApiError(error_type, message, code)
@@ -66,50 +70,50 @@ class DeezerAlbum(Release):
                 # each time, we assume that the duplicates will be merged by a
                 # cron task.
                 if (
-                    json_object["record_type"]
+                    json_data["record_type"]
                     not in ReleaseGroup.AlbumTypeChoices.values
                 ):
                     album_type = ReleaseGroup.AlbumTypeChoices.UNDEF
                 else:
-                    album_type = json_object["record_type"]
+                    album_type = json_data["record_type"]
 
                 release_group = ReleaseGroup.objects.create(
-                    title=json_object["title"], album_type=album_type,
+                    title=json_data["title"], album_type=album_type,
                 )
 
-                instance.cover_small = json_object["cover_small"]
-                instance.cover_medium = json_object["cover_medium"]
-                instance.cover_big = json_object["cover_big"]
-                instance.cover_xl = json_object["cover_xl"]
-                release_date_list = json_object["release_date"].split("-")
+                instance.cover_small = json_data["cover_small"]
+                instance.cover_medium = json_data["cover_medium"]
+                instance.cover_big = json_data["cover_big"]
+                instance.cover_xl = json_data["cover_xl"]
+                release_date_list = json_data["release_date"].split("-")
                 release_date_list = [int(elt) for elt in release_date_list]
                 instance.release_date = dt.date(*release_date_list)
-                instance.label_name = json_object["label"]
+                instance.label_name = json_data["label"]
                 instance.barcode_type = Release.BarcodeTypeChoices.UPC
-                instance.barcode = json_object["upc"]
-                instance.link = json_object["link"]
-                instance.share = json_object["share"]
-                instance.nb_tracks = json_object["nb_tracks"]
-                instance.nb_fans = json_object["fans"]
-                instance.rating = json_object["rating"]
-                instance.duration = json_object["duration"]
-                instance.available = json_object["available"]
+                instance.barcode = json_data["upc"]
+                instance.link = json_data["link"]
+                instance.share = json_data["share"]
+                instance.nb_tracks = json_data["nb_tracks"]
+                instance.nb_fans = json_data["fans"]
+                instance.rating = json_data["rating"]
+                instance.duration = json_data["duration"]
+                instance.available = json_data["available"]
                 if not instance.available:
-                    instance.alternative_id = json_object["alternative"]["id"]
-                instance.tracklist_url = json_object["tracklist"]
-                instance.explicit_lyrics = json_object["explicit_lyrics"]
-                instance.explicit_content_lyrics = json_object[
+                    instance.alternative_id = json_data["alternative"]["id"]
+                instance.tracklist_url = json_data["tracklist"]
+                instance.explicit_lyrics = json_data["explicit_lyrics"]
+                instance.explicit_content_lyrics = json_data[
                     "explicit_content_lyrics"
                 ]
-                instance.explicit_content_cover = json_object[
+                instance.explicit_content_cover = json_data[
                     "explicit_content_cover"
                 ]
 
                 instance.release_group = release_group
                 instance.save()
 
-                for json_contrib in json_object["contributors"]:
-                    contributor = Artist.retrieve_from_deezer(
+                for json_contrib in json_data["contributors"]:
+                    contributor = Artist.get_or_retrieve_from_deezer(
                         json_contrib["id"]
                     )[0]
                     if json_contrib["role"] == "Main":
@@ -165,26 +169,32 @@ class DeezerTrack(Track):
     def __str__(self):
         return f"{self.recording.title} (Deezer)"
 
+    def download_data(self):
+        api_request = requests.get(
+                settings.DEEZER_API_TRACK_URL.format(self.dz_id)
+            )
+        json_data = api_request.json()
+
+        return json_data
+
     @classmethod
-    def retrieve(cls, dz_id, update=False):
+    def get_or_retrieve(cls, dz_id, update=False):
         """
         Retrieves a track from the database with the given id, or, if not
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
+
+        # Fields other than id are set only if a new DeezerAlbum
+        # instance was created, or if the instance should be updated.
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            # Fields other than id are set only if a new DeezerAlbum
-            # instance was created, or if the instance should be updated.
-            r_track = requests.get(
-                settings.DEEZER_API_TRACK_URL.format(instance.dz_id)
-            )
-            json_object = r_track.json()
+            json_data = instance.download_data()
 
             try:
-                error_type = json_object["error"]["type"]
-                message = json_object["error"]["message"]
-                code = json_object["error"]["code"]
+                error_type = json_data["error"]["type"]
+                message = json_data["error"]["message"]
+                code = json_data["error"]["code"]
                 instance.delete()  # Otherwise, a blank track would stay in
                 # the database.
                 raise DeezerApiError(error_type, message, code)
@@ -193,7 +203,7 @@ class DeezerTrack(Track):
 
             try:
                 recording, recording_created = Recording.objects.get_or_create(
-                    isrc=json_object["isrc"]
+                    isrc=json_data["isrc"]
                 )
                 instance.recording = recording
 
@@ -203,56 +213,56 @@ class DeezerTrack(Track):
                     or settings.ALWAYS_UPDATE_DEEZER_DATA
                 ):
 
-                    recording.title = json_object["title"]
+                    recording.title = json_data["title"]
                     recording.deezer_track = instance
                 recording.save()
 
                 try:
-                    track_title_version = json_object["title_version"]
+                    track_title_version = json_data["title_version"]
                 except KeyError:
                     track_title_version = ""
                 instance.title_version = track_title_version
-                instance.title_short = json_object["title_short"]
-                instance.duration = json_object["duration"]
-                instance.readable = json_object["readable"]
-                instance.link = json_object["link"]
-                instance.share = json_object["share"]
-                instance.rank = json_object["rank"]
-                release_date_list = json_object["release_date"].split("-")
+                instance.title_short = json_data["title_short"]
+                instance.duration = json_data["duration"]
+                instance.readable = json_data["readable"]
+                instance.link = json_data["link"]
+                instance.share = json_data["share"]
+                instance.rank = json_data["rank"]
+                release_date_list = json_data["release_date"].split("-")
                 release_date_list = [int(elt) for elt in release_date_list]
                 instance.release_date = dt.date(*release_date_list)
-                instance.disc_number = json_object["disk_number"]
-                instance.track_number = json_object["track_position"]
-                instance.explicit_lyrics = json_object["explicit_lyrics"]
-                instance.explicit_content_lyrics = json_object[
+                instance.disc_number = json_data["disk_number"]
+                instance.track_number = json_data["track_position"]
+                instance.explicit_lyrics = json_data["explicit_lyrics"]
+                instance.explicit_content_lyrics = json_data[
                     "explicit_content_lyrics"
                 ]
-                instance.explicit_content_cover = json_object[
+                instance.explicit_content_cover = json_data[
                     "explicit_content_cover"
                 ]
-                instance.preview = json_object["preview"]
-                instance.bpm = json_object["bpm"]
-                instance.gain = json_object["gain"]
+                instance.preview = json_data["preview"]
+                instance.bpm = json_data["bpm"]
+                instance.gain = json_data["gain"]
 
                 if not instance.readable:
                     try:  # Even when the track is not readable, the
                         # alternative track is not always present in the
                         # API response.
-                        instance.alternative_id = json_object["alternative"][
+                        instance.alternative_id = json_data["alternative"][
                             "id"
                         ]
                     except:
                         pass  # The field is set to NULL.
 
                 try:
-                    instance.release = DeezerAlbum.retrieve(
-                        json_object["album"]["id"]
+                    instance.release = DeezerAlbum.get_or_retrieve(
+                        json_data["album"]["id"]
                     )[0]
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
 
-                for json_contrib in json_object["contributors"]:
-                    contributor = Artist.retrieve_from_deezer(
+                for json_contrib in json_data["contributors"]:
+                    contributor = Artist.get_or_retrieve_from_deezer(
                         json_contrib["id"]
                     )[0]
                     if json_contrib["role"] == "Main":
@@ -267,7 +277,7 @@ class DeezerTrack(Track):
                     contrib.save()
 
                 available_markets = []
-                for market_code in json_object["available_countries"]:
+                for market_code in json_data["available_countries"]:
                     market, market_created = Market.objects.get_or_create(
                         code=market_code
                     )

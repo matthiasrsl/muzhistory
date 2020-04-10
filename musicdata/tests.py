@@ -12,4 +12,4 @@ class ArtistTest(TestCase):
         raises a DeezerApiError.
         """
         with self.assertRaises(DeezerApiError):
-            artist, created = Artist.retrieve_from_deezer(-1)
+            artist, created = Artist.get_or_retrieve_from_deezer(-1)

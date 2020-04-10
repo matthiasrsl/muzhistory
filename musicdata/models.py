@@ -44,26 +44,32 @@ class Artist(models.Model):
         else:
             pass
 
+    def download_data(self):
+        r_artist = requests.get(
+            settings.DEEZER_API_ARTIST_URL.format(self.deezer_id)
+        )
+        json_data = r_artist.json()
+
+        return json_data
+
     @classmethod
-    def retrieve_from_deezer(cls, dz_id, update=False):
+    def get_or_retrieve_from_deezer(cls, dz_id, update=False):
         """
         Retrieves an artist from the database with the given id, or,
         if not in the database, makes a request to the Deezer API and creates
         the instance.
         """
         instance, created = cls.objects.get_or_create(deezer_id=dz_id)
+
+        # Fields other than id are set only if a new Artist instance
+        # was created, or if the instance should be updated.
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            # Fields other than id are set only if a new Artist instance
-            # was created, or if the instance should be updated.
-            r_artist = requests.get(
-                settings.DEEZER_API_ARTIST_URL.format(instance.deezer_id)
-            )
-            json_artist = r_artist.json()
+            json_data = instance.download_data()
 
             try:
-                error_type = json_artist["error"]["type"]
-                message = json_artist["error"]["message"]
-                code = json_artist["error"]["code"]
+                error_type = json_data["error"]["type"]
+                message = json_data["error"]["message"]
+                code = json_data["error"]["code"]
                 instance.delete()  # Otherwise, a blank artist will stay in
                 # the database.
                 raise DeezerApiError(error_type, message, code)
@@ -71,14 +77,14 @@ class Artist(models.Model):
                 pass  # No API-related error occured.
 
             try:
-                instance.name = json_artist["name"]
-                instance.image_url_deezer_small = json_artist["picture_small"]
-                instance.image_url_deezer_medium = json_artist[
+                instance.name = json_data["name"]
+                instance.image_url_deezer_small = json_data["picture_small"]
+                instance.image_url_deezer_medium = json_data[
                     "picture_medium"
                 ]
-                instance.image_url_deezer_big = json_artist["picture_big"]
-                instance.image_url_deezer_xl = json_artist["picture_xl"]
-                instance.nb_fans_deezer = json_artist["nb_fan"]
+                instance.image_url_deezer_big = json_data["picture_big"]
+                instance.image_url_deezer_xl = json_data["picture_xl"]
+                instance.nb_fans_deezer = json_data["nb_fan"]
                 instance.save()
 
             except:  # If an unexpected error happens, we don't want a
