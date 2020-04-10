@@ -1,5 +1,3 @@
-import json
-
 from django.conf import settings
 from django.db import models
 from django.utils import timezone as tz
@@ -60,7 +58,7 @@ class Artist(models.Model):
             r_artist = requests.get(
                 settings.DEEZER_API_ARTIST_URL.format(instance.deezer_id)
             )
-            json_artist = json.loads(r_artist.text)
+            json_artist = r_artist.json()
 
             try:
                 error_type = json_artist["error"]["type"]

@@ -1,5 +1,4 @@
 import datetime as dt
-import json
 
 from django.conf import settings
 from django.db import models
@@ -50,7 +49,7 @@ class DeezerAlbum(Release):
             r_album = requests.get(
                 settings.DEEZER_API_ALBUM_URL.format(instance.dz_id)
             )
-            json_object = json.loads(r_album.text)
+            json_object = r_album.json()
 
             try:
                 error_type = json_object["error"]["type"]
@@ -180,7 +179,7 @@ class DeezerTrack(Track):
             r_track = requests.get(
                 settings.DEEZER_API_TRACK_URL.format(instance.dz_id)
             )
-            json_object = json.loads(r_track.text)
+            json_object = r_track.json()
 
             try:
                 error_type = json_object["error"]["type"]
