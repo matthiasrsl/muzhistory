@@ -22,6 +22,9 @@ settings.LOG_RETRIEVAL = False
 
 class DeezerAlbumTest(TestCase):
     def setUp(self):
+        download_artist = MagicMock(
+            return_value=json.loads(data.artist_test_response_text)
+        )
         download_album = MagicMock(
             return_value=json.loads(data.album_test_response_text)
         )
@@ -192,6 +195,20 @@ class DeezerAccountTest(TestCase):
 
     def setUp(self):
         self.dz_account = deezer_account_models.DeezerAccount.objects.get()
+        
+        download_artist = MagicMock(
+            return_value=json.loads(data.artist_test_response_text)
+        )
+        musicdata_models.Artist.download_data_from_deezer = download_artist
+        download_album = MagicMock(
+            return_value=json.loads(data.album_test_response_text)
+        )
+        deezer_objects_models.DeezerAlbum.download_data = download_album
+        download_track = MagicMock(
+            return_value=json.loads(data.track_test_response_text)
+        )
+        deezer_objects_models.DeezerTrack.download_data = download_track
+
         self.connection_error_patch = patch(
             "musicdata.models.Artist.download_data_from_deezer",
             new=MagicMock(side_effect=ConnectionError()),
