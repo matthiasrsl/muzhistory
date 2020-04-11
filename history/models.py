@@ -36,7 +36,7 @@ class HistoryEntry(models.Model):
     timestamp = models.PositiveIntegerField(null=True, blank=True)
     # Consistent with timestamp if it is not null.
     listening_datetime = models.DateTimeField()
-    
+
     @classmethod
     def new_deezer_track_entry(cls, entry_json, profile):
         """
@@ -67,7 +67,7 @@ class HistoryEntry(models.Model):
                     track = DeezerTrack.get_or_retrieve(track_id)[0]
 
                 else:  # User's mp3: no need for retrieval as all data
-                       # is already in the current api response.
+                    # is already in the current api response.
                     track, created = DeezerMp3.objects.get_or_create(
                         dz_id=track_id
                     )
@@ -82,7 +82,8 @@ class HistoryEntry(models.Model):
             except DeezerApiError:
                 db_entry.entry_type = SpecialHistoryEntryChoices.DEEZER_ERROR
 
-            db_entry.save()
+            db_entry.save()  # Do not save before, as a corrupted entry could 
+                            # be stored in case of an unexpected exception.
         else:
             ignored = True
 
