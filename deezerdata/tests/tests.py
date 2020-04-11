@@ -1,13 +1,16 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import json
 
 from django.conf import settings
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 from requests.exceptions import ConnectionError
 
+from accounts.models import Profile
 import deezerdata.models.deezer_account as deezer_account_models
 import deezerdata.models.deezer_objects as deezer_objects_models
+from history.models import HistoryEntry
 import musicdata.models as musicdata_models
 from platform_apis.models import DeezerApiError
 
@@ -169,9 +172,79 @@ class DeezerTrackTest(TestCase):
         except ConnectionError:
             pass  # Our mock purposedly raises this error
 
-        with self.assertRaises(
-            deezer_objects_models.DeezerTrack.DoesNotExist
-        ):
+        with self.assertRaises(deezer_objects_models.DeezerTrack.DoesNotExist):
             query = deezer_objects_models.DeezerTrack.objects.get(
                 dz_id=67238735
             )
+
+
+class DeezerAccountTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user("User", "random@example.com", "pwd")
+        profile = Profile.objects.create(user=user)
+        user.save()
+        profile.save()
+        dz_account = deezer_account_models.DeezerAccount.objects.create(
+            profile=profile, user_id=1
+        )
+        dz_account.save()
+
+    def setUp(self):
+        self.dz_account = deezer_account_models.DeezerAccount.objects.get()
+        self.connection_error_patch = patch(
+            "musicdata.models.Artist.download_data_from_deezer",
+            new=MagicMock(side_effect=ConnectionError()),
+        )
+        history1 = json.loads(data.history1_test_data_text)
+        history2 = json.loads(data.history2_test_data_text)
+        self.download_history_data_patch = patch(
+            "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
+            new=MagicMock(
+                side_effect=[history1, history2]
+            ),
+        )
+        self.download_history_data_patch.start()
+        self.connection_error_patch.start()
+        
+
+    def tearDown(self):
+        self.download_history_data_patch.stop()
+        try:
+            self.connection_error_patch.stop()
+        except RuntimeError:
+            pass  # The patch has been stopped in a test that didn't need it.
+
+    def test_retrieve_history_normal_case(self):
+        """
+        Tests that DeezerAccount.retrieve_history works in
+        normal conditions.
+        """
+        self.connection_error_patch.stop()
+        original_datetime = (
+            self.dz_account.last_history_request
+        )  # Sould be the Epoch.
+        self.dz_account.retrieve_history()
+        self.assertNotEqual(
+            self.dz_account.last_history_request, original_datetime
+        )
+        query = HistoryEntry.objects.filter(timestamp=1586441751)
+        self.assertEqual(len(query), 1)
+        
+    def test_retrieve_history_network_error(self):
+        """
+        Tests that the account last_history_request is not updated
+        if a network error (network unreachable) occurs during
+        the retrieval process.
+        """
+        original_datetime = (
+            self.dz_account.last_history_request
+        )  # Sould be the Epoch.
+        try:
+            self.dz_account.retrieve_history()
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+        self.assertEqual(
+            self.dz_account.last_history_request, original_datetime
+        )
+        

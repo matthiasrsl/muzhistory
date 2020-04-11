@@ -71,10 +71,9 @@ class DeezerAccount(PlatformAccount):
         self.explicit_content_level = r_data["explicit_content_level"]
         self.flow_url = r_data["tracklist"]
 
-    def retrieve_history_iteration(self, url=None):
+    def download_history_data(self, url):  # pragma: no cover
         """
-        Makes a request to the Deezer API for a segment of a user's
-        listening history, and creates the entries.
+        Downloads the account's listening history data from the Deezer Api.
         """
         if url:
             api_request = requests.get(url)
@@ -83,8 +82,15 @@ class DeezerAccount(PlatformAccount):
                 settings.DEEZER_API_HISTORY_URL.format(self.user_id),
                 params={"access_token": self.access_token,},
             )
+        return api_request.json()
 
-        api_response = json.loads(api_request.text)
+    def retrieve_history_iteration(self, url=None):
+        """
+        Makes a request to the Deezer API for a segment of a user's
+        listening history, and creates the entries.
+        """
+        api_response = self.download_history_data(url)
+        #print(api_response)
         history_json = api_response["data"]
         try:
             next_url = api_response["next"]

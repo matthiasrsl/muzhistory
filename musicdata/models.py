@@ -46,6 +46,9 @@ class Artist(models.Model):
             pass
 
     def download_data_from_deezer(self):  # pragma: no cover
+        """
+        Downloads the artist data from the Deezer Api.
+        """
         r_artist = requests.get(
             settings.DEEZER_API_ARTIST_URL.format(self.deezer_id)
         )

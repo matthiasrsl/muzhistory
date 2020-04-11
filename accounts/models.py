@@ -9,6 +9,7 @@ from django.utils import timezone as tz
 import requests
 from deezerdata.models.deezer_account import DeezerAccount
 from platform_apis.models import (
+    DeezerApiError,
     DeezerOAuthError,
     DeezerRefusedAccessError,
     Market,
