@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 
-from deezerdata.models import *
+from deezerdata.models.deezer_objects import *
+from history.models import *
 from musicdata.models import *
 from platform_apis.models import *
 
@@ -10,8 +11,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
+        HistoryEntry.objects.all().delete()
         Genre.objects.all().delete()
-        Market.objects.all().delete()
+        #Market.objects.all().delete()
         ReleaseGroupContribution.objects.all().delete()
         RecordingContribution.objects.all().delete()
         DeezerTrack.objects.all().delete()

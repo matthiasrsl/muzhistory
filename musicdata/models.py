@@ -221,6 +221,24 @@ class Track(models.Model):
     track_number = models.IntegerField(null=True, blank=True)
     available_markets = models.ManyToManyField("platform_apis.Market")
 
+    def __str__(self):
+        if self.track_type == self.TrackTypeChoices.DEEZER_TRACK:
+            return str(self.deezertrack)
+        elif self.track_type == self.TrackTypeChoices.DEEZER_MP3:
+            return str(self.deezertrack.deezermp3)
+        else:
+            return super().__str__()
+
+
+    '''def _get_duration(self):
+        if self.track_type == self.TrackTypeChoices.DEEZER_TRACK:
+            return self.deezertrack.duration
+
+    def _set_duration(self, value):
+        pass
+
+    duration = property(_get_duration, _set_duration)'''
+
 
 class Genre(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
