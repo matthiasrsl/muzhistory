@@ -80,9 +80,7 @@ class Artist(models.Model):
             try:
                 instance.name = json_data["name"]
                 instance.image_url_deezer_small = json_data["picture_small"]
-                instance.image_url_deezer_medium = json_data[
-                    "picture_medium"
-                ]
+                instance.image_url_deezer_medium = json_data["picture_medium"]
                 instance.image_url_deezer_big = json_data["picture_big"]
                 instance.image_url_deezer_xl = json_data["picture_xl"]
                 instance.nb_fans_deezer = json_data["nb_fan"]
@@ -207,7 +205,14 @@ class Track(models.Model):
     It corresponds to a MusicBrainz's Track.
     """
 
+    class TrackTypeChoices(models.TextChoices):
+        DEEZER_TRACK = "deezer_track", "Deezer track"
+        DEEZER_MP3 = "deezer_mp3", "Deezer user's mp3"
+
     version = models.IntegerField(default=settings.MH_VERSION)
+    track_type = models.CharField(
+        max_length=20, choices=TrackTypeChoices.choices
+    )
     recording = models.ForeignKey(
         "musicdata.Recording", on_delete=models.PROTECT, null=True, blank=True
     )

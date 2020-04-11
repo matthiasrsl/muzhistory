@@ -79,7 +79,7 @@ class HistoryEntry(models.Model):
                 db_entry.track = track
 
             except DeezerApiError:
-                db_entry.entry_type = SpecialHistoryEntryChoices.LISTENING
+                db_entry.entry_type = SpecialHistoryEntryChoices.DEEZER_ERROR
 
             db_entry.save()
         else:
