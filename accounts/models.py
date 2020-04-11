@@ -27,6 +27,9 @@ class Profile(models.Model):
         null=True, blank=True, default=settings.OLDEST_DATE
     )
 
+    def __str__(self):
+        return self.user.username
+
     def get_deezer_access_token(self, code):
         """
         Retrieves the user's access token from Deezer after authentication.

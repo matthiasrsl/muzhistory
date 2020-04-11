@@ -112,17 +112,18 @@ class DeezerTrackTest(TestCase):
                 0
             )
 
-    def test_retrieve_not_authorized(self):
+    def test_retrieve_mp3(self):
         """
-        Checks that the retrieval of a user mp3 without oauth authentication
-        raises a DeezerApiError.
+        Tests that trying to retrieve a DeezerMp3 raises an exception.
+        (Deezer Mp3 are retrievable from the api, and it would be 
+        useless as all relevant information is obtained during 
+        the history iteration retrieval).
         """
         download_track = MagicMock(
-            return_value=json.loads(data.unauthorized_track_response_text)
+            return_value=json.loads(data.mp3_test_response_text)
         )
         deezer_objects_models.DeezerTrack.download_data = download_track
-
-        with self.assertRaises(DeezerApiError):
+        with self.assertRaises(ValueError):
             track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
                 -2834538522
             )

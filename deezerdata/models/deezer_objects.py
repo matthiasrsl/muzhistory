@@ -188,6 +188,9 @@ class DeezerTrack(Track):
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
+        if dz_id<0:
+            raise ValueError("This id corresponds to a Deezer user mp3.")
+
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
         
         # Fields other than id are set only if a new DeezerAlbum

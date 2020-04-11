@@ -66,7 +66,8 @@ class HistoryEntry(models.Model):
                 if track_id > 0:  # Deezer track.
                     track = DeezerTrack.get_or_retrieve(track_id)[0]
 
-                else:  # User's mp3
+                else:  # User's mp3: no need for retrieval as all data
+                       # is already in the current api response.
                     mp3, created = DeezerMp3.objects.get_or_create(
                         dz_id=track_id
                     )
