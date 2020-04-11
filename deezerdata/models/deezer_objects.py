@@ -34,7 +34,7 @@ class DeezerAlbum(Release):
     def __str__(self):
         return f"{self.release_group.title} (Deezer)"
 
-    def download_data(self):
+    def download_data(self):  # pragma: no cover
         api_request = requests.get(
                 settings.DEEZER_API_ALBUM_URL.format(self.dz_id)
             )
@@ -169,7 +169,7 @@ class DeezerTrack(Track):
     def __str__(self):
         return f"{self.recording.title} (Deezer)"
 
-    def download_data(self):
+    def download_data(self):  # pragma: no cover
         api_request = requests.get(
                 settings.DEEZER_API_TRACK_URL.format(self.dz_id)
             )
