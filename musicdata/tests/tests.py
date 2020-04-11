@@ -10,21 +10,44 @@ from . import data
 
 
 class ArtistTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         download_artist = MagicMock(
-            return_value=json.loads(data.inexistant_artist_test_response_text)
+            return_value=json.loads(data.artist_test_response_text)
         )
         models.Artist.download_data_from_deezer = download_artist
+
+    def test_retrieve_from_deezer_existent(self):
+        """
+        Checks that the retrieval of an existing artist from 
+        the Deezer API works.
+        """
+        artist, created = models.Artist.get_or_retrieve_from_deezer(27)
+        self.assertEqual(artist.name, "Daft Punk")
+        self.assertEqual(artist.nb_fans_deezer, 3772926)
+        self.assertTrue(created)
 
     def test_retrieve_from_deezer_non_existent(self):
         """
         Checks that the retrieval of an artist with an invalid deezer id
         raises a DeezerApiError.
         """
+        download_artist = MagicMock(
+            return_value=json.loads(data.inexistant_artist_test_response_text)
+        )
+        models.Artist.download_data_from_deezer = download_artist
         with self.assertRaises(DeezerApiError):
             artist, created = models.Artist.get_or_retrieve_from_deezer(-1)
 
+    def test_retrieve_from_deezer_no_duplicate(self):
+        """
+        Checks that the retrieval of an artist already in the database
+        does not create a duplicate entry.
+        """
+        artist, created = models.Artist.get_or_retrieve_from_deezer(27)
+        artist, created = models.Artist.get_or_retrieve_from_deezer(27)
+        self.assertFalse(created)
+        query = models.Artist.objects.all()
+        self.assertEqual(len(query), 1)
 
 class TrackTest(TestCase):
     @classmethod

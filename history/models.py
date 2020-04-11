@@ -68,14 +68,14 @@ class HistoryEntry(models.Model):
 
                 else:  # User's mp3: no need for retrieval as all data
                        # is already in the current api response.
-                    mp3, created = DeezerMp3.objects.get_or_create(
+                    track, created = DeezerMp3.objects.get_or_create(
                         dz_id=track_id
                     )
                     if created:
-                        mp3.title = track.title_short = entry_json["title"]
-                        mp3.artist_name = entry_json["artist"]["name"]
-                        mp3.album_title = entry_json["album"]["title"]
-                        mp3.save()
+                        track.title = track.title_short = entry_json["title"]
+                        track.artist_name = entry_json["artist"]["name"]
+                        track.album_title = entry_json["album"]["title"]
+                        track.save()
 
                 db_entry.track = track
 

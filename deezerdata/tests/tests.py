@@ -16,22 +16,52 @@ settings.LOG_RETRIEVAL = False
 
 
 class DeezerAlbumTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         download_album = MagicMock(
-            return_value=json.loads(data.inexistant_album_response_text)
+            return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
+
+    def test_retrieve_existent(self):
+        """
+        Checks that the retrieval of an existing album from 
+        the Deezer API works.
+        """
+        (album, created,) = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )
+        self.assertEqual(album.release_group.title, "Random Access Memories")
+        self.assertEqual(album.nb_tracks, 13)
+        self.assertTrue(created)
 
     def test_retrieve_non_existent(self):
         """
         Checks that the retrieval of an album with an invalid deezer id
         raises a DeezerApiError.
         """
+        download_album = MagicMock(
+            return_value=json.loads(data.inexistant_album_response_text)
+        )
+        deezer_objects_models.DeezerAlbum.download_data = download_album
         with self.assertRaises(DeezerApiError):
             album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
                 -1
             )
+
+    def test_retrieve_no_duplicate(self):
+        """
+        Checks that the retrieval of an album already in the database
+        does not create a duplicate entry.
+        """
+        (album, created,) = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )
+        (album, created,) = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )
+        self.assertFalse(created)
+        query = deezer_objects_models.DeezerAlbum.objects.all()
+        self.assertEqual(len(query), 1)
 
 
 class DeezerTrackTest(TestCase):

@@ -31,6 +31,7 @@ class HistoryEntryTest(TestCase):
         )
         dz_account.save()
 
+    def setUp(self):
         download_artist = MagicMock(
             return_value=json.loads(data.artist_test_response_text)
         )
@@ -43,8 +44,6 @@ class HistoryEntryTest(TestCase):
             return_value=json.loads(data.track1_test_response_text)
         )
         deezer_objects_models.DeezerTrack.download_data = download_track
-
-    def setUp(self):
         self.dz_account = deezer_account_models.DeezerAccount.objects.get(
             user_id=1
         )
@@ -52,7 +51,7 @@ class HistoryEntryTest(TestCase):
         self.entry1_json = json.loads(data.entry1_test_text)
         self.entry2_json = json.loads(data.entry2_test_text)
 
-    def saves_history_correctly(self):
+    def test_saves_deezer_track_history_entry_correctly(self):
         """
         Checks that HistoryEntry.new_deezer_track_entry correctly saves
         the entry that is passed as a string.
@@ -61,9 +60,29 @@ class HistoryEntryTest(TestCase):
             ignored,
             entry_listening_datetime,
         ) = HistoryEntry.new_deezer_track_entry(self.entry1_json, self.profile)
-        self.assertEqual()
+        entry = HistoryEntry.objects.all().order_by("-id")[0]
+        self.assertEqual(entry.profile, self.profile)
+        self.assertEqual(entry.track.recording.title, "Get Lucky")
+        self.assertEqual(
+            entry.entry_type,
+            HistoryEntry.SpecialHistoryEntryChoices.LISTENING.value,
+        )
 
-    def test_does_not_stores_same_entry_twice(self):
+    def test_saves_deezer_mp3_history_entry_correctly(self):
+        """
+        """
+        self.entry_mp3 = json.loads(data.entry_deezer_mp3_response_text)
+        (
+            ignored,
+            entry_listening_datetime,
+        ) = HistoryEntry.new_deezer_track_entry(self.entry_mp3, self.profile)
+        entry = HistoryEntry.objects.all().order_by("-id")[0]
+        self.assertEqual(entry.track.deezertrack.deezermp3.title, "La Noyée")
+        self.assertEqual(
+            entry.track.deezertrack.deezermp3.artist_name, "Serge Gainsbourg"
+        )
+
+    def test_does_not_stores_same_deezer_track_entry_twice(self):
         """
         Checks that if HistoryEntry.new_deezer_track_entry is called a 
         second time with the same timestamp, deezer track id and 
@@ -83,7 +102,7 @@ class HistoryEntryTest(TestCase):
         self.assertIs(ignored, True)
         self.assertIsInstance(entry_listening_datetime, dt.datetime)
 
-    def test_does_not_ignore_entries_with_same_timestamp(self):
+    def test_does_not_ignore_deezer_track_entries_with_same_timestamp(self):
         """
         Checks that if HistoryEntry.new_deezer_track_entry is called a 
         second time with the same timestamp and DeezerAccount but 
