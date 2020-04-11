@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 import datetime as dt
 from django.test import TestCase
 
+from requests.exceptions import ConnectionError
+
 from accounts.models import Profile
 import deezerdata.models.deezer_account as deezer_account_models
 import deezerdata.models.deezer_objects as deezer_objects_models
@@ -127,3 +129,24 @@ class HistoryEntryTest(TestCase):
         ) = HistoryEntry.new_deezer_track_entry(self.entry2_json, self.profile)
         self.assertIs(ignored, False)
         self.assertIsInstance(entry_listening_datetime, dt.datetime)
+
+    def test_retrieve_network_error_during_artist_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of a contributor, no corrupted entry
+        is stored in the database and the profile last_history_request is not changed.
+        """
+        download_artist = MagicMock(side_effect=ConnectionError())
+        musicdata_models.Artist.download_data_from_deezer = download_artist
+        try:
+            (
+                ignored,
+                entry_listening_datetime,
+            ) = HistoryEntry.new_deezer_track_entry(
+                self.entry2_json, self.profile
+            )
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(HistoryEntry.DoesNotExist):
+            query = HistoryEntry.objects.get()

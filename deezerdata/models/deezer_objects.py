@@ -300,7 +300,10 @@ class DeezerTrack(Track):
 
             except:  # If an unexpected error happens, we don't want a
                 # corrupted object to pollute the database.
-                instance.delete()
+                # Really useful ? The fact that instance.save() is called
+                # at the end of the process seems to already prevent
+                # this behaviour.
+                instance.delete()  
                 raise
 
         if created and settings.LOG_RETRIEVAL:

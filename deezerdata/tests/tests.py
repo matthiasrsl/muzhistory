@@ -4,6 +4,8 @@ import json
 from django.conf import settings
 from django.test import TestCase
 
+from requests.exceptions import ConnectionError
+
 import deezerdata.models.deezer_account as deezer_account_models
 import deezerdata.models.deezer_objects as deezer_objects_models
 import musicdata.models as musicdata_models
@@ -65,8 +67,7 @@ class DeezerAlbumTest(TestCase):
 
 
 class DeezerTrackTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         download_artist = MagicMock(
             return_value=json.loads(data.artist_test_response_text)
         )
@@ -75,16 +76,15 @@ class DeezerTrackTest(TestCase):
             return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
-
-    def test_retrieve_existent(self):
-        """
-        Checks that the retrieval of an existing tracks works.
-        """
         download_track = MagicMock(
             return_value=json.loads(data.track_test_response_text)
         )
         deezer_objects_models.DeezerTrack.download_data = download_track
 
+    def test_retrieve_existent(self):
+        """
+        Checks that the retrieval of an existing tracks works.
+        """
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
         )  # Get Lucky
@@ -111,11 +111,6 @@ class DeezerTrackTest(TestCase):
         Checks that the retrieval of a track already in the database
         does not create a duplicate entry.
         """
-        download_track = MagicMock(
-            return_value=json.loads(data.track_test_response_text)
-        )
-        deezer_objects_models.DeezerTrack.download_data = download_track
-
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
         )  # Get Lucky
@@ -156,4 +151,27 @@ class DeezerTrackTest(TestCase):
         with self.assertRaises(ValueError):
             track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
                 -2834538522
+            )
+
+    def test_retrieve_network_error_during_artist_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of a contributor, no corrupted tracke
+        is stored in the database.
+        """
+        download_artist = MagicMock(side_effect=ConnectionError())
+        musicdata_models.Artist.download_data_from_deezer = download_artist
+
+        try:
+            track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+                67238735
+            )  # Get Lucky
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(
+            deezer_objects_models.DeezerTrack.DoesNotExist
+        ):
+            query = deezer_objects_models.DeezerTrack.objects.get(
+                dz_id=67238735
             )
