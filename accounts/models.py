@@ -9,6 +9,7 @@ from django.utils import timezone as tz
 import requests
 from deezerdata.models.deezer_account import DeezerAccount
 from platform_apis.models import (
+    DeezerApiError,
     DeezerOAuthError,
     DeezerRefusedAccessError,
     Market,
@@ -26,6 +27,9 @@ class Profile(models.Model):
     last_history_request = models.DateTimeField(
         null=True, blank=True, default=settings.OLDEST_DATE
     )
+
+    def __str__(self):
+        return self.user.username
 
     def get_deezer_access_token(self, code):
         """

@@ -1,11 +1,16 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import json
 
 from django.conf import settings
 from django.test import TestCase
+from django.contrib.auth.models import User
 
+from requests.exceptions import ConnectionError
+
+from accounts.models import Profile
 import deezerdata.models.deezer_account as deezer_account_models
 import deezerdata.models.deezer_objects as deezer_objects_models
+from history.models import HistoryEntry
 import musicdata.models as musicdata_models
 from platform_apis.models import DeezerApiError
 
@@ -16,27 +21,59 @@ settings.LOG_RETRIEVAL = False
 
 
 class DeezerAlbumTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
+        download_artist = MagicMock(
+            return_value=json.loads(data.artist_test_response_text)
+        )
         download_album = MagicMock(
-            return_value=json.loads(data.inexistant_album_response_text)
+            return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
+
+    def test_retrieve_existent(self):
+        """
+        Checks that the retrieval of an existing album from 
+        the Deezer API works.
+        """
+        (album, created,) = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )
+        self.assertEqual(album.release_group.title, "Random Access Memories")
+        self.assertEqual(album.nb_tracks, 13)
+        self.assertTrue(created)
 
     def test_retrieve_non_existent(self):
         """
         Checks that the retrieval of an album with an invalid deezer id
         raises a DeezerApiError.
         """
+        download_album = MagicMock(
+            return_value=json.loads(data.inexistant_album_response_text)
+        )
+        deezer_objects_models.DeezerAlbum.download_data = download_album
         with self.assertRaises(DeezerApiError):
             album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
                 -1
             )
 
+    def test_retrieve_no_duplicate(self):
+        """
+        Checks that the retrieval of an album already in the database
+        does not create a duplicate entry.
+        """
+        (album, created,) = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )
+        (album, created,) = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )
+        self.assertFalse(created)
+        query = deezer_objects_models.DeezerAlbum.objects.all()
+        self.assertEqual(len(query), 1)
+
 
 class DeezerTrackTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
+    def setUp(self):
         download_artist = MagicMock(
             return_value=json.loads(data.artist_test_response_text)
         )
@@ -45,16 +82,15 @@ class DeezerTrackTest(TestCase):
             return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
-
-    def test_retrieve_existent(self):
-        """
-        Checks that the retrieval of an existing tracks works.
-        """
         download_track = MagicMock(
             return_value=json.loads(data.track_test_response_text)
         )
         deezer_objects_models.DeezerTrack.download_data = download_track
 
+    def test_retrieve_existent(self):
+        """
+        Checks that the retrieval of an existing tracks works.
+        """
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
         )  # Get Lucky
@@ -81,11 +117,6 @@ class DeezerTrackTest(TestCase):
         Checks that the retrieval of a track already in the database
         does not create a duplicate entry.
         """
-        download_track = MagicMock(
-            return_value=json.loads(data.track_test_response_text)
-        )
-        deezer_objects_models.DeezerTrack.download_data = download_track
-
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
         )  # Get Lucky
@@ -112,17 +143,125 @@ class DeezerTrackTest(TestCase):
                 0
             )
 
-    def test_retrieve_not_authorized(self):
+    def test_retrieve_mp3(self):
         """
-        Checks that the retrieval of a user mp3 without oauth authentication
-        raises a DeezerApiError.
+        Tests that trying to retrieve a DeezerMp3 raises an exception.
+        (Deezer Mp3 are retrievable from the api, and it would be 
+        useless as all relevant information is obtained during 
+        the history iteration retrieval).
         """
         download_track = MagicMock(
-            return_value=json.loads(data.unauthorized_track_response_text)
+            return_value=json.loads(data.mp3_test_response_text)
         )
         deezer_objects_models.DeezerTrack.download_data = download_track
-
-        with self.assertRaises(DeezerApiError):
+        with self.assertRaises(ValueError):
             track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
                 -2834538522
             )
+
+    def test_retrieve_network_error_during_artist_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of a contributor, no corrupted tracke
+        is stored in the database.
+        """
+        download_artist = MagicMock(side_effect=ConnectionError())
+        musicdata_models.Artist.download_data_from_deezer = download_artist
+
+        try:
+            track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+                67238735
+            )  # Get Lucky
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(deezer_objects_models.DeezerTrack.DoesNotExist):
+            query = deezer_objects_models.DeezerTrack.objects.get(
+                dz_id=67238735
+            )
+
+
+class DeezerAccountTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user("User", "random@example.com", "pwd")
+        profile = Profile.objects.create(user=user)
+        user.save()
+        profile.save()
+        dz_account = deezer_account_models.DeezerAccount.objects.create(
+            profile=profile, user_id=1
+        )
+        dz_account.save()
+
+    def setUp(self):
+        self.dz_account = deezer_account_models.DeezerAccount.objects.get()
+        
+        download_artist = MagicMock(
+            return_value=json.loads(data.artist_test_response_text)
+        )
+        musicdata_models.Artist.download_data_from_deezer = download_artist
+        download_album = MagicMock(
+            return_value=json.loads(data.album_test_response_text)
+        )
+        deezer_objects_models.DeezerAlbum.download_data = download_album
+        download_track = MagicMock(
+            return_value=json.loads(data.track_test_response_text)
+        )
+        deezer_objects_models.DeezerTrack.download_data = download_track
+
+        self.connection_error_patch = patch(
+            "musicdata.models.Artist.download_data_from_deezer",
+            new=MagicMock(side_effect=ConnectionError()),
+        )
+        history1 = json.loads(data.history1_test_data_text)
+        history2 = json.loads(data.history2_test_data_text)
+        self.download_history_data_patch = patch(
+            "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
+            new=MagicMock(
+                side_effect=[history1, history2]
+            ),
+        )
+        self.download_history_data_patch.start()
+        self.connection_error_patch.start()
+        
+
+    def tearDown(self):
+        self.download_history_data_patch.stop()
+        try:
+            self.connection_error_patch.stop()
+        except RuntimeError:
+            pass  # The patch has been stopped in a test that didn't need it.
+
+    def test_retrieve_history_normal_case(self):
+        """
+        Tests that DeezerAccount.retrieve_history works in
+        normal conditions.
+        """
+        self.connection_error_patch.stop()
+        original_datetime = (
+            self.dz_account.last_history_request
+        )  # Sould be the Epoch.
+        self.dz_account.retrieve_history()
+        self.assertNotEqual(
+            self.dz_account.last_history_request, original_datetime
+        )
+        query = HistoryEntry.objects.filter(timestamp=1586441751)
+        self.assertEqual(len(query), 1)
+        
+    def test_retrieve_history_network_error(self):
+        """
+        Tests that the account last_history_request is not updated
+        if a network error (network unreachable) occurs during
+        the retrieval process.
+        """
+        original_datetime = (
+            self.dz_account.last_history_request
+        )  # Sould be the Epoch.
+        try:
+            self.dz_account.retrieve_history()
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+        self.assertEqual(
+            self.dz_account.last_history_request, original_datetime
+        )
+        

@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'musicdata',
     'deezerdata',
     # Debugging, testing and documentation tools.
-    # 'django_nose',
+    'django_nose',
     'django_extensions',
 ]
 
@@ -47,19 +47,19 @@ DATABASES = {
 
 # Testing
 
-'''
+
 # Use nose to run all tests
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+#TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
 # Tell nose to measure coverage on the 'foo' and 'bar' apps
 NOSE_ARGS = [
     '--with-coverage',
-    '--cover-package= tools.models, tools.admin, \
-            platform_apis.models, platform_apis.admin, \
-            musicdata.models, musicdata.admin, \
-            deezerdata.models, deezerdata.admin',
+    '--cover-package= tools, \
+            platform_apis, \
+            musicdata, \
+            deezerdata, history'
 ]
-'''
+
 
 # Custom settings
 

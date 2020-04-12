@@ -34,7 +34,10 @@ class DeezerAlbum(Release):
     def __str__(self):
         return f"{self.release_group.title} (Deezer)"
 
-    def download_data(self):
+    def download_data(self):  # pragma: no cover
+        """
+        Downloads the album data from the Deezer Api.
+        """
         api_request = requests.get(
                 settings.DEEZER_API_ALBUM_URL.format(self.dz_id)
             )
@@ -169,7 +172,14 @@ class DeezerTrack(Track):
     def __str__(self):
         return f"{self.recording.title} (Deezer)"
 
-    def download_data(self):
+    def save(self, *args, **kwargs):
+        self.track_type = Track.TrackTypeChoices.DEEZER_TRACK
+        super().save(*args, **kwargs)
+
+    def download_data(self):  # pragma: no cover
+        """
+        Downloads the track data from the Deezer Api.
+        """
         api_request = requests.get(
                 settings.DEEZER_API_TRACK_URL.format(self.dz_id)
             )
@@ -184,8 +194,11 @@ class DeezerTrack(Track):
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
-        instance, created = cls.objects.get_or_create(dz_id=dz_id)
+        if dz_id<0:
+            raise ValueError("This id corresponds to a Deezer user mp3.")
 
+        instance, created = cls.objects.get_or_create(dz_id=dz_id)
+        
         # Fields other than id are set only if a new DeezerAlbum
         # instance was created, or if the instance should be updated.
         if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
@@ -293,11 +306,14 @@ class DeezerTrack(Track):
 
             except:  # If an unexpected error happens, we don't want a
                 # corrupted object to pollute the database.
-                instance.delete()
+                # Really useful ? The fact that instance.save() is called
+                # at the end of the process seems to already prevent
+                # this behaviour.
+                instance.delete()  
                 raise
 
         if created and settings.LOG_RETRIEVAL:
-            print("retrieved album {}.".format(instance))
+            print("retrieved track {}.".format(instance))
         return (instance, created)
 
 
@@ -308,3 +324,7 @@ class DeezerMp3(DeezerTrack):
 
     def __str__(self):
         return f"{self.title} (Deezer Mp3)"
+
+    def save(self, *args, **kwargs):
+        self.track_type = Track.TrackTypeChoices.DEEZER_MP3
+        super(Track, self).save(*args, **kwargs)

@@ -3,3 +3,5 @@ django-environ
 requests
 django-modeladmin-reorder
 django-extensions
+coverage
+django-nose

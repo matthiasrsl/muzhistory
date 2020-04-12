@@ -45,7 +45,10 @@ class Artist(models.Model):
         else:
             pass
 
-    def download_data_from_deezer(self):
+    def download_data_from_deezer(self):  # pragma: no cover
+        """
+        Downloads the artist data from the Deezer Api.
+        """
         r_artist = requests.get(
             settings.DEEZER_API_ARTIST_URL.format(self.deezer_id)
         )
@@ -80,9 +83,7 @@ class Artist(models.Model):
             try:
                 instance.name = json_data["name"]
                 instance.image_url_deezer_small = json_data["picture_small"]
-                instance.image_url_deezer_medium = json_data[
-                    "picture_medium"
-                ]
+                instance.image_url_deezer_medium = json_data["picture_medium"]
                 instance.image_url_deezer_big = json_data["picture_big"]
                 instance.image_url_deezer_xl = json_data["picture_xl"]
                 instance.nb_fans_deezer = json_data["nb_fan"]
@@ -207,7 +208,14 @@ class Track(models.Model):
     It corresponds to a MusicBrainz's Track.
     """
 
+    class TrackTypeChoices(models.TextChoices):
+        DEEZER_TRACK = "deezer_track", "Deezer track"
+        DEEZER_MP3 = "deezer_mp3", "Deezer user's mp3"
+
     version = models.IntegerField(default=settings.MH_VERSION)
+    track_type = models.CharField(
+        max_length=20, choices=TrackTypeChoices.choices
+    )
     recording = models.ForeignKey(
         "musicdata.Recording", on_delete=models.PROTECT, null=True, blank=True
     )
@@ -215,6 +223,24 @@ class Track(models.Model):
     # Position on the disc.
     track_number = models.IntegerField(null=True, blank=True)
     available_markets = models.ManyToManyField("platform_apis.Market")
+
+    def __str__(self):
+        if self.track_type == self.TrackTypeChoices.DEEZER_TRACK:
+            return str(self.deezertrack)
+        elif self.track_type == self.TrackTypeChoices.DEEZER_MP3:
+            return str(self.deezertrack.deezermp3)
+        else:
+            return super().__str__()
+
+
+    '''def _get_duration(self):
+        if self.track_type == self.TrackTypeChoices.DEEZER_TRACK:
+            return self.deezertrack.duration
+
+    def _set_duration(self, value):
+        pass
+
+    duration = property(_get_duration, _set_duration)'''
 
 
 class Genre(models.Model):

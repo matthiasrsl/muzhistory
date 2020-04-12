@@ -1,0 +1,23 @@
+[run]
+include = */models.py */models/* */views.py */views/* */forms.py */forms/* 
+    */templates/*
+omit = */migrations/* */__init__.py */tests/*
+
+[report]
+
+omit = 
+    */migrations/*
+    */__init__.py
+    */tests/*
+    */urls.py
+    *settings.py
+    */wsgi.py
+    */apps.py
+    */test*.py
+    manage.py
+    */admin.py
+
+exclude_lines = 
+    pragma: no cover
+    def __str__
+    def __repr__

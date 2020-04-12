@@ -30,6 +30,10 @@ class GenreAdmin(admin.ModelAdmin):
     search_fields = ("name", "dz_id")
 
 
+class TrackAdmin(admin.ModelAdmin):
+    list_display = ("track_type", "recording")
+
+
 class ReleaseGroupContributionAdmin(admin.ModelAdmin):
     list_display = ("artist", "release_group", "role", "version")
     list_display_links = ("release_group",)
@@ -47,6 +51,7 @@ class RecordingContributionAdmin(admin.ModelAdmin):
 admin.site.register(Artist, ArtistAdmin)
 admin.site.register(ReleaseGroup, ReleaseGroupAdmin)
 admin.site.register(Recording, RecordingAdmin)
+admin.site.register(Track, TrackAdmin)
 admin.site.register(Genre, GenreAdmin)
 admin.site.register(ReleaseGroupContribution, ReleaseGroupContributionAdmin)
 admin.site.register(RecordingContribution, RecordingContributionAdmin)
