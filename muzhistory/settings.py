@@ -177,6 +177,7 @@ ADMIN_REORDER = (
     "platform_apis",
     "musicdata",
     "deezerdata",
+    "tools",
 )
 
 #  Custom settings

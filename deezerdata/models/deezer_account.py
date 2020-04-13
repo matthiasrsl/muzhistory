@@ -3,6 +3,7 @@ import json
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone as tz
 
 from history.models import HistoryEntry
 from musicdata.models import *
