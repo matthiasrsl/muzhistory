@@ -14,10 +14,16 @@ class ExceptionLog(models.Model):
     occured_on = models.DateTimeField()
 
 
-def log_exceptions(fn):
-    def wrapped(*args, **kwargs):
+def log_exceptions(fn_ififoqu):
+    """
+    Executes the decorated function and if an exception occurs,
+    stores it in the database with its traceback.
+    """
+    # The weird names are to unequivocally detect frames related to 
+    # this decorator in the traceback.
+    def wrapped_izfgzi(*args, **kwargs):
         try:
-            return fn(*args, **kwargs)
+            return fn_ififoqu(*args, **kwargs)
         except Exception as e:
             now = tz.now()
             e_type, e_val, e_traceback = sys.exc_info()
@@ -28,11 +34,11 @@ def log_exceptions(fn):
                 exception_name=e_type.__name__,
                 exception_module=e_type.__module__,
                 exception_value=str(e_val),
-                function_name=str(fn).split(' ')[1],
+                function_name=str(fn_ififoqu).split(' ')[1],
                 traceback=traceback_text,
                 occured_on=now
             )
             entry.save()
             raise
 
-    return wrapped
+    return wrapped_izfgzi
