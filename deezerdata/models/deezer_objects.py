@@ -6,7 +6,7 @@ from django.db import models
 #from history.models import HistoryEntry
 from musicdata.models import *
 from platform_apis.models import DeezerApiError, Market
-from tools.models import monitor_exceptions
+from tools.models import log_exceptions
 
 
 class DeezerAlbum(Release):
@@ -46,6 +46,7 @@ class DeezerAlbum(Release):
         return json_data
 
     @classmethod
+    @log_exceptions
     def get_or_retrieve(cls, dz_id, update=False):
         """
         Retrieves an album from the database with the given id, or,
@@ -189,7 +190,7 @@ class DeezerTrack(Track):
         return json_data
 
     @classmethod
-    @monitor_exceptions
+    @log_exceptions
     def get_or_retrieve(cls, dz_id, update=False):
         """
         Retrieves a track from the database with the given id, or, if not
@@ -312,7 +313,6 @@ class DeezerTrack(Track):
                 # at the end of the process seems to already prevent
                 # this behaviour.
                 instance.delete()  
-                print("Deletion !")
                 raise
 
         if created and settings.LOG_RETRIEVAL:
