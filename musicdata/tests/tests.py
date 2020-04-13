@@ -1,5 +1,5 @@
 import json
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from django.test import TestCase
 
 from deezerdata.models.deezer_objects import *
@@ -8,6 +8,7 @@ from platform_apis.models import DeezerApiError
 
 from . import data
 
+settings.LOG_RETRIEVAL = False
 
 class ArtistTest(TestCase):
     def setUp(self):
@@ -15,6 +16,10 @@ class ArtistTest(TestCase):
             return_value=json.loads(data.artist_test_response_text)
         )
         models.Artist.download_data_from_deezer = download_artist
+        self.connection_error_artist_patch = patch(
+            "musicdata.models.Artist.download_data_from_deezer",
+            new=MagicMock(side_effect=ConnectionError()),
+        )
 
     def test_retrieve_from_deezer_existent(self):
         """
@@ -48,6 +53,28 @@ class ArtistTest(TestCase):
         self.assertFalse(created)
         query = models.Artist.objects.all()
         self.assertEqual(len(query), 1)
+
+    def test_retrieve_network_error_during_artist_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of the artist from the Deezer API, no
+        corrupted artist is stored in the database.
+        See Github issue #24
+        """
+        self.connection_error_artist_patch.start()
+        try:
+            track, created = models.Artist.get_or_retrieve_from_deezer(
+                27
+            )  # Daft Punk
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(models.Artist.DoesNotExist):
+            query = models.Artist.objects.get(
+                deezer_id=27
+            )
+        self.connection_error_artist_patch.stop()
+
 
 class TrackTest(TestCase):
     @classmethod

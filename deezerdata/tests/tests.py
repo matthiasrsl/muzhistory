@@ -30,6 +30,15 @@ class DeezerAlbumTest(TestCase):
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
 
+        self.connection_error_artist_patch = patch(
+            "musicdata.models.Artist.download_data_from_deezer",
+            new=MagicMock(side_effect=ConnectionError()),
+        )
+        self.connection_error_album_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerAlbum.download_data",
+            new=MagicMock(side_effect=ConnectionError()),
+        )
+
     def test_retrieve_existent(self):
         """
         Checks that the retrieval of an existing album from 
@@ -70,6 +79,48 @@ class DeezerAlbumTest(TestCase):
         self.assertFalse(created)
         query = deezer_objects_models.DeezerAlbum.objects.all()
         self.assertEqual(len(query), 1)
+
+    def test_retrieve_network_error_during_artist_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of a contributor, no corrupted album
+        is stored in the database.
+        """
+        self.connection_error_artist_patch.start()
+        try:
+            album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+                6575789
+            )  # Daft Punk's Random Access Memories
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(deezer_objects_models.DeezerAlbum.DoesNotExist):
+            query = deezer_objects_models.DeezerAlbum.objects.get(
+                dz_id=6575789
+            )
+        self.connection_error_artist_patch.stop()
+
+    def test_retrieve_network_error_during_album_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of the album - and not a linked object,
+        but the track himself - no corrupted album
+        is stored in the database.
+        See Github issue #24
+        """
+        self.connection_error_album_patch.start()
+        try:
+            album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+                6575789
+            )  # Daft Punk's Random Access Memories
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(deezer_objects_models.DeezerAlbum.DoesNotExist):
+            query = deezer_objects_models.DeezerAlbum.objects.get(
+                dz_id=6575789
+            )
+        self.connection_error_album_patch.stop()
 
 
 class DeezerTrackTest(TestCase):
@@ -162,11 +213,34 @@ class DeezerTrackTest(TestCase):
     def test_retrieve_network_error_during_artist_retrieval(self):
         """
         Tests that if a network error (network unreachable) happens
-        during the retrieval of a contributor, no corrupted tracke
+        during the retrieval of a contributor, no corrupted track
         is stored in the database.
         """
         download_artist = MagicMock(side_effect=ConnectionError())
         musicdata_models.Artist.download_data_from_deezer = download_artist
+
+        try:
+            track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+                67238735
+            )  # Get Lucky
+        except ConnectionError:
+            pass  # Our mock purposedly raises this error
+
+        with self.assertRaises(deezer_objects_models.DeezerTrack.DoesNotExist):
+            query = deezer_objects_models.DeezerTrack.objects.get(
+                dz_id=67238735
+            )
+
+    def test_retrieve_network_error_during_track_retrieval(self):
+        """
+        Tests that if a network error (network unreachable) happens
+        during the retrieval of the track - and not a linked object,
+        but the track himself - no corrupted track
+        is stored in the database.
+        See Github issue #24
+        """
+        download_track = MagicMock(side_effect=ConnectionError())
+        deezer_objects_models.DeezerTrack.download_data = download_track
 
         try:
             track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
