@@ -5,6 +5,7 @@ from django.db import models
 from django.utils import timezone as tz
 
 from platform_apis.models import DeezerApiError
+from tools.models import log_exceptions
 
 # from deezerdata import DeezerTrack
 
@@ -57,6 +58,7 @@ class Artist(models.Model):
         return json_data
 
     @classmethod
+    @log_exceptions
     def get_or_retrieve_from_deezer(cls, dz_id, update=False):
         """
         Retrieves an artist from the database with the given id, or,

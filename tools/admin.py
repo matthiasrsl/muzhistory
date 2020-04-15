@@ -1,3 +1,8 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register
 
-# Register your models here.
+from .models import *
+
+@register(ExceptionLog)
+class ExceptionLogAdmin(ModelAdmin):
+    list_display = ('exception_name', 'occured_on')
+

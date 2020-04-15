@@ -166,7 +166,7 @@ SESSION_COOKIE_AGE = 365 * 24 * 3600
 
 STATIC_URL = "/static/"
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+STATICFILES_DIRS = (os.path.join(BASE_DIR, "static/"),)
 
 LOGIN_URL = "/accounts/login/"
 
@@ -177,6 +177,7 @@ ADMIN_REORDER = (
     "platform_apis",
     "musicdata",
     "deezerdata",
+    "tools",
 )
 
 #  Custom settings

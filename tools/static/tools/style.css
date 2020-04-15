@@ -1,0 +1,87 @@
+body {
+    font-family: Helvetica, Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 0;
+}
+
+a, a:visited {
+    text-decoration: none;
+    color: #0076b1
+}
+
+a:hover {
+    color: #ff3c00;
+}
+
+/* Log list */
+.log_list_h1 {
+    margin-bottom: 30px;
+}
+
+.log_list {
+    margin-top: 30px;
+    border-collapse: collapse;
+    border-bottom: 1px solid black;
+}
+
+.log_row td {
+    padding: auto 20px;
+    border-top: 1px solid black;
+    height: 25px;
+}
+
+.log_row td:nth-child(1) {
+    width: 50px;
+}
+
+.log_row td:nth-child(2) {
+    width: 300px;
+}
+
+.log_row td:nth-child(3) {
+    width: 800px;
+}
+
+/* Log display */
+
+h1 .exc_module {
+    font-size: 0.7em;
+    color: #666;
+    font-weight: normal;
+}
+
+h1 .exc_module strong {
+    font-weight: normal;
+    color: #000;
+}
+
+p.exc_infos {
+    font-size: 0.8em;
+    color: #333;
+}
+
+pre.traceback {
+    display: inline-block;
+    line-height: 1.5em;
+    background: #eee;
+    margin: 15px 30 px;
+    padding: 10px 15px;
+    white-space: pre-wrap;
+    max-width: 1000px;
+}
+
+.tb_line_exception {
+    font-weight: bold;
+    color: red;
+}
+
+.tb_line_logging, .tb_line_file_dependency, .tb_line_line_dependency {
+    color: #777;
+}
+
+.tb_line_begin_tb, .tb_line_embedded, .tb_line_chaining {
+    color: #33f;
+}

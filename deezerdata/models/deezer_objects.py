@@ -6,6 +6,7 @@ from django.db import models
 #from history.models import HistoryEntry
 from musicdata.models import *
 from platform_apis.models import DeezerApiError, Market
+from tools.models import log_exceptions
 
 
 class DeezerAlbum(Release):
@@ -45,6 +46,7 @@ class DeezerAlbum(Release):
         return json_data
 
     @classmethod
+    @log_exceptions
     def get_or_retrieve(cls, dz_id, update=False):
         """
         Retrieves an album from the database with the given id, or,
@@ -188,6 +190,7 @@ class DeezerTrack(Track):
         return json_data
 
     @classmethod
+    @log_exceptions
     def get_or_retrieve(cls, dz_id, update=False):
         """
         Retrieves a track from the database with the given id, or, if not

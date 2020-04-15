@@ -7,6 +7,7 @@ from django.utils import timezone as tz
 
 from deezerdata.models.deezer_objects import *
 from platform_apis.models import DeezerApiError
+from tools.models import log_exceptions
 
 
 class HistoryEntry(models.Model):
@@ -38,6 +39,7 @@ class HistoryEntry(models.Model):
     listening_datetime = models.DateTimeField()
 
     @classmethod
+    @log_exceptions
     def new_deezer_track_entry(cls, entry_json, profile):
         """
         Creates, if not existing, a new HistoryEntry corresponding to

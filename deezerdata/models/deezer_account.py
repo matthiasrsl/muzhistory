@@ -3,10 +3,12 @@ import json
 
 from django.conf import settings
 from django.db import models
+from django.utils import timezone as tz
 
 from history.models import HistoryEntry
 from musicdata.models import *
 from platform_apis.models import *
+from tools.models import log_exceptions
 
 
 class DeezerAccount(PlatformAccount):
@@ -30,6 +32,7 @@ class DeezerAccount(PlatformAccount):
     explicit_content_level = models.CharField(max_length=100)
     flow_url = models.URLField(max_length=2000)
 
+    @log_exceptions
     def update(self):
         url = settings.DEEZER_API_USER_URL
         params = {"access_token": self.access_token}
@@ -109,6 +112,7 @@ class DeezerAccount(PlatformAccount):
 
         return (next_url, oldest_listening_datetime)
 
+    @log_exceptions
     def retrieve_history(self):
         """
         Retrieves the listening history of a user from the Deezer API.
