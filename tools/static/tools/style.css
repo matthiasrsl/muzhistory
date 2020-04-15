@@ -7,6 +7,46 @@ h1 {
     margin-bottom: 0;
 }
 
+a, a:visited {
+    text-decoration: none;
+    color: #0076b1
+}
+
+a:hover {
+    color: #ff3c00;
+}
+
+/* Log list */
+.log_list_h1 {
+    margin-bottom: 30px;
+}
+
+.log_list {
+    margin-top: 30px;
+    border-collapse: collapse;
+    border-bottom: 1px solid black;
+}
+
+.log_row td {
+    padding: auto 20px;
+    border-top: 1px solid black;
+    height: 25px;
+}
+
+.log_row td:nth-child(1) {
+    width: 50px;
+}
+
+.log_row td:nth-child(2) {
+    width: 300px;
+}
+
+.log_row td:nth-child(3) {
+    width: 800px;
+}
+
+/* Log display */
+
 h1 .exc_module {
     font-size: 0.7em;
     color: #666;
