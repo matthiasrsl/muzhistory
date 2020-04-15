@@ -1,6 +1,9 @@
 from unittest.mock import MagicMock, patch
 
-from django.test import TestCase
+from django.contrib.auth.models import User
+from django.test import TestCase, Client
+from django.urls import reverse
+from django.utils import timezone as tz
 
 from requests.exceptions import ConnectionError
 
@@ -38,3 +41,50 @@ class ExceptionLogTest(TestCase):
         self.assertEqual(last_log.function_name, "DeezerTrack.get_or_retrieve")
         self.assertEqual(last_log.exception_module, "builtins")
         self.connection_error_album_patch.stop()
+
+
+class ExceptionLogDisplayTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        normal_user = User.objects.create_user(
+            "normaluser", "foo@bar.com", "pwd"
+        )
+        staff_user = User.objects.create_user(
+            "staffuser", "foo@bar.com", "pwd"
+        )
+        superuser = User.objects.create_superuser(
+            "superuser", "foo@bar.com", "pwd"
+        )
+        staff_user.is_staff = True
+        normal_user.save()
+        staff_user.save()
+        superuser.save()
+        exception_log = ExceptionLog.objects.create(
+            exception_name = "name",
+            exception_module = "module",
+            exception_value = "value",
+            function_name = "name",
+            traceback = "traceback",
+            occured_on = tz.now()
+        )
+        exception_log.save()
+
+    def setUp(self):
+        self.client = Client()
+
+    def test_restricted_access(self):
+        """
+        Tests that only a superuser can access exception logs.
+        """
+        log_id = ExceptionLog.objects.get().id
+        self.client.login(username='normaluser', password='pwd')
+        response = self.client.get(reverse("tools:log_display", args=[log_id]))
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='staffuser', password='pwd')
+        response = self.client.get(reverse("tools:log_display", args=[log_id]))
+        self.assertEqual(response.status_code, 403)
+
+        self.client.login(username='superuser', password='pwd')
+        response = self.client.get(reverse("tools:log_display", args=[log_id]))
+        self.assertEqual(response.status_code, 200)
