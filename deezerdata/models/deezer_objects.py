@@ -321,6 +321,9 @@ class DeezerMp3(DeezerTrack):
     title = models.CharField(max_length=1000)
     artist_name = models.CharField(max_length=500)
     album_name = models.CharField(max_length=1000)
+    deezer_account = models.ForeignKey(
+        "deezerdata.DeezerAccount", on_delete=models.CASCADE,
+    )
 
     def __str__(self):
         return f"{self.title} (Deezer Mp3)"
@@ -328,3 +331,62 @@ class DeezerMp3(DeezerTrack):
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_MP3
         super(Track, self).save(*args, **kwargs)
+
+    def download_data(self, deezer_account):  # pragma: no cover
+        """
+        Downloads the track data from the Deezer Api.
+        """
+        params = {"access_token": deezer_account.access_token}
+        api_request = requests.get(
+            settings.DEEZER_API_TRACK_URL.format(self.dz_id), params=params
+        )
+        json_data = api_request.json()
+
+        return json_data
+
+    @classmethod
+    def get_or_retrieve(cls, dz_id, deezer_account, update=False):
+        """
+        Retrieves a mp3 from the database with the given id, or, if not
+        in the database, makes a request to the Deezer API and creates
+        the instance.
+        """
+        if dz_id > 0:
+            raise ValueError("This id corresponds to a Deezer ragular track.")
+
+        instance, created = cls.objects.get_or_create(
+            dz_id=dz_id, deezer_account=deezer_account
+        )
+
+        try:
+            # Fields other than id are set only if a new DeezerAlbum
+            # instance was created, or if the instance should be updated.
+            if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
+                json_data = instance.download_data(deezer_account)
+
+                try:
+                    error_type = json_data["error"]["type"]
+                    message = json_data["error"]["message"]
+                    code = json_data["error"]["code"]
+                    instance.delete()  # Otherwise, a blank track would stay in
+                    # the database.
+                    raise DeezerApiError(error_type, message, code)
+                except KeyError:  # No API-related error occured.
+                    if json_data["isrc"]:
+                        raise ValueError("This is not a user mp3.")
+                    instance.title = instance.title_short = json_data["title"]
+                    instance.artist_name = json_data["artist"]["name"]
+                    instance.album_title = json_data["album"]["title"]
+                    instance.save()
+
+                instance.save()
+
+        except:  # If an unexpected error happens, we don't want a
+            # corrupted object to pollute the database.
+            instance.save()
+            instance.delete()
+            raise
+
+        if created and settings.LOG_RETRIEVAL:
+            print("retrieved track {}.".format(instance))
+        return (instance, created)

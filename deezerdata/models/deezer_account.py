@@ -108,7 +108,9 @@ class DeezerAccount(PlatformAccount):
             (
                 ignored,
                 oldest_listening_datetime,
-            ) = HistoryEntry.new_deezer_track_entry(entry_json, self.profile)
+            ) = HistoryEntry.new_deezer_track_entry(
+                entry_json, self.profile, self
+            )
 
         return (next_url, oldest_listening_datetime)
 
@@ -130,8 +132,7 @@ class DeezerAccount(PlatformAccount):
             ellipsis_entry = HistoryEntry(
                 profile=self.profile,
                 listening_datetime=oldest_listening_datetime,
-                entry_type= \
-                    HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS,
+                entry_type=HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS,
             )
             ellipsis_entry.save()
 

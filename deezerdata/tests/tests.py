@@ -142,7 +142,7 @@ class DeezerTrackTest(TestCase):
 
     def test_retrieve_existent(self):
         """
-        Checks that the retrieval of an existing tracks works.
+        Checks that the retrieval of an existing track works.
         """
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
@@ -199,9 +199,7 @@ class DeezerTrackTest(TestCase):
     def test_retrieve_mp3(self):
         """
         Tests that trying to retrieve a DeezerMp3 raises an exception.
-        (Deezer Mp3 are retrievable from the api, and it would be 
-        useless as all relevant information is obtained during 
-        the history iteration retrieval).
+        (Deezer Mp3 have their own retrieval method).
         """
         download_track = MagicMock(
             return_value=json.loads(data.mp3_test_response_text)
@@ -296,7 +294,6 @@ class DeezerAccountTest(TestCase):
             new=MagicMock(side_effect=[history1, history2]),
         )
         self.download_history_data_patch.start()
-        
 
     def tearDown(self):
         self.download_history_data_patch.stop()
@@ -347,8 +344,7 @@ class DeezerAccountTest(TestCase):
         """
         deezer_account = deezer_account_models.DeezerAccount.objects.get()
         deezer_account.last_history_request = tz.make_aware(
-            dt.datetime(year=2020, month=1, day=1),
-            tz.get_current_timezone()
+            dt.datetime(year=2020, month=1, day=1), tz.get_current_timezone()
         )
         deezer_account.save()
         deezer_account.retrieve_history()
@@ -357,3 +353,128 @@ class DeezerAccountTest(TestCase):
         )
         self.assertEqual(entries.count(), 1)
 
+
+class DeezerMp3Test(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        user = User.objects.create_user("User", "random@example.com", "pwd")
+        profile = Profile.objects.create(user=user)
+        user.save()
+        profile.save()
+        dz_account = deezer_account_models.DeezerAccount.objects.create(
+            profile=profile, user_id=1
+        )
+        dz_account.save()
+
+    def setUp(self):
+        self.deezer_account = deezer_account_models.DeezerAccount.objects.get()
+        history1 = json.loads(data.history1_test_data_text)
+        history2 = json.loads(data.history2_test_data_text)
+        mp3_data = json.loads(data.mp3_test_response_text)
+        inexistant_response = json.loads(data.inexistant_track_response_text)
+        unauthorized_response = json.loads(data.mp3_unauthorized_response_text)
+        negative_id_reponse = json.loads(data.track_negative_id_response_test)
+        self.download_history_data_patch = patch(
+            "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
+            new=MagicMock(side_effect=[history1, history2]),
+        )
+        self.download_mp3_data_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerMp3.download_data",
+            new=MagicMock(return_value=mp3_data),
+        )
+        self.download_inexistant_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerMp3.download_data",
+            new=MagicMock(return_value=inexistant_response),
+        )
+        self.download_unauthorized_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerMp3.download_data",
+            new=MagicMock(return_value=unauthorized_response),
+        )
+        self.download_negative_id_track_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerMp3.download_data",
+            new=MagicMock(return_value=negative_id_reponse),
+        )
+
+    def test_retrieve_history_check_mp3_account(self):
+        """
+        Tests that the deezer_account of a DeezerMp3 is filled
+        during a history retrieval.
+        """
+        self.download_history_data_patch.start()
+        self.deezer_account = deezer_account_models.DeezerAccount.objects.get()
+        self.deezer_account.retrieve_history()
+        deezer_mp3 = deezer_objects_models.DeezerMp3.objects.get()
+        self.assertEqual(deezer_mp3.deezer_account, self.deezer_account)
+        self.download_history_data_patch.stop()
+
+    def test_retrieve_existing(self):
+        """
+        Checks that the retrieval of an existing mp3 works.
+        """
+        self.download_mp3_data_patch.start()
+        deezer_objects_models.DeezerMp3.get_or_retrieve(
+            -2902124464, self.deezer_account
+        )
+        query = deezer_objects_models.DeezerMp3.objects.filter(
+            dz_id=-2902124464
+        )
+        self.assertEqual(query.count(), 1)
+        self.assertEqual(query[0].deezer_account, self.deezer_account)
+        self.download_mp3_data_patch.stop()
+
+    def test_retrieve_nonexistent(self):
+        """
+        Tests that the retrieval of a mp3 with an invalid deezer id
+        raises a DeezerApiError.
+        """
+        self.download_inexistant_patch.start()
+        with self.assertRaises(DeezerApiError):
+            track, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
+                -65426, self.deezer_account
+            )
+        with self.assertRaises(deezer_objects_models.DeezerMp3.DoesNotExist):
+            query = deezer_objects_models.DeezerMp3.objects.get()
+        self.download_inexistant_patch.stop()
+
+    def test_retrieve_unauthorized(self):
+        """
+        Tests that the retrieval of a mp3 with the wrong access
+        token raises a DeezerApiError and does not leave a blank
+        mp3 in the database.
+        """
+        self.download_unauthorized_patch.start()
+        with self.assertRaises(DeezerApiError):
+            tuple_ = deezer_objects_models.DeezerMp3.get_or_retrieve(
+                -2902124464, self.deezer_account
+            )
+        with self.assertRaises(deezer_objects_models.DeezerMp3.DoesNotExist):
+            query = deezer_objects_models.DeezerMp3.objects.get()
+        self.download_unauthorized_patch.stop()
+
+    def test_retrieve_no_mp3(self):
+        """
+        Some tracks with a negative deezer_id in the Deezer database are
+        not user mp3s but unavailable tracks. This test tests that 
+        if such a track is attempted to be retrieved via the DeezerMp3
+        model, a ValueError is raised and no blank mp3 is stored.
+        """
+        self.download_negative_id_track_patch.start()
+        with self.assertRaises(ValueError):
+            tuple_ = deezer_objects_models.DeezerMp3.get_or_retrieve(
+                -64642681, self.deezer_account
+            )
+        with self.assertRaises(deezer_objects_models.DeezerMp3.DoesNotExist):
+            query = deezer_objects_models.DeezerMp3.objects.get()
+        self.download_negative_id_track_patch.stop()
+
+    def test_retrieve_regular_track(self):
+        """
+        Tests that trying to retrieve a regular track raises an 
+        exception (DeezerTracks have their own retrieval method).
+        """
+        with self.assertRaises(ValueError):
+            mp3, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
+                67238735, self.deezer_account
+            )
+        with self.assertRaises(deezer_objects_models.DeezerMp3.DoesNotExist):
+            query = deezer_objects_models.DeezerMp3.objects.get()

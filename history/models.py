@@ -42,7 +42,7 @@ class HistoryEntry(models.Model):
 
     @classmethod
     @log_exceptions
-    def new_deezer_track_entry(cls, entry_json, profile):
+    def new_deezer_track_entry(cls, entry_json, profile, deezer_account):
         """
         Creates, if not existing, a new HistoryEntry corresponding to
         the provided json data from the Deezer API.
@@ -72,7 +72,7 @@ class HistoryEntry(models.Model):
                 else:  # User's mp3: no need for retrieval as all data
                     # is already in the current api response.
                     track, created = DeezerMp3.objects.get_or_create(
-                        dz_id=track_id
+                        dz_id=track_id, deezer_account=deezer_account
                     )
                     if created:
                         track.title = track.title_short = entry_json["title"]
