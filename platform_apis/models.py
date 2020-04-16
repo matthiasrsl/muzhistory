@@ -58,7 +58,7 @@ class PlatformAccount(models.Model):
     )
     user_id = models.CharField(max_length=100)
     access_token = models.CharField(max_length=150, null=True, blank=True)
-    email = models.EmailField()
+    email = models.EmailField(blank=True)
     market = models.ForeignKey(
         "platform_apis.Market", on_delete=models.PROTECT, null=True, blank=True
     )

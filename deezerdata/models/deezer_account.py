@@ -16,12 +16,12 @@ class DeezerAccount(PlatformAccount):
     A user account on Deezer.
     """
 
-    lastname = models.CharField(max_length=300)
-    firstname = models.CharField(max_length=300)
+    lastname = models.CharField(max_length=300, blank=True)
+    firstname = models.CharField(max_length=300, blank=True)
     status = models.IntegerField(null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     inscription_date = models.DateField(null=True, blank=True)
-    gender = models.CharField(max_length=1)
+    gender = models.CharField(max_length=1, blank=True)
     link = models.URLField(max_length=2000)
     picture_small = models.URLField(max_length=2000)
     picture_medium = models.URLField(max_length=2000)
