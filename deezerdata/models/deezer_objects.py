@@ -3,7 +3,7 @@ import datetime as dt
 from django.conf import settings
 from django.db import models
 
-#from history.models import HistoryEntry
+# from history.models import HistoryEntry
 from musicdata.models import *
 from platform_apis.models import DeezerApiError, Market
 from tools.models import log_exceptions
@@ -40,8 +40,8 @@ class DeezerAlbum(Release):
         Downloads the album data from the Deezer Api.
         """
         api_request = requests.get(
-                settings.DEEZER_API_ALBUM_URL.format(self.dz_id)
-            )
+            settings.DEEZER_API_ALBUM_URL.format(self.dz_id)
+        )
         json_data = api_request.json()
         return json_data
 
@@ -55,22 +55,22 @@ class DeezerAlbum(Release):
         """
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
 
-        # Fields other than id are set only if a new DeezerAlbum
-        # instance was created, or if the instance should be updated.
-        if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            json_data = instance.download_data()
+        try:
+            # Fields other than id are set only if a new DeezerAlbum
+            # instance was created, or if the instance should be updated.
+            if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
+                json_data = instance.download_data()
 
-            try:
-                error_type = json_data["error"]["type"]
-                message = json_data["error"]["message"]
-                code = json_data["error"]["code"]
-                instance.delete()  # Otherwise, a blank album will stay in
-                # the database.
-                raise DeezerApiError(error_type, message, code)
-            except KeyError:
-                pass  # No API-related error occured.
+                try:
+                    error_type = json_data["error"]["type"]
+                    message = json_data["error"]["message"]
+                    code = json_data["error"]["code"]
+                    instance.delete()  # Otherwise, a blank album will stay in
+                    # the database.
+                    raise DeezerApiError(error_type, message, code)
+                except KeyError:
+                    pass  # No API-related error occured.
 
-            try:
                 # Creation of the ReleaseGroup. A new ReleaseGroup is created
                 # each time, we assume that the duplicates will be merged by a
                 # cron task.
@@ -134,10 +134,11 @@ class DeezerAlbum(Release):
                     )
                     contrib.save()
 
-            except:  # If an unexpected error happens, we don't want a
-                # corrupted object to pollute the database.
-                instance.delete()
-                raise
+        except:  # If an unexpected error happens, we don't want a
+            # corrupted object to pollute the database.
+            instance.save()
+            instance.delete()
+            raise
 
         if created and settings.LOG_RETRIEVAL:
             print("retrieved album {}.".format(instance))
@@ -172,7 +173,7 @@ class DeezerTrack(Track):
     alternative_id = models.BigIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return f"{self.recording.title} (Deezer)"
+        return str(self.recording) #f"{self.recording.title} (Deezer)"
 
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_TRACK
@@ -183,8 +184,8 @@ class DeezerTrack(Track):
         Downloads the track data from the Deezer Api.
         """
         api_request = requests.get(
-                settings.DEEZER_API_TRACK_URL.format(self.dz_id)
-            )
+            settings.DEEZER_API_TRACK_URL.format(self.dz_id)
+        )
         json_data = api_request.json()
 
         return json_data
@@ -197,27 +198,27 @@ class DeezerTrack(Track):
         in the database, makes a request to the Deezer API and creates
         the instance.
         """
-        if dz_id<0:
+        if dz_id < 0:
             raise ValueError("This id corresponds to a Deezer user mp3.")
 
         instance, created = cls.objects.get_or_create(dz_id=dz_id)
-        
-        # Fields other than id are set only if a new DeezerAlbum
-        # instance was created, or if the instance should be updated.
-        if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            json_data = instance.download_data()
 
-            try:
-                error_type = json_data["error"]["type"]
-                message = json_data["error"]["message"]
-                code = json_data["error"]["code"]
-                instance.delete()  # Otherwise, a blank track would stay in
-                # the database.
-                raise DeezerApiError(error_type, message, code)
-            except KeyError:
-                pass  # No API-related error occured.
+        try:
+            # Fields other than id are set only if a new DeezerAlbum
+            # instance was created, or if the instance should be updated.
+            if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
+                json_data = instance.download_data()
 
-            try:
+                try:
+                    error_type = json_data["error"]["type"]
+                    message = json_data["error"]["message"]
+                    code = json_data["error"]["code"]
+                    instance.delete()  # Otherwise, a blank track would stay in
+                    # the database.
+                    raise DeezerApiError(error_type, message, code)
+                except KeyError:
+                    pass  # No API-related error occured.
+
                 recording, recording_created = Recording.objects.get_or_create(
                     isrc=json_data["isrc"]
                 )
@@ -298,22 +299,18 @@ class DeezerTrack(Track):
                         code=market_code
                     )
                     if market_created and settings.LOG_RETRIEVAL:
-                        print(
-                            f"Market {market.code} created"
-                        )
+                        print(f"Market {market.code} created")
                     available_markets.append(market)
                 instance.available_markets.add(*available_markets)
                 # Bulk-add to reduce database access.
 
                 instance.save()
 
-            except:  # If an unexpected error happens, we don't want a
-                # corrupted object to pollute the database.
-                # Really useful ? The fact that instance.save() is called
-                # at the end of the process seems to already prevent
-                # this behaviour.
-                instance.delete()  
-                raise
+        except:  # If an unexpected error happens, we don't want a
+            # corrupted object to pollute the database.
+            instance.save()
+            instance.delete()
+            raise
 
         if created and settings.LOG_RETRIEVAL:
             print("retrieved track {}.".format(instance))

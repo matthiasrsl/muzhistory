@@ -67,38 +67,39 @@ class Artist(models.Model):
         """
         instance, created = cls.objects.get_or_create(deezer_id=dz_id)
 
-        # Fields other than id are set only if a new Artist instance
-        # was created, or if the instance should be updated.
-        if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
-            json_data = instance.download_data_from_deezer()
+        try:
+            # Fields other than id are set only if a new Artist instance
+            # was created, or if the instance should be updated.
+            if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
+                json_data = instance.download_data_from_deezer()
 
-            try:
-                error_type = json_data["error"]["type"]
-                message = json_data["error"]["message"]
-                code = json_data["error"]["code"]
-                instance.delete()  # Otherwise, a blank artist will stay in
-                # the database.
-                raise DeezerApiError(error_type, message, code)
-            except KeyError:
-                pass  # No API-related error occured.
+                try:
+                    error_type = json_data["error"]["type"]
+                    message = json_data["error"]["message"]
+                    code = json_data["error"]["code"]
+                    instance.delete()  # Otherwise, a blank artist will stay in
+                    # the database.
+                    raise DeezerApiError(error_type, message, code)
+                except KeyError:
+                    pass  # No API-related error occured.
 
-            try:
-                instance.name = json_data["name"]
-                instance.image_url_deezer_small = json_data["picture_small"]
-                instance.image_url_deezer_medium = json_data["picture_medium"]
-                instance.image_url_deezer_big = json_data["picture_big"]
-                instance.image_url_deezer_xl = json_data["picture_xl"]
-                instance.nb_fans_deezer = json_data["nb_fan"]
-                instance.save()
+                    instance.name = json_data["name"]
+                    instance.image_url_deezer_small = json_data["picture_small"]
+                    instance.image_url_deezer_medium = json_data["picture_medium"]
+                    instance.image_url_deezer_big = json_data["picture_big"]
+                    instance.image_url_deezer_xl = json_data["picture_xl"]
+                    instance.nb_fans_deezer = json_data["nb_fan"]
+                    instance.save()
 
-            except:  # If an unexpected error happens, we don't want a
-                # corrupted object to pollute the database.
-                instance.delete()
-                raise
 
-        if created and settings.LOG_RETRIEVAL:
-            print("retrieved artist {}.".format(instance))
-        return (instance, created)
+            if created and settings.LOG_RETRIEVAL:
+                print("retrieved artist {}.".format(instance))
+            return (instance, created)
+        except:  # If an unexpected error happens, we don't want a
+            # corrupted object to pollute the database.
+            instance.save()  # To be able to delete it.
+            instance.delete()
+            raise
 
 
 class ReleaseGroup(models.Model):
