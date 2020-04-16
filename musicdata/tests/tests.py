@@ -1,8 +1,12 @@
 import json
 from unittest.mock import MagicMock, patch
+
+from django.contrib.auth.models import User
 from django.test import TestCase
 
+from accounts.models import Profile
 from deezerdata.models.deezer_objects import *
+from deezerdata.models.deezer_account import *
 from musicdata import models
 from platform_apis.models import DeezerApiError
 
@@ -79,6 +83,14 @@ class ArtistTest(TestCase):
 class TrackTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        user = User.objects.create_user("User", "random@example.com", "pwd")
+        profile = Profile.objects.create(user=user)
+        user.save()
+        profile.save()
+        dz_account = DeezerAccount.objects.create(
+            profile=profile, user_id=1
+        )
+        dz_account.save()
         recording = Recording.objects.create(
             isrc="USQX91300108", title="Get Lucky",
         )
@@ -109,6 +121,7 @@ class TrackTest(TestCase):
             title="Title",
             artist_name="Artist",
             album_name="Album",
+            deezer_account=dz_account
         )
         deezer_mp3.save()
         track3 = Track.objects.create(track_type="")

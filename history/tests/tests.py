@@ -50,6 +50,7 @@ class HistoryEntryTest(TestCase):
             user_id=1
         )
         self.profile = Profile.objects.get()
+        self.deezer_account = deezer_account_models.DeezerAccount.objects.get()
         self.entry1_json = json.loads(data.entry1_test_text)
         self.entry2_json = json.loads(data.entry2_test_text)
 
@@ -61,7 +62,9 @@ class HistoryEntryTest(TestCase):
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(self.entry1_json, self.profile)
+        ) = HistoryEntry.new_deezer_track_entry(
+            self.entry1_json, self.profile, self.deezer_account
+        )
         entry = HistoryEntry.objects.all().order_by("-id")[0]
         self.assertEqual(entry.profile, self.profile)
         self.assertEqual(entry.track.recording.title, "Get Lucky")
@@ -77,7 +80,9 @@ class HistoryEntryTest(TestCase):
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(self.entry_mp3, self.profile)
+        ) = HistoryEntry.new_deezer_track_entry(
+            self.entry_mp3, self.profile, self.deezer_account
+        )
         entry = HistoryEntry.objects.all().order_by("-id")[0]
         self.assertEqual(entry.track.deezertrack.deezermp3.title, "La Noyée")
         self.assertEqual(
@@ -94,13 +99,17 @@ class HistoryEntryTest(TestCase):
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(self.entry1_json, self.profile)
+        ) = HistoryEntry.new_deezer_track_entry(
+            self.entry1_json, self.profile, self.deezer_account
+        )
         self.assertIs(ignored, False)
         self.assertIsInstance(entry_listening_datetime, dt.datetime)
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(self.entry1_json, self.profile)
+        ) = HistoryEntry.new_deezer_track_entry(
+            self.entry1_json, self.profile, self.deezer_account
+        )
         self.assertIs(ignored, True)
         self.assertIsInstance(entry_listening_datetime, dt.datetime)
 
@@ -114,7 +123,9 @@ class HistoryEntryTest(TestCase):
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(self.entry1_json, self.profile)
+        ) = HistoryEntry.new_deezer_track_entry(
+            self.entry1_json, self.profile, self.deezer_account
+        )
         self.assertIs(ignored, False)
         self.assertIsInstance(entry_listening_datetime, dt.datetime)
 
@@ -126,7 +137,9 @@ class HistoryEntryTest(TestCase):
         (
             ignored,
             entry_listening_datetime,
-        ) = HistoryEntry.new_deezer_track_entry(self.entry2_json, self.profile)
+        ) = HistoryEntry.new_deezer_track_entry(
+            self.entry2_json, self.profile, self.deezer_account
+        )
         self.assertIs(ignored, False)
         self.assertIsInstance(entry_listening_datetime, dt.datetime)
 
@@ -143,7 +156,7 @@ class HistoryEntryTest(TestCase):
                 ignored,
                 entry_listening_datetime,
             ) = HistoryEntry.new_deezer_track_entry(
-                self.entry2_json, self.profile
+                self.entry2_json, self.profile, self.deezer_account
             )
         except ConnectionError:
             pass  # Our mock purposedly raises this error
