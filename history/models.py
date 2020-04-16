@@ -24,7 +24,7 @@ class HistoryEntry(models.Model):
 
         LISTENING = "listening", "Track listening"  # Regular
         DEEZER_ERROR = "err_deezer", "Deezer error"
-        DEEZER_ELLIPSIS = "ellipsis", "History Ellipsis (Deezer)"
+        DEEZER_ELLIPSIS = "ellipsis_deezer", "History Ellipsis (Deezer)"
 
     version = models.IntegerField(default=settings.MH_VERSION)
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE)
@@ -33,7 +33,9 @@ class HistoryEntry(models.Model):
         choices=SpecialHistoryEntryChoices.choices,
         default=SpecialHistoryEntryChoices.LISTENING,
     )
-    track = models.ForeignKey("musicdata.Track", on_delete=models.PROTECT)
+    track = models.ForeignKey(
+        "musicdata.Track", null=True, blank=True, on_delete=models.PROTECT
+    )
     timestamp = models.PositiveIntegerField(null=True, blank=True)
     # Consistent with timestamp if it is not null.
     listening_datetime = models.DateTimeField()
@@ -52,7 +54,6 @@ class HistoryEntry(models.Model):
             tz.get_current_timezone(),
         )
         track_id = entry_json["id"]
-
         existing_entries_with_this_datetime = cls.objects.filter(
             profile=profile,
             listening_datetime=entry_listening_datetime,
@@ -84,8 +85,8 @@ class HistoryEntry(models.Model):
             except DeezerApiError:
                 db_entry.entry_type = SpecialHistoryEntryChoices.DEEZER_ERROR
 
-            db_entry.save()  # Do not save before, as a corrupted entry could 
-                            # be stored in case of an unexpected exception.
+            db_entry.save()  # Do not save before, as a corrupted entry could
+            # be stored in case of an unexpected exception.
         else:
             ignored = True
 

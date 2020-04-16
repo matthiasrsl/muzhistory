@@ -93,7 +93,7 @@ class DeezerAccount(PlatformAccount):
         listening history, and creates the entries.
         """
         api_response = self.download_history_data(url)
-        #print(api_response)
+        # print(api_response)
         history_json = api_response["data"]
         try:
             next_url = api_response["next"]
@@ -126,15 +126,14 @@ class DeezerAccount(PlatformAccount):
                 next_url,
                 oldest_listening_datetime,
             ) = self.retrieve_history_iteration(next_url)
-
         if oldest_listening_datetime > self.last_history_request:
-            """ellipsis_entry = HistoryEntry(
-                profile=self,
+            ellipsis_entry = HistoryEntry(
+                profile=self.profile,
                 listening_datetime=oldest_listening_datetime,
-                entry_type="history_ellipsis",
+                entry_type= \
+                    HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS,
             )
-            ellipsis_entry.save()"""
-            pass
+            ellipsis_entry.save()
 
         self.last_history_request = tz.now()
         self.save()

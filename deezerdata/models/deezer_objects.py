@@ -173,7 +173,7 @@ class DeezerTrack(Track):
     alternative_id = models.BigIntegerField(null=True, blank=True)
 
     def __str__(self):
-        return str(self.recording) #f"{self.recording.title} (Deezer)"
+        return f"{self.recording.title} (Deezer)"
 
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_TRACK

@@ -1,9 +1,11 @@
-from unittest.mock import MagicMock, patch
 import json
+import datetime as dt
+from unittest.mock import MagicMock, patch
 
 from django.conf import settings
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.utils import timezone as tz
 
 from requests.exceptions import ConnectionError
 
@@ -269,7 +271,7 @@ class DeezerAccountTest(TestCase):
 
     def setUp(self):
         self.dz_account = deezer_account_models.DeezerAccount.objects.get()
-        
+
         download_artist = MagicMock(
             return_value=json.loads(data.artist_test_response_text)
         )
@@ -291,12 +293,9 @@ class DeezerAccountTest(TestCase):
         history2 = json.loads(data.history2_test_data_text)
         self.download_history_data_patch = patch(
             "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
-            new=MagicMock(
-                side_effect=[history1, history2]
-            ),
+            new=MagicMock(side_effect=[history1, history2]),
         )
         self.download_history_data_patch.start()
-        self.connection_error_patch.start()
         
 
     def tearDown(self):
@@ -304,14 +303,13 @@ class DeezerAccountTest(TestCase):
         try:
             self.connection_error_patch.stop()
         except RuntimeError:
-            pass  # The patch has been stopped in a test that didn't need it.
+            pass  #  The patch has been stopped in a test that didn't need it.
 
     def test_retrieve_history_normal_case(self):
         """
         Tests that DeezerAccount.retrieve_history works in
         normal conditions.
         """
-        self.connection_error_patch.stop()
         original_datetime = (
             self.dz_account.last_history_request
         )  # Sould be the Epoch.
@@ -321,13 +319,14 @@ class DeezerAccountTest(TestCase):
         )
         query = HistoryEntry.objects.filter(timestamp=1586441751)
         self.assertEqual(len(query), 1)
-        
+
     def test_retrieve_history_network_error(self):
         """
         Tests that the account last_history_request is not updated
         if a network error (network unreachable) occurs during
         the retrieval process.
         """
+        self.connection_error_patch.start()
         original_datetime = (
             self.dz_account.last_history_request
         )  # Sould be the Epoch.
@@ -338,4 +337,23 @@ class DeezerAccountTest(TestCase):
         self.assertEqual(
             self.dz_account.last_history_request, original_datetime
         )
-        
+        self.connection_error_patch.stop()
+
+    def test_ellipsis_entry_if_last_update_too_old(self):
+        """
+        Tests that if the last_history_request attribute of the profile
+        is older that the oldest entry in the data retrieved, an 
+        ellispsis history entry is created.
+        """
+        deezer_account = deezer_account_models.DeezerAccount.objects.get()
+        deezer_account.last_history_request = tz.make_aware(
+            dt.datetime(year=2020, month=1, day=1),
+            tz.get_current_timezone()
+        )
+        deezer_account.save()
+        deezer_account.retrieve_history()
+        entries = HistoryEntry.objects.filter(
+            entry_type=HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS
+        )
+        self.assertEqual(entries.count(), 1)
+
