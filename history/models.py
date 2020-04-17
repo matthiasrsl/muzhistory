@@ -6,6 +6,7 @@ from django.utils import timezone as tz
 
 
 from deezerdata.models.deezer_objects import *
+from deezerdata.models.deezer_account import *
 from platform_apis.models import DeezerApiError
 from tools.models import log_exceptions
 
@@ -28,6 +29,12 @@ class HistoryEntry(models.Model):
 
     version = models.IntegerField(default=settings.MH_VERSION)
     profile = models.ForeignKey("accounts.Profile", on_delete=models.CASCADE)
+    deezer_account = models.ForeignKey(
+        "deezerdata.DeezerAccount",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     entry_type = models.CharField(
         max_length=100,
         choices=SpecialHistoryEntryChoices.choices,
@@ -56,12 +63,14 @@ class HistoryEntry(models.Model):
         track_id = entry_json["id"]
         existing_entries_with_this_datetime = cls.objects.filter(
             profile=profile,
+            deezer_account=deezer_account,
             listening_datetime=entry_listening_datetime,
             track__deezertrack__dz_id=track_id,
         )
         if len(existing_entries_with_this_datetime) == 0:
             db_entry = HistoryEntry(
                 profile=profile,
+                deezer_account=deezer_account,
                 timestamp=entry_json["timestamp"],
                 listening_datetime=entry_listening_datetime,
             )

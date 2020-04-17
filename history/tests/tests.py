@@ -67,6 +67,7 @@ class HistoryEntryTest(TestCase):
         )
         entry = HistoryEntry.objects.all().order_by("-id")[0]
         self.assertEqual(entry.profile, self.profile)
+        self.assertEqual(entry.deezer_account, self.deezer_account)
         self.assertEqual(entry.track.recording.title, "Get Lucky")
         self.assertEqual(
             entry.entry_type,
