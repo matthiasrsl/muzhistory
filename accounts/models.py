@@ -85,8 +85,13 @@ class Profile(models.Model):
         if created:
             deezer_account.profile = self
         else:
-            if deezer_account.profile != self:
-                raise PermissionDenied
+            if (
+                deezer_account.profile != self
+                and deezer_account.profile != None
+            ):
+                raise ValueError(
+                    "This Deezer account is already linked to another profile."
+                )
 
         deezer_account.access_token = access_token
         deezer_account.update()
