@@ -134,6 +134,7 @@ class DeezerAlbumTest(TestCase):
         self.assertEqual(album.release_group.genres.all()[0].name, "Pop")
         self.assertEqual(album.release_group.genres.all()[0].dz_id, 132)
 
+
 class DeezerTrackTest(TestCase):
     def setUp(self):
         download_artist = MagicMock(
@@ -298,24 +299,22 @@ class DeezerAccountTest(TestCase):
         )
         history1 = json.loads(data.history1_test_data_text)
         history2 = json.loads(data.history2_test_data_text)
+        oauth_blocked = json.loads(data.oauth_access_removed_response_text)
         self.download_history_data_patch = patch(
             "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
             new=MagicMock(side_effect=[history1, history2]),
         )
-        self.download_history_data_patch.start()
-
-    def tearDown(self):
-        self.download_history_data_patch.stop()
-        try:
-            self.connection_error_patch.stop()
-        except RuntimeError:
-            pass  #  The patch has been stopped in a test that didn't need it.
+        self.oauth_blocked_patch = patch(
+            "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
+            new=MagicMock(return_value=oauth_blocked),
+        )
 
     def test_retrieve_history_normal_case(self):
         """
         Tests that DeezerAccount.retrieve_history works in
         normal conditions.
         """
+        self.download_history_data_patch.start()
         original_datetime = (
             self.dz_account.last_history_request
         )  # Sould be the Epoch.
@@ -325,6 +324,7 @@ class DeezerAccountTest(TestCase):
         )
         query = HistoryEntry.objects.filter(timestamp=1586441751)
         self.assertEqual(len(query), 1)
+        self.download_history_data_patch.stop()
 
     def test_retrieve_history_network_error(self):
         """
@@ -332,6 +332,7 @@ class DeezerAccountTest(TestCase):
         if a network error (network unreachable) occurs during
         the retrieval process.
         """
+        self.download_history_data_patch.start()
         self.connection_error_patch.start()
         original_datetime = (
             self.dz_account.last_history_request
@@ -344,6 +345,7 @@ class DeezerAccountTest(TestCase):
             self.dz_account.last_history_request, original_datetime
         )
         self.connection_error_patch.stop()
+        self.download_history_data_patch.stop()
 
     def test_ellipsis_entry_if_last_update_too_old(self):
         """
@@ -351,6 +353,7 @@ class DeezerAccountTest(TestCase):
         is older that the oldest entry in the data retrieved, an 
         ellispsis history entry is created.
         """
+        self.download_history_data_patch.start()
         deezer_account = deezer_account_models.DeezerAccount.objects.get()
         deezer_account.last_history_request = tz.make_aware(
             dt.datetime(year=2020, month=1, day=1), tz.get_current_timezone()
@@ -361,6 +364,26 @@ class DeezerAccountTest(TestCase):
             entry_type=HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS
         )
         self.assertEqual(entries.count(), 1)
+        self.download_history_data_patch.stop()
+
+        # def test_blocked_from_deezer(self):
+        """
+        Tests that if a user removes MuzHistory's access to their 
+        Deezer account from Deezer, the DeezerAccount status is set
+        to blocked.
+        """
+        self.oauth_blocked_patch.start()
+        last_history_request = self.dz_account.last_history_request
+        self.dz_account.retrieve_history()
+        dz_account = deezer_account_models.DeezerAccount.objects.get(
+            id=self.dz_account.id
+        )
+        self.assertEqual(
+            dz_account.status,
+            deezer_account_models.DeezerAccount.StatusChoices.BLOCKED,
+        )
+        self.assertEqual(dz_account.last_history_request, last_history_request)
+        self.oauth_blocked_patch.stop()
 
 
 class DeezerMp3Test(TestCase):

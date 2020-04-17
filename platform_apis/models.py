@@ -51,8 +51,17 @@ class PlatformAccount(models.Model):
     """
     A user account on a music streaming platform.
     """
+    class StatusChoices(models.TextChoices):
+        ACTIVE = "act", "Active"
+        INACTIVE = "ina", "Inactive"
+        BLOCKED = "blo", "Blocked"
 
     version = models.IntegerField(default=settings.MH_VERSION)
+    status = models.CharField(
+        max_length=3,
+        choices=StatusChoices.choices,
+        default=StatusChoices.ACTIVE,
+    )
     profile = models.ForeignKey(
         "accounts.Profile", on_delete=models.CASCADE, null=True
     )

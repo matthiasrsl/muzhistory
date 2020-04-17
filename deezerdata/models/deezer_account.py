@@ -15,10 +15,9 @@ class DeezerAccount(PlatformAccount):
     """
     A user account on Deezer.
     """
-
     lastname = models.CharField(max_length=300, blank=True)
     firstname = models.CharField(max_length=300, blank=True)
-    status = models.IntegerField(null=True, blank=True)
+    status_deezer = models.IntegerField(null=True, blank=True)
     birthday = models.DateField(null=True, blank=True)
     inscription_date = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, blank=True)
@@ -93,7 +92,13 @@ class DeezerAccount(PlatformAccount):
         listening history, and creates the entries.
         """
         api_response = self.download_history_data(url)
-        # print(api_response)
+        try:
+            error_type = api_response["error"]["type"]
+            message = api_response["error"]["message"]
+            code = api_response["error"]["code"]
+            raise DeezerApiError(error_type, message, code)
+        except KeyError:  # No API-related error occured
+            pass
         history_json = api_response["data"]
         try:
             next_url = api_response["next"]
@@ -119,15 +124,24 @@ class DeezerAccount(PlatformAccount):
         """
         Retrieves the listening history of a user from the Deezer API.
         """
-        (
-            next_url,
-            oldest_listening_datetime,
-        ) = self.retrieve_history_iteration()
-        while next_url:
+        try:
             (
                 next_url,
                 oldest_listening_datetime,
-            ) = self.retrieve_history_iteration(next_url)
+            ) = self.retrieve_history_iteration()
+            while next_url:
+                (
+                    next_url,
+                    oldest_listening_datetime,
+                ) = self.retrieve_history_iteration(next_url)
+        except DeezerApiError as e:
+            if e.error_type == "OAuthException":
+                self.status = DeezerAccount.StatusChoices.BLOCKED
+                self.save()
+                return
+            else:
+                raise e
+
         if oldest_listening_datetime > self.last_history_request:
             ellipsis_entry = HistoryEntry(
                 profile=self.profile,
