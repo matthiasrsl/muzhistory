@@ -103,8 +103,6 @@ class DeezerAlbum(Release):
                 instance.rating = json_data["rating"]
                 instance.duration = json_data["duration"]
                 instance.available = json_data["available"]
-                if not instance.available:
-                    instance.alternative_id = json_data["alternative"]["id"]
                 instance.tracklist_url = json_data["tracklist"]
                 instance.explicit_lyrics = json_data["explicit_lyrics"]
                 instance.explicit_content_lyrics = json_data[
@@ -113,6 +111,16 @@ class DeezerAlbum(Release):
                 instance.explicit_content_cover = json_data[
                     "explicit_content_cover"
                 ]
+
+                if not instance.available:
+                    try:  # Even when the album is not available, the
+                        # alternative album is not always present in the
+                        # API response.
+                        instance.alternative_id = json_data["alternative"][
+                            "id"
+                        ]
+                    except:
+                        pass  # The field is set to NULL.
 
                 instance.release_group = release_group
                 instance.save()
