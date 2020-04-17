@@ -124,7 +124,7 @@ class ReleaseGroup(models.Model):
         choices=AlbumTypeChoices.choices,
         default=AlbumTypeChoices.UNDEF,
     )
-
+    genres = models.ManyToManyField('Genre')
     contributors = models.ManyToManyField(
         "Artist", through="ReleaseGroupContribution"
     )

@@ -117,6 +117,15 @@ class DeezerAlbum(Release):
                 instance.release_group = release_group
                 instance.save()
 
+                for json_genre in json_data["genres"]["data"]:
+                    genre, genre_created = Genre.objects.get_or_create(
+                        dz_id=json_genre["id"]
+                    )
+                    if genre_created:
+                        genre.name = json_genre["name"]
+                        genre.save()
+                    instance.release_group.genres.add(genre)
+
                 for json_contrib in json_data["contributors"]:
                     contributor = Artist.get_or_retrieve_from_deezer(
                         json_contrib["id"]

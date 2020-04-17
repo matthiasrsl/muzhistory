@@ -124,6 +124,15 @@ class DeezerAlbumTest(TestCase):
             )
         self.connection_error_album_patch.stop()
 
+    def test_genre(self):
+        """
+        Tests that during the etrieval of a DeezerAlbum, its genres are specified in its ReleaseGroup.
+        """
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )  # Daft Punk's Random Access Memories
+        self.assertEqual(album.release_group.genres.all()[0].name, "Pop")
+        self.assertEqual(album.release_group.genres.all()[0].dz_id, 132)
 
 class DeezerTrackTest(TestCase):
     def setUp(self):
