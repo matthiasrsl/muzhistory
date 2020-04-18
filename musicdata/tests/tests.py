@@ -14,6 +14,7 @@ from . import data
 
 settings.LOG_RETRIEVAL = False
 
+
 class ArtistTest(TestCase):
     def setUp(self):
         download_artist = MagicMock(
@@ -23,6 +24,13 @@ class ArtistTest(TestCase):
         self.connection_error_artist_patch = patch(
             "musicdata.models.Artist.download_data_from_deezer",
             new=MagicMock(side_effect=ConnectionError()),
+        )
+        inexistant_artist_reponse = json.loads(
+            data.inexistant_artist_test_response_text
+        )
+        self.inexistent_artist_patch = patch(
+            "musicdata.models.Artist.download_data_from_deezer",
+            new=MagicMock(return_value=inexistant_artist_reponse),
         )
 
     def test_retrieve_from_deezer_existent(self):
@@ -74,10 +82,42 @@ class ArtistTest(TestCase):
             pass  # Our mock purposedly raises this error
 
         with self.assertRaises(models.Artist.DoesNotExist):
-            query = models.Artist.objects.get(
-                deezer_id=27
-            )
+            query = models.Artist.objects.get(deezer_id=27)
         self.connection_error_artist_patch.stop()
+
+    def test_set_deleted_deezer_api(self):
+        """
+        Tests that if a known artist is deleted from the Deezer API,
+        its deleted_deezer attribute is set to True.
+        """
+        artist, created = models.Artist.get_or_retrieve_from_deezer(
+            27
+        )  # Daft Punk
+        self.assertTrue(created)
+        self.assertFalse(artist.deleted_deezer)
+        self.inexistent_artist_patch.start()
+        artist, created = models.Artist.get_or_retrieve_from_deezer(
+            27, update=True
+        )  # Daft Punk
+        self.assertFalse(created)
+        self.assertTrue(artist.deleted_deezer)
+        self.inexistent_artist_patch.stop()
+
+    def test_set_last_update_deezer_api(self):
+        """
+        Tests that the last_update_deezer attribute of an Artist 
+        is set when it is retrieved from the Deezer API.
+        """
+        datetime_before_update = tz.now()
+        artist, created = models.Artist.get_or_retrieve_from_deezer(
+            27
+        )  # Daft Punk
+        self.assertTrue(artist.last_update_deezer > datetime_before_update)
+        datetime_before_update = tz.now()
+        artist, created = models.Artist.get_or_retrieve_from_deezer(
+            27, update=True
+        )  # Daft Punk
+        self.assertTrue(artist.last_update_deezer > datetime_before_update)
 
 
 class TrackTest(TestCase):
@@ -87,9 +127,7 @@ class TrackTest(TestCase):
         profile = Profile.objects.create(user=user)
         user.save()
         profile.save()
-        dz_account = DeezerAccount.objects.create(
-            profile=profile, user_id=1
-        )
+        dz_account = DeezerAccount.objects.create(profile=profile, user_id=1)
         dz_account.save()
         recording = Recording.objects.create(
             isrc="USQX91300108", title="Get Lucky",
@@ -121,7 +159,7 @@ class TrackTest(TestCase):
             title="Title",
             artist_name="Artist",
             album_name="Album",
-            deezer_account=dz_account
+            deezer_account=dz_account,
         )
         deezer_mp3.save()
         track3 = Track.objects.create(track_type="")

@@ -79,9 +79,14 @@ class Artist(models.Model):
                     error_type = json_data["error"]["type"]
                     message = json_data["error"]["message"]
                     code = json_data["error"]["code"]
-                    instance.delete()  # Otherwise, a blank artist will stay in
-                    # the database.
-                    raise DeezerApiError(error_type, message, code)
+                    if created:
+                        instance.delete()  # Otherwise, a blank artist would
+                                           # stay in the database.
+                        raise DeezerApiError(error_type, message, code)
+                    else:
+                        instance.deleted_deezer = True
+                        instance.save()
+                        return instance, created
                 except KeyError:
                     pass  # No API-related error occured.
 
@@ -91,6 +96,7 @@ class Artist(models.Model):
                     instance.image_url_deezer_big = json_data["picture_big"]
                     instance.image_url_deezer_xl = json_data["picture_xl"]
                     instance.nb_fans_deezer = json_data["nb_fan"]
+                    instance.last_update_deezer = tz.now()
                     instance.save()
 
 
