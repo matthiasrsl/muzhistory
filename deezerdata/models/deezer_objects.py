@@ -400,9 +400,14 @@ class DeezerMp3(DeezerTrack):
                     error_type = json_data["error"]["type"]
                     message = json_data["error"]["message"]
                     code = json_data["error"]["code"]
-                    instance.delete()  # Otherwise, a blank track would stay in
-                    # the database.
-                    raise DeezerApiError(error_type, message, code)
+                    if created:
+                        instance.delete()  # Otherwise, a blank track would 
+                        # stay in the database.
+                        raise DeezerApiError(error_type, message, code)
+                    else:
+                        instance.deleted = True;
+                        instance.save()
+                        return instance, created
                 except KeyError:  # No API-related error occured.
                     if json_data["isrc"]:
                         raise ValueError("This is not a user mp3.")
@@ -411,6 +416,7 @@ class DeezerMp3(DeezerTrack):
                     instance.album_title = json_data["album"]["title"]
                     instance.save()
 
+                instance.last_update = tz.now()
                 instance.save()
 
         except:  # If an unexpected error happens, we don't want a

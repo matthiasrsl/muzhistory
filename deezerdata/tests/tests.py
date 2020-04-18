@@ -603,3 +603,41 @@ class DeezerMp3Test(TestCase):
             )
         with self.assertRaises(deezer_objects_models.DeezerMp3.DoesNotExist):
             query = deezer_objects_models.DeezerMp3.objects.get()
+
+    def test_set_deleted(self):
+        """
+        Tests that if a known mp3 is deleted from the Deezer API,
+        its deleted attribute is set to True.
+        """
+        self.download_mp3_data_patch.start()
+        mp3, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
+            -2902124464, self.deezer_account
+        )
+        self.assertTrue(created)
+        self.assertFalse(mp3.deleted)
+        self.download_mp3_data_patch.stop()
+        self.download_inexistant_patch.start()
+        mp3, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
+            -2902124464, self.deezer_account, update=True
+        ) 
+        self.assertFalse(created)
+        self.assertTrue(mp3.deleted)
+        self.download_inexistant_patch.stop()
+
+    def test_set_last_update(self):
+        """
+        Tests that the last_update attribute of a DeezerMp3 is set when
+        it is retrieved from the API.
+        """
+        self.download_mp3_data_patch.start()
+        datetime_before_update = tz.now()
+        mp3, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
+            -2902124464, self.deezer_account
+        )
+        self.assertTrue(mp3.last_update > datetime_before_update)
+        datetime_before_update = tz.now()
+        mp3, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
+            -2902124464, self.deezer_account, update=True
+        )
+        self.assertTrue(mp3.last_update > datetime_before_update)
+        self.download_mp3_data_patch.stop()
