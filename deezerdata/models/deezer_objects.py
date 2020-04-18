@@ -67,9 +67,14 @@ class DeezerAlbum(Release):
                     error_type = json_data["error"]["type"]
                     message = json_data["error"]["message"]
                     code = json_data["error"]["code"]
-                    instance.delete()  # Otherwise, a blank album will stay in
-                    # the database.
-                    raise DeezerApiError(error_type, message, code)
+                    if created:
+                        instance.delete()  # Otherwise, a blank album would
+                        # stay in the database.
+                        raise DeezerApiError(error_type, message, code)
+                    else:
+                        instance.deleted = True
+                        instance.save()
+                        return instance, created
                 except KeyError:
                     pass  # No API-related error occured.
 
@@ -125,6 +130,7 @@ class DeezerAlbum(Release):
                         pass  # The field is set to NULL.
 
                 instance.release_group = release_group
+                instance.last_update = tz.now()
                 instance.save()
 
                 for json_genre in json_data["genres"]["data"]:

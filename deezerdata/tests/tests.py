@@ -40,6 +40,13 @@ class DeezerAlbumTest(TestCase):
             "deezerdata.models.deezer_objects.DeezerAlbum.download_data",
             new=MagicMock(side_effect=ConnectionError()),
         )
+        inexistant_track_response = json.loads(
+            data.inexistant_album_response_text
+        )
+        self.inexistent_album_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerAlbum.download_data",
+            new=MagicMock(return_value=inexistant_track_response),
+        )
 
     def test_retrieve_existent(self):
         """
@@ -133,6 +140,40 @@ class DeezerAlbumTest(TestCase):
         )  # Daft Punk's Random Access Memories
         self.assertEqual(album.release_group.genres.all()[0].name, "Pop")
         self.assertEqual(album.release_group.genres.all()[0].dz_id, 132)
+
+    def test_set_deleted(self):
+        """
+        Tests that if a known album is deleted from the Deezer API,
+        its deleted attribute is set to True.
+        """
+        album, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            6575789
+        )  # Daft Punk's Random Access Memories
+        self.assertTrue(created)
+        self.assertFalse(album.deleted)
+        self.inexistent_album_patch.start()
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789, update=True
+        )  # Daft Punk's Random Access Memories
+        self.assertFalse(created)
+        self.assertTrue(album.deleted)
+        self.inexistent_album_patch.stop()
+
+    def test_set_last_update(self):
+        """
+        Tests that the last_update attribute of a DeezerAlbum is set when
+        it is retrieved from the API.
+        """
+        datetime_before_update = tz.now()
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )  # Daft Punk's Random Access Memories
+        self.assertTrue(album.last_update > datetime_before_update)
+        datetime_before_update = tz.now()
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789, update=True
+        )  # Daft Punk's Random Access Memories
+        self.assertTrue(album.last_update > datetime_before_update)
 
 
 class DeezerTrackTest(TestCase):
