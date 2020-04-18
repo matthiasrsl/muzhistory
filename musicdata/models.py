@@ -36,6 +36,8 @@ class Artist(models.Model):
     # The sizes vary on Spotify.
     image_url_spotify_medium = models.URLField(max_length=2000)
     nb_fans_deezer = models.BigIntegerField(null=True, blank=True)
+    deleted_deezer = models.BooleanField(default=False)
+    last_update_deezer = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"{self.name} (Artist)"

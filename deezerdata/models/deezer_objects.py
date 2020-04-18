@@ -31,6 +31,8 @@ class DeezerAlbum(Release):
     explicit_lyrics = models.BooleanField(null=True, blank=True)
     explicit_content_lyrics = models.IntegerField(null=True, blank=True)
     explicit_content_cover = models.IntegerField(null=True, blank=True)
+    deleted = models.BooleanField(default=False)
+    last_update = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"{self.release_group.title} (Deezer)"
@@ -188,6 +190,8 @@ class DeezerTrack(Track):
     # as it is part of audio features.
     gain = models.FloatField(null=True, blank=True)
     alternative_id = models.BigIntegerField(null=True, blank=True)
+    deleted = models.BooleanField(default=False)
+    last_update = models.DateTimeField(null=True)
 
     def __str__(self):
         return f"{self.recording.title} (Deezer)"
@@ -225,14 +229,18 @@ class DeezerTrack(Track):
             # instance was created, or if the instance should be updated.
             if created or update or settings.ALWAYS_UPDATE_DEEZER_DATA:
                 json_data = instance.download_data()
-
                 try:
                     error_type = json_data["error"]["type"]
                     message = json_data["error"]["message"]
                     code = json_data["error"]["code"]
-                    instance.delete()  # Otherwise, a blank track would stay in
-                    # the database.
-                    raise DeezerApiError(error_type, message, code)
+                    if created:
+                        instance.delete()  # Otherwise, a blank track would
+                        # stay in the database.
+                        raise DeezerApiError(error_type, message, code)
+                    else:
+                        instance.deleted = True
+                        instance.save()
+                        return instance, created
                 except KeyError:
                     pass  # No API-related error occured.
 
@@ -321,6 +329,7 @@ class DeezerTrack(Track):
                 instance.available_markets.add(*available_markets)
                 # Bulk-add to reduce database access.
 
+                instance.last_update = tz.now()
                 instance.save()
 
         except:  # If an unexpected error happens, we don't want a

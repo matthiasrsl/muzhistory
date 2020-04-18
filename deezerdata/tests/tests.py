@@ -145,15 +145,26 @@ class DeezerTrackTest(TestCase):
             return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
-        download_track = MagicMock(
-            return_value=json.loads(data.track_test_response_text)
+        
+        inexistant_track_response = json.loads(
+            data.inexistant_track_response_text
         )
-        deezer_objects_models.DeezerTrack.download_data = download_track
+        existing_track_response = json.loads(data.track_test_response_text)
+
+        self.existing_track_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack.download_data",
+            new=MagicMock(return_value=existing_track_response),
+        )
+        self.inexistent_track_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack.download_data",
+            new=MagicMock(return_value=inexistant_track_response),
+        )
 
     def test_retrieve_existent(self):
         """
         Checks that the retrieval of an existing track works.
         """
+        self.existing_track_patch.start()
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
         )  # Get Lucky
@@ -174,12 +185,14 @@ class DeezerTrackTest(TestCase):
         self.assertEqual(
             track.release.release_group.contributors.all()[0].name, "Daft Punk"
         )
+        self.existing_track_patch.stop()
 
     def test_retrieve_no_duplicate(self):
         """
         Checks that the retrieval of a track already in the database
         does not create a duplicate entry.
         """
+        self.existing_track_patch.start()
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735
         )  # Get Lucky
@@ -190,21 +203,20 @@ class DeezerTrackTest(TestCase):
             dz_id=67238735
         )
         self.assertEqual(len(query_tracks), 1)
+        self.existing_track_patch.stop()
 
     def test_retrieve_non_existent(self):
         """
         Checks that the retrieval of an track with an invalid deezer id
         raises a DeezerApiError.
         """
-        download_track = MagicMock(
-            return_value=json.loads(data.inexistant_track_response_text)
-        )
-        deezer_objects_models.DeezerTrack.download_data = download_track
+        self.inexistent_track_patch.start()
 
         with self.assertRaises(DeezerApiError):
             track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
                 0
             )
+        self.inexistent_track_patch.stop()
 
     def test_retrieve_mp3(self):
         """
@@ -226,6 +238,7 @@ class DeezerTrackTest(TestCase):
         during the retrieval of a contributor, no corrupted track
         is stored in the database.
         """
+        self.existing_track_patch.start()
         download_artist = MagicMock(side_effect=ConnectionError())
         musicdata_models.Artist.download_data_from_deezer = download_artist
 
@@ -240,6 +253,7 @@ class DeezerTrackTest(TestCase):
             query = deezer_objects_models.DeezerTrack.objects.get(
                 dz_id=67238735
             )
+        self.existing_track_patch.stop()
 
     def test_retrieve_network_error_during_track_retrieval(self):
         """
@@ -263,6 +277,44 @@ class DeezerTrackTest(TestCase):
             query = deezer_objects_models.DeezerTrack.objects.get(
                 dz_id=67238735
             )
+
+    def test_set_deleted(self):
+        """
+        Tests that if a known track is deleted from the Deezer API,
+        its deleted attribute is set to True.
+        """
+        self.existing_track_patch.start()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )  # Get Lucky
+        self.assertTrue(created)
+        self.assertFalse(track.deleted)
+        self.existing_track_patch.stop()
+        self.inexistent_track_patch.start()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735, update=True
+        )  # Get Lucky
+        self.assertFalse(created)
+        self.assertTrue(track.deleted)
+        self.inexistent_track_patch.stop()
+
+    def test_set_last_update(self):
+        """
+        Tests that the last_update attribute of a DeezerTrack is set when
+        it is retrieved from the API.
+        """
+        self.existing_track_patch.start()
+        datetime_before_update = tz.now()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )  # Get Lucky
+        self.assertTrue(track.last_update > datetime_before_update)
+        datetime_before_update = tz.now()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735, update=True
+        )  # Get Lucky
+        self.assertTrue(track.last_update > datetime_before_update)
+        self.existing_track_patch.stop()
 
 
 class DeezerAccountTest(TestCase):
@@ -366,7 +418,7 @@ class DeezerAccountTest(TestCase):
         self.assertEqual(entries.count(), 1)
         self.download_history_data_patch.stop()
 
-        # def test_blocked_from_deezer(self):
+    def test_blocked_from_deezer(self):
         """
         Tests that if a user removes MuzHistory's access to their 
         Deezer account from Deezer, the DeezerAccount status is set
