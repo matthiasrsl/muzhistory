@@ -10,21 +10,24 @@ from requests.exceptions import RequestException
 from deezerdata.models.deezer_account import DeezerAccount
 
 
-@login_required
-def display_profile(request):
-    profile = request.user.profile
-    platform_accounts = profile.platformaccount_set.all()
-    deezer_accounts = []
-    for account in platform_accounts:
-        try:
-            deezer_accounts.append(account.deezeraccount)
-        except AttributeError:  # This account is not a DeezerAccount
-            pass
+class DisplayProfile(View, LoginRequiredMixin):
+    """
+    Displays the profile of the current user.
+    """
+    def get(self, request):
+        profile = request.user.profile
+        platform_accounts = profile.platformaccount_set.all()
+        deezer_accounts = []
+        for account in platform_accounts:
+            try:
+                deezer_accounts.append(account.deezeraccount)
+            except AttributeError:  # This account is not a DeezerAccount
+                pass
 
-    deezer_link_account_url = settings.DEEZER_OAUTH_URL.format(
-        settings.DEEZER_API_APP_ID, settings.DEEZER_AUTH_REDIRECT_URI
-    )
-    return render(request, "accounts/display_profile.html", locals())
+        deezer_link_account_url = settings.DEEZER_OAUTH_URL.format(
+            settings.DEEZER_API_APP_ID, settings.DEEZER_AUTH_REDIRECT_URI
+        )
+        return render(request, "accounts/display_profile.html", locals())
 
 
 class GetDeezerOAuthCode(View, LoginRequiredMixin):
@@ -73,4 +76,4 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
                 "pu être lié.",
             )
 
-        return redirect(display_profile)
+        return redirect(DisplayProfile.as_view())
