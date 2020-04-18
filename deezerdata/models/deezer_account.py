@@ -51,7 +51,7 @@ class DeezerAccount(PlatformAccount):
         self.lastname = r_data["lastname"]
         self.firstname = r_data["firstname"]
         self.email = r_data["email"]
-        self.status = r_data["status"]
+        self.status_deezer = r_data["status"]
         if r_data["birthday"] != "0000-00-00":
             birthday_list = r_data["birthday"].split("-")
             birthday_list = [int(elt) for elt in birthday_list]
@@ -124,31 +124,32 @@ class DeezerAccount(PlatformAccount):
         """
         Retrieves the listening history of a user from the Deezer API.
         """
-        try:
-            (
-                next_url,
-                oldest_listening_datetime,
-            ) = self.retrieve_history_iteration()
-            while next_url:
+        if self.status == self.StatusChoices.ACTIVE:
+            try:
                 (
                     next_url,
                     oldest_listening_datetime,
-                ) = self.retrieve_history_iteration(next_url)
-        except DeezerApiError as e:
-            if e.error_type == "OAuthException":
-                self.status = DeezerAccount.StatusChoices.BLOCKED
-                self.save()
-                return
-            else:
-                raise e
+                ) = self.retrieve_history_iteration()
+                while next_url:
+                    (
+                        next_url,
+                        oldest_listening_datetime,
+                    ) = self.retrieve_history_iteration(next_url)
+            except DeezerApiError as e:
+                if e.error_type == "OAuthException":
+                    self.status = DeezerAccount.StatusChoices.BLOCKED
+                    self.save()
+                    return
+                else:
+                    raise e
 
-        if oldest_listening_datetime > self.last_history_request:
-            ellipsis_entry = HistoryEntry(
-                profile=self.profile,
-                listening_datetime=oldest_listening_datetime,
-                entry_type=HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS,
-            )
-            ellipsis_entry.save()
+            if oldest_listening_datetime > self.last_history_request:
+                ellipsis_entry = HistoryEntry(
+                    profile=self.profile,
+                    listening_datetime=oldest_listening_datetime,
+                    entry_type=HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS,
+                )
+                ellipsis_entry.save()
 
-        self.last_history_request = tz.now()
-        self.save()
+            self.last_history_request = tz.now()
+            self.save()

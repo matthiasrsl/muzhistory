@@ -94,5 +94,6 @@ class Profile(models.Model):
                 )
 
         deezer_account.access_token = access_token
+        deezer_account.status = DeezerAccount.StatusChoices.ACTIVE
         deezer_account.update()
         deezer_account.save()

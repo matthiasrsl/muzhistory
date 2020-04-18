@@ -46,6 +46,10 @@ class Market(models.Model):
     code = models.CharField(max_length=2)  # ISO 3166-1 alpha-2.
     english_name = models.CharField(max_length=100, null=True)
 
+    def __str__(self):
+        return self.code
+
+
 
 class PlatformAccount(models.Model):
     """
