@@ -200,7 +200,11 @@ class DeezerTrack(Track):
     last_update = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"{self.recording.title} (Deezer)"
+        return (
+            f"{self.recording.title} (Deezer)"
+            if self.recording
+            else "ERROR"
+        )
 
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_TRACK
@@ -401,11 +405,11 @@ class DeezerMp3(DeezerTrack):
                     message = json_data["error"]["message"]
                     code = json_data["error"]["code"]
                     if created:
-                        instance.delete()  # Otherwise, a blank track would 
+                        instance.delete()  # Otherwise, a blank track would
                         # stay in the database.
                         raise DeezerApiError(error_type, message, code)
                     else:
-                        instance.deleted = True;
+                        instance.deleted = True
                         instance.save()
                         return instance, created
                 except KeyError:  # No API-related error occured.

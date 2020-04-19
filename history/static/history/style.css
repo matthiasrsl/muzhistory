@@ -1,0 +1,77 @@
+/*@font-face {
+    font-family: 'open_sansregular';
+    src: url('fonts/OpenSans-Regular-webfont.eot');
+    src: url('fonts/OpenSans-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+         url('fonts/OpenSans-Regular-webfont.woff2') format('woff2'),
+         url('fonts/OpenSans-Regular-webfont.woff') format('woff'),
+         url('fonts/OpenSans-Regular-webfont.ttf') format('truetype'),
+         url('fonts/OpenSans-Regular-webfont.svg#open_sansregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}*/
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 2.2em;
+}
+
+h2 {
+    font-size: 1.6em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: flex;
+    margin: 5px auto 15px auto;
+}
+
+.album_cover img {
+    width: 65px;
+    margin: auto 10px auto auto;
+    cursor: pointer;
+}
+
+p {
+    margin: 0;
+}
+
+.track_metadata {
+    display: flex;
+    flex-direction: column;
+}
+
+.track_title {
+    font-size: 1.4em;
+    padding: 0;
+    margin: 2px 0 0 0;
+    line-height: 80%;
+}
+
+.track_title_version {
+    font-size: 0.7em;
+}
+
+.artist_name {
+    font-size: 0.9em
+}
+
+.album_name {
+    font-size: 0.9em;
+    color: #777;
+}
+
+.listening_datetime {
+    font-size: 0.7em;
+    color: #777;
+}
+
+.empty_history_message {
+    font-size: 1.2em;
+    font-weight: bold;
+}

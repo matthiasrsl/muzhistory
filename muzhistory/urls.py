@@ -22,4 +22,5 @@ urlpatterns = [
     path("tools_nqztht/", include("tools.urls", namespace="tools")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("accounts.urls")),
+    path("history/", include("history.urls", namespace="history")),
 ]

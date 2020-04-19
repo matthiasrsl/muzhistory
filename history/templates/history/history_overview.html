@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}
+Historique de {{ profile.user.username }} - MuzHistory
+{% endblock %}
+
+{% block static %}
+  <link rel="stylesheet" href="{% static 'history/style.css'%}" />
+{% endblock %}
+
+{% block section %}
+<h1>Historique d'écoute de {{ profile.user.username }}</h1>
+<a href="#">Statistiques</a>
+<a href="#">Mise à jour</a>
+<p>Dernière mise à jour:
+  <!-- text "le" is inside the filter parameter to avoid displaying
+       it if the filters displays "yesterday" or such values. -->
+  {{ last_history_request|naturalday:"\l\e j F Y" }}
+  à {{ last_history_request|time }}</p>
+<br />
+{% if entries %}
+<p><strong>{{ paginator.count }} écoutes</strong> depuis
+  {{ date_first_entry|naturalday:"\l\e j F Y" }}, soit plus de
+  <strong>
+    {{ total_listening_duration_hours }} 
+    heure{{ total_listening_duration_hours|pluralize }}
+  </strong>
+</p>
+<br />
+<p>Page {{ page.number }} de {{ page.paginator.num_pages }}: du
+  {{ first_entry.listening_datetime|date:"j F Y" }} au
+  {{ last_entry.listening_datetime|date:"j F Y" }}
+</p>
+<p>
+  <a href="{% url 'history:overview' %}">Première page</a>
+  {% if page.has_previous %}
+  - <a href="{% url 'history:overview' %}?page=
+              {{ page.previous_page_number }}">
+    Page précédente</a>
+  {% endif %}
+  {% if page.has_next %}
+  - <a href="{% url 'history:overview' %}?page={{ page.next_page_number }}">
+    Page suivante</a>
+  {% endif %}
+  {% endif %}
+  <br />
+
+  <ul class='history_overview'>
+    {% for entry in page %}
+    {% if entry.entry_type == 'ellipsis_deezer' %}
+    <li>Oups... Il y a des écoutes perdues.</li>
+    {% elif entry.entry_type == 'listening' and  entry.deezer_account %}
+    <li>
+      <div class='album_cover' onclick="playaudio({{ entry.id }});">
+        <img src="{{ entry.track.deezertrack.release.cover_medium }}"
+          alt="Album cover: {{ entry.track.deezertrack.release.release_group.title }}" title="Écouter un extrait" />
+      </div>
+      <div class='track_metadata'>
+        <p class='track_title'>
+          {{ entry.track.deezertrack.title_short }}<span class="track_title_version">
+            {{ entry.track.deezer_track.title_version }}</span>
+        </p>
+        <p class='artist_and_album'>
+          {% for contributor in entry.track.recording.contributors.all %}
+          <span class='artist_name'>{{ contributor.name }}</span>
+          {% endfor %}
+          - <span class='album_name'>
+              {{ entry.track.deezertrack.release.release_group.title }}
+            </span>
+        </p>
+        <p class='listening_datetime'>Écouté
+          {{ entry.listening_datetime|naturalday:"\l\e j F Y" }} à
+          {{ entry.listening_datetime|time }}</p>
+        <audio id={{ entry.id }} src="{{ entry.track.deezertrack.preview }}" preload='none'></audio>
+      </div>
+    </li>
+    {% endif %}
+    {% empty %}
+    <p class="empty_history_message">
+      Votre historique d'écoute est vide.</p>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function playaudio(id) {
+      var allaudios = document.querySelectorAll('audio');
+      var audio = document.getElementById(id);
+      if (audio.paused) {
+          for (var i = 0; i < allaudios.length; i++) {
+              allaudios[i].pause();
+          }
+          audio.play();
+      } else {
+          audio.pause();
+      }
+  }
+</script>
+{% endblock %}
