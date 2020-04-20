@@ -49,9 +49,12 @@ p {
     font-size: 0.9em
 }
 
+.artist_name_role_feat {
+    color: #777;
+}
+
 .album_name {
     font-size: 0.9em;
-    color: #777;
 }
 
 .listening_datetime {

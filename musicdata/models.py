@@ -193,7 +193,7 @@ class Recording(models.Model):
     # no longer be available. As this data is not critically
     # important, we allow this behaviour (which is better than having
     # tracks - and therefore potentially history entries - having no
-    # recording.
+    # recording).
     deezer_track = models.ForeignKey(
         "deezerdata.DeezerTrack",
         on_delete=models.SET_NULL,

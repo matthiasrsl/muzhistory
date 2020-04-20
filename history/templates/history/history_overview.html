@@ -62,8 +62,13 @@ Historique de {{ profile.user.username }} - MuzHistory
             {{ entry.track.deezertrack.title_version }}</span>
         </p>
         <p class='artist_and_album'>
-          {% for contributor in entry.track.recording.contributors.all %}
+          <!-- {% for contributor in entry.track.recording.contributors.all %}
           <span class='artist_name'>{{ contributor.name }}</span>
+          {% endfor %} -->
+          {% for contrib in entry.track.recording.recordingcontribution_set.all %}
+            <span class='artist_name artist_name_role_{{ contrib.role }}'>
+              {{ contrib.artist.name }}{% if not forloop.last %}, {% endif %}
+            </span>
           {% endfor %}
           - <span class='album_name'>
               {{ entry.track.deezertrack.release.release_group.title }}

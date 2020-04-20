@@ -32,6 +32,7 @@ class HistoryOverview(View, LoginRequiredMixin):
                 "track__deezertrack__release__release_group",
                 "track__recording",
             )
+            #.annotate(contrib='track__recording__recordingcontribution_set')
             .filter(profile=profile)
             .order_by("-listening_datetime")
         )
