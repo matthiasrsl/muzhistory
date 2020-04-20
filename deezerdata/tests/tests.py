@@ -175,6 +175,37 @@ class DeezerAlbumTest(TestCase):
         )  # Daft Punk's Random Access Memories
         self.assertTrue(album.last_update > datetime_before_update)
 
+    def test_retrieve_no_duplicate_contributions(self):
+        """
+        Github issue #26:
+        Tests that when a album is updated, its release_group's 
+        contributions are not duplicated.
+        """
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )  # Daft Punk's Random Access Memories
+        self.assertEqual(album.release_group.contributors.count(), 1)
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789, update=True
+        )  # Daft Punk's Random Access Memories
+        self.assertEqual(album.release_group.contributors.count(), 1)
+
+    def test_update_no_duplicate_release_group(self):
+        """
+        Tests that when a track is updated, its release's release_group
+        is not duplicated.
+        """
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )  # Daft Punk's Random Access Memories
+        query = musicdata_models.ReleaseGroup.objects.filter(title="Random Access Memories")
+        self.assertEqual(query.count(), 1)
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789, update=True
+        )  # Daft Punk's Random Access Memories
+        query = musicdata_models.ReleaseGroup.objects.filter(title="Random Access Memories")
+        self.assertEqual(query.count(), 1)
+
 
 class DeezerTrackTest(TestCase):
     def setUp(self):
@@ -355,6 +386,23 @@ class DeezerTrackTest(TestCase):
             67238735, update=True
         )  # Get Lucky
         self.assertTrue(track.last_update > datetime_before_update)
+        self.existing_track_patch.stop()
+
+    def test_update_no_duplicate_contributions(self):
+        """
+        Github issue #26:
+        Tests that when a track is updated, its recording's
+        contributions are not duplicated.
+        """
+        self.existing_track_patch.start()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )  # Get Lucky
+        self.assertEqual(track.recording.contributors.count(), 3)
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735, update=True
+        )  # Get Lucky
+        self.assertEqual(track.recording.contributors.count(), 3)
         self.existing_track_patch.stop()
 
 

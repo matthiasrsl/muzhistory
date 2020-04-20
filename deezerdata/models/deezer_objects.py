@@ -89,7 +89,7 @@ class DeezerAlbum(Release):
                 else:
                     album_type = json_data["record_type"]
 
-                release_group = ReleaseGroup.objects.create(
+                release_group, rl_created = ReleaseGroup.objects.get_or_create(
                     title=json_data["title"], album_type=album_type,
                 )
 
@@ -141,6 +141,11 @@ class DeezerAlbum(Release):
                         genre.name = json_genre["name"]
                         genre.save()
                     instance.release_group.genres.add(genre)
+
+                if not created:  #  To avoid duplicate contributions
+                    ReleaseGroupContribution.objects.filter(
+                        release_group=release_group
+                    ).delete()
 
                 for json_contrib in json_data["contributors"]:
                     contributor = Artist.get_or_retrieve_from_deezer(
@@ -201,9 +206,7 @@ class DeezerTrack(Track):
 
     def __str__(self):
         return (
-            f"{self.recording.title} (Deezer)"
-            if self.recording
-            else "ERROR"
+            f"{self.recording.title} (Deezer)" if self.recording else "ERROR"
         )
 
     def save(self, *args, **kwargs):
@@ -312,6 +315,11 @@ class DeezerTrack(Track):
                     )[0]
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
+
+                if not created:  # To avoid duplicate contributions
+                    RecordingContribution.objects.filter(
+                        recording=recording
+                    ).delete()
 
                 for json_contrib in json_data["contributors"]:
                     contributor = Artist.get_or_retrieve_from_deezer(
