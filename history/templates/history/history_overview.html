@@ -53,6 +53,72 @@ Historique de {{ profile.user.username }} - MuzHistory
     {% elif entry.entry_type == 'listening' and  entry.deezer_account %}
     <li>
       <div class='album_cover' onclick="playaudio({{ entry.id }});">
+        {% if entry.track.deezertrack %}
+          <img 
+            {% if entry.track.deezertrack.deezermp3 %}
+              src="{{ DEFAULT_ALBUM_COVER_URL }}"
+              alt="Generic album cover" 
+              title="Pas d'extrait disponible" 
+            {% else %}
+              class="play_extract"
+              src="{{ entry.track.deezertrack.release.cover_medium }}"
+              alt="
+                Album cover: 
+                {{ entry.track.deezertrack.release.release_group.title }}
+              " 
+              title="Écouter un extrait" 
+            {% endif %}
+          />
+        {% endif %}
+      </div>
+      <div class='track_metadata'>
+        <p class='track_title'>
+        {% if entry.track.deezertrack %}
+          {% if entry.track.deezertrack.deezermp3 %}
+            {{ entry.track.deezertrack.deezermp3.title }}
+          {% else %}
+            {{ entry.track.recording.title }}
+          {% endif %}
+        {% endif %}
+        </p>
+        <p class='artist_and_album'>
+          {% if entry.track.deezertrack %}
+            {% if entry.track.deezertrack.deezermp3 %}
+              {{ entry.track.deezertrack.deezermp3.artist_name }}
+            {% else %}
+              {% for contrib in entry.track.recording.recordingcontribution_set.all %}
+                <span class='
+                    artist_name artist_name_role_{{ contrib.role }}
+                '>
+                  {{ contrib.artist.name }}{% if not forloop.last %}, 
+                  {% endif %}
+                </span>
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+          <span class='album_name'>
+            {% if entry.track.deezertrack %}
+              {% if entry.track.deezertrack.deezermp3 %}
+                {% if entry.track.deezertrack.deezermp3.album_name %}
+                  - {{ entry.track.deezertrack.deezermp3.album_name }}
+                {% endif %}
+              {% else %}
+                - {{ entry.track.deezertrack.release.release_group.title}}
+              {% endif %}
+            {% endif %}
+          </span>
+        </p>
+        <p class='listening_datetime'>Écouté
+          {{ entry.listening_datetime|naturalday:"\l\e j F Y" }} à
+          {{ entry.listening_datetime|time }}</p>
+        {% if entry.track.deezertrack %}
+          <audio id={{ entry.id }} src="{{ entry.track.deezertrack.preview }}" 
+              preload='none'>
+          </audio>
+        {% endif %}
+      </div>
+    <!--
+      <div class='album_cover' onclick="playaudio({{ entry.id }});">
         <img src="{{ entry.track.deezertrack.release.cover_medium }}"
           alt="Album cover: {{ entry.track.deezertrack.release.release_group.title }}" title="Écouter un extrait" />
       </div>
@@ -62,9 +128,6 @@ Historique de {{ profile.user.username }} - MuzHistory
             {{ entry.track.deezertrack.title_version }}</span>
         </p>
         <p class='artist_and_album'>
-          <!-- {% for contributor in entry.track.recording.contributors.all %}
-          <span class='artist_name'>{{ contributor.name }}</span>
-          {% endfor %} -->
           {% for contrib in entry.track.recording.recordingcontribution_set.all %}
             <span class='artist_name artist_name_role_{{ contrib.role }}'>
               {{ contrib.artist.name }}{% if not forloop.last %}, {% endif %}
@@ -78,7 +141,7 @@ Historique de {{ profile.user.username }} - MuzHistory
           {{ entry.listening_datetime|naturalday:"\l\e j F Y" }} à
           {{ entry.listening_datetime|time }}</p>
         <audio id={{ entry.id }} src="{{ entry.track.deezertrack.preview }}" preload='none'></audio>
-      </div>
+      </div>-->
     </li>
     {% endif %}
     {% empty %}

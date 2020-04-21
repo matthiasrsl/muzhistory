@@ -65,24 +65,27 @@
         <p class='track_title'>
         {% if track.deezertrack %}
           {% if track.deezertrack.deezermp3 %}
-            {{ track.deezertrack.deezermp3.title }} (mp3)
+            {{ track.deezertrack.deezermp3.title }}
           {% else %}
             {{ track.recording.title }}
           {% endif %}
         {% endif %}
         </p>
         <p class='artist_and_album'>
-          <span class="artist_name">
             {% if track.deezertrack %}
               {% if track.deezertrack.deezermp3 %}
                 {{ track.deezertrack.deezermp3.artist_name }}
               {% else %}
-                {% for contributor in track.recording.contributors.all %}
-                  {{ contributor.name }}{% if not forloop.last %},{% endif %}
+                {% for contrib in track.recording.recordingcontribution_set.all %}
+                  <span class='
+                      artist_name artist_name_role_{{ contrib.role }}
+                  '>
+                    {{ contrib.artist.name }}{% if not forloop.last %}, 
+                    {% endif %}
+                  </span>
                 {% endfor %}
               {% endif %}
             {% endif %}
-          </span>
           <span class='album_name'>
             {% if track.deezertrack %}
               {% if track.deezertrack.deezermp3 %}

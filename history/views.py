@@ -28,6 +28,7 @@ class HistoryOverview(View, LoginRequiredMixin):
             .last_history_request
         )
 
+        DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL
         entries = (
             HistoryEntry.objects.select_related(
                 "track",
