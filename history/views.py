@@ -191,6 +191,35 @@ class Statistics(View, LoginRequiredMixin):
             .order_by("-entry_count")[:10]
         )
 
-        return render(
-            request, "history/statistics.html", locals()
-        )
+        stats_sections = [
+            {
+                "title": "Les 7 derniers jours",
+                "objects": {
+                    "artists": artists_last_7days,
+                    "tracks": tracks_last_7days,
+                },
+            },
+            {
+                "title": "Les 30 derniers jours",
+                "objects": {
+                    "artists": artists_30_days,
+                    "tracks": tracks_30_days,
+                },
+            },
+            {
+                "title": tz.now().year,
+                "objects": {
+                    "artists": artists_this_year,
+                    "tracks": tracks_this_year,
+                },
+            },
+            {
+                "title": "Tout l'historique",
+                "objects": {
+                    "artists": artists_all_time,
+                    "tracks": tracks_all_time,
+                },
+            },
+        ]
+
+        return render(request, "history/statistics.html", locals())
