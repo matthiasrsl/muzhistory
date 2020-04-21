@@ -22,6 +22,9 @@ li {
 .album_cover img {
     width: 65px;
     margin: auto 10px auto auto;
+}
+
+.album_cover img.play_extract {
     cursor: pointer;
 }
 

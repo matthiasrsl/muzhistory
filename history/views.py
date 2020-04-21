@@ -1,5 +1,6 @@
 import datetime as dt
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator, EmptyPage
@@ -83,6 +84,7 @@ class Statistics(View, LoginRequiredMixin):
     """
 
     def get(self, request):
+        DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL
         profile = request.user.profile
         entries = HistoryEntry.objects.filter(profile=profile)
         if not entries:
@@ -123,8 +125,7 @@ class Statistics(View, LoginRequiredMixin):
             Artist.objects.filter(
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
-                recording__track__historyentry__listening_datetime__year= \
-                    tz.now().year,
+                recording__track__historyentry__listening_datetime__year=tz.now().year,
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
             .order_by("-entry_count")[:5]
@@ -190,4 +191,6 @@ class Statistics(View, LoginRequiredMixin):
             .order_by("-entry_count")[:10]
         )
 
-        return render(request, "history/statistics.html", locals())
+        return render(
+            request, "history/statistics.html", locals()
+        )

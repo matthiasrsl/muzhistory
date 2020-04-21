@@ -33,20 +33,67 @@
 <ol>
   {% for track in tracks_last_7days %}
   <li>
-    {% if track.deezertrack %}
-      {% if track.deezertrack.deezermp3 %}
-        {{ track.deezertrack.deezermp3.artist_name }} -
-        {{ track.deezertrack.deezermp3.title }} (mp3)
-      {% else %}
-        {% for contributor in track.recording.contributors.all %}
-          {{ contributor.name }}{% if not forloop.last %},
-            {% else %} - {% endif %}
-        {% endfor %}
-        {{ track.recording.title}}
+    <div class='album_cover' onclick="playaudio({{ track.id }});">
+      {% if track.deezertrack %}
+        <img 
+          {% if track.deezertrack.deezermp3 %}
+            src="{{ DEFAULT_ALBUM_COVER_URL }}"
+            alt="Generic album cover" 
+            title="Pas d'extrait disponible" 
+          {% else %}
+            class="play_extract"
+            src="{{ track.deezertrack.release.cover_medium }}"
+            alt="
+              Album cover: {{ track.deezertrack.release.release_group.title }}
+            " 
+            title="Écouter un extrait" 
+          {% endif %}
+        />
       {% endif %}
-    {% endif %}
-    
-    ({{ track.entry_count }} écoutes)
+    </div>
+    <div class='track_metadata'>
+      <p class='track_title'>
+      {% if track.deezertrack %}
+        {% if track.deezertrack.deezermp3 %}
+          {{ track.deezertrack.deezermp3.title }} (mp3)
+        {% else %}
+          {{ track.recording.title }}
+        {% endif %}
+      {% endif %}
+      </p>
+      <p class='artist_and_album'>
+        <span class="artist_name">
+          {% if track.deezertrack %}
+            {% if track.deezertrack.deezermp3 %}
+              {{ track.deezertrack.deezermp3.artist_name }}
+            {% else %}
+              {% for contributor in track.recording.contributors.all %}
+                {{ contributor.name }}{% if not forloop.last %},{% endif %}
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+        </span>
+        <span class='album_name'>
+          {% if track.deezertrack %}
+            {% if track.deezertrack.deezermp3 %}
+              {% if track.deezertrack.deezermp3.album_name %}
+                - {{ track.deezertrack.deezermp3.album_name }}
+              {% endif %}
+            {% else %}
+              - {{ track.deezertrack.release.release_group.title}}
+            {% endif %}
+          {% endif %}
+        </span>
+      </p>
+      <p class='listening_datetime'>
+        {{ track.entry_count }} écoute{{ track.entry_count|pluralize }}
+      </p>
+      {% if track.deezertrack %}
+        <audio id={{ track.id }} src="{{ track.deezertrack.preview }}" 
+            preload='none'>
+        </audio>
+      {% endif %}
+    </div>
   </li>
   {% empty %}
   <p>Vous n'avez rien écouté.</p>
@@ -170,4 +217,21 @@
   {% endfor %}
 </ol>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function playaudio(id) {
+      var allaudios = document.querySelectorAll('audio');
+      var audio = document.getElementById(id);
+      if (audio.paused) {
+          for (var i = 0; i < allaudios.length; i++) {
+              allaudios[i].pause();
+          }
+          audio.play();
+      } else {
+          audio.pause();
+      }
+  }
+</script>
 {% endblock %}
