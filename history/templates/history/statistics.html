@@ -1,0 +1,132 @@
+<!-- -*- mode: html; indent-tabs-mode: nil; tab-width: 2 -*- -->
+
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'history/style.css'%}" />
+{% endblock %}
+
+{% block section %}
+<h1>Statistiques</h1>
+<a href="{% url 'history:overview' %}">Historique</a>
+{% if empty_history %}
+<p>Votre historique d'écoute est vide.</p>
+{% else %}
+
+  {% for section in stats_sections %}
+  <h2>{{ section.title }}</h2>
+  <ol>
+    {% for artist in section.objects.artists %}
+    <li>
+      <div class="artist_image">
+        {% if artist.image_url_deezer_small %}
+          <img src="{{ artist.image_url_deezer_medium }}"
+            alt="{{ artist.name }}" />
+        {% endif %}
+      </div>
+      <div class="artist_metadata">
+        <p class="artist_name">{{ artist.name }}</p>
+        <p class="listenings_count">
+          {{ artist.entry_count }} écoute{{ artist.entry_count|pluralize }}
+        </p>
+      </div>
+    </li>
+    {% empty %}
+    <p>Vous n'avez rien écouté durant cette période.</p>
+    {% endfor %}
+  </ol>
+
+  <h3>Morceaux les plus écoutés</h3>
+  <ol>
+    {% for track in section.objects.tracks %}
+    <li>
+      <div class='album_cover' onclick="playaudio({{ track.id }});">
+        {% if track.deezertrack %}
+          <img 
+            {% if track.deezertrack.deezermp3 %}
+              src="{{ DEFAULT_ALBUM_COVER_URL }}"
+              alt="Generic album cover" 
+              title="Pas d'extrait disponible" 
+            {% else %}
+              class="play_extract"
+              src="{{ track.deezertrack.release.cover_medium }}"
+              alt="
+                Album cover: {{ track.deezertrack.release.release_group.title }}
+              " 
+              title="Écouter un extrait" 
+            {% endif %}
+          />
+        {% endif %}
+      </div>
+      <div class='track_metadata'>
+        <p class='track_title'>
+        {% if track.deezertrack %}
+          {% if track.deezertrack.deezermp3 %}
+            {{ track.deezertrack.deezermp3.title }} (mp3)
+          {% else %}
+            {{ track.recording.title }}
+          {% endif %}
+        {% endif %}
+        </p>
+        <p class='artist_and_album'>
+          <span class="artist_name">
+            {% if track.deezertrack %}
+              {% if track.deezertrack.deezermp3 %}
+                {{ track.deezertrack.deezermp3.artist_name }}
+              {% else %}
+                {% for contributor in track.recording.contributors.all %}
+                  {{ contributor.name }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endif %}
+          </span>
+          <span class='album_name'>
+            {% if track.deezertrack %}
+              {% if track.deezertrack.deezermp3 %}
+                {% if track.deezertrack.deezermp3.album_name %}
+                  - {{ track.deezertrack.deezermp3.album_name }}
+                {% endif %}
+              {% else %}
+                - {{ track.deezertrack.release.release_group.title}}
+              {% endif %}
+            {% endif %}
+          </span>
+        </p>
+        <p class='listenings_count'>
+          {{ track.entry_count }} écoute{{ track.entry_count|pluralize }}
+        </p>
+        {% if track.deezertrack %}
+          <audio id={{ track.id }} src="{{ track.deezertrack.preview }}" 
+              preload='none'>
+          </audio>
+        {% endif %}
+      </div>
+    </li>
+    {% empty %}
+    <p>Vous n'avez rien écouté.</p>
+    {% endfor %}
+  </ol>
+
+  {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function playaudio(id) {
+      var allaudios = document.querySelectorAll('audio');
+      var audio = document.getElementById(id);
+      if (audio.paused) {
+          for (var i = 0; i < allaudios.length; i++) {
+              allaudios[i].pause();
+          }
+          audio.play();
+      } else {
+          audio.pause();
+      }
+  }
+</script>
+{% endblock %}

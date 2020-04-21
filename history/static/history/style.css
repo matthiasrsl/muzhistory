@@ -22,6 +22,9 @@ li {
 .album_cover img {
     width: 65px;
     margin: auto 10px auto auto;
+}
+
+.album_cover img.play_extract {
     cursor: pointer;
 }
 
@@ -37,7 +40,7 @@ p {
 .track_title {
     font-size: 1.4em;
     padding: 0;
-    margin: 2px 0 0 0;
+    margin: 2px 0;
     line-height: 80%;
 }
 
@@ -45,8 +48,8 @@ p {
     font-size: 0.7em;
 }
 
-.artist_name {
-    font-size: 0.9em
+.track_metadata .artist_name {
+    font-size: 0.9em;
 }
 
 .artist_name_role_feat {
@@ -65,4 +68,27 @@ p {
 .empty_history_message {
     font-size: 1.2em;
     font-weight: bold;
+}
+
+/* Statistics */
+
+.artist_image img {
+    width: 80px;
+    margin: auto 10px auto auto;
+    border: 1px solid white;
+    border-radius: 40px;
+}
+
+.artist_metadata {
+    position: relative;
+    top: 22px;
+}
+
+.artist_metadata .artist_name{
+    font-size: 1.4em;
+}
+
+.listenings_count {
+    font-size: 0.9em;
+    color: #777;
 }
