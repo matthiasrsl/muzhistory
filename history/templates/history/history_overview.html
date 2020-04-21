@@ -11,7 +11,7 @@ Historique de {{ profile.user.username }} - MuzHistory
 
 {% block section %}
 <h1>Historique d'écoute de {{ profile.user.username }}</h1>
-<a href="#">Statistiques</a>
+<a href="{% url 'history:statistics' %}">Statistiques</a>
 <a href="#">Mise à jour</a>
 <p>Dernière mise à jour:
   <!-- text "le" is inside the filter parameter to avoid displaying

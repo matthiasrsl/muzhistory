@@ -1,0 +1,173 @@
+<!-- -*- mode: html; indent-tabs-mode: nil; tab-width: 2 -*- -->
+
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'history/style.css'%}" />
+{% endblock %}
+
+{% block section %}
+<h1>Statistiques</h1>
+{% if empty_history %}
+<p>Votre historique d'écoute est vide.</p>
+{% else %}
+<a href="{% url 'history:overview' %}">Historique</a>
+<h2>Les 7 derniers jours</h2>
+<h3>Artistes les plus écoutés</h3>
+<ol>
+  {% for artist in artists_last_7days %}
+  <li>
+    {{ artist.name }}
+    ({{ artist.entry_count }} 
+      écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté durant cette période.</p>
+  {% endfor %}
+</ol>
+
+<h3>Morceaux les plus écoutés</h3>
+<ol>
+  {% for track in tracks_last_7days %}
+  <li>
+    {% if track.deezertrack %}
+      {% if track.deezertrack.deezermp3 %}
+        {{ track.deezertrack.deezermp3.artist_name }} -
+        {{ track.deezertrack.deezermp3.title }} (mp3)
+      {% else %}
+        {% for contributor in track.recording.contributors.all %}
+          {{ contributor.name }}{% if not forloop.last %},
+            {% else %} - {% endif %}
+        {% endfor %}
+        {{ track.recording.title}}
+      {% endif %}
+    {% endif %}
+    
+    ({{ track.entry_count }} écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté.</p>
+  {% endfor %}
+</ol>
+
+
+<h2>Les 30 derniers jours</h2>
+<h3>Artistes les plus écoutés</h3>
+<ol>
+  {% for artist in artists_30_days %}
+  <li>
+    {{ artist.name }}
+    ({{ artist.entry_count }} 
+      écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté.</p>
+  {% endfor %}
+</ol>
+
+<h3>Morceaux les plus écoutés</h3>
+<ol>
+  {% for track in tracks_30_days %}
+  <li>
+    {% if track.deezertrack %}
+      {% if track.deezertrack.deezermp3 %}
+        {{ track.deezertrack.deezermp3.artist_name }} -
+        {{ track.deezertrack.deezermp3.title }} (mp3)
+      {% else %}
+        {% for contributor in track.recording.contributors.all %}
+          {{ contributor.name }}{% if not forloop.last %},
+            {% else %} - {% endif %}
+        {% endfor %}
+        {{ track.recording.title}}
+      {% endif %}
+    {% endif %}
+    
+    ({{ track.entry_count }} écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté durant cette période.</p>
+  {% endfor %}
+</ol>
+
+
+<h2>{% now "Y" %}</h2>
+<h3>Artistes les plus écoutés</h3>
+<ol>
+  {% for artist in artists_this_year %}
+  <li>
+    {{ artist.name }}
+    ({{ artist.entry_count }} 
+      écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté.</p>
+  {% endfor %}
+</ol>
+
+<h3>Morceaux les plus écoutés</h3>
+<ol>
+  {% for track in tracks_this_year %}
+  <li>
+    {% if track.deezertrack %}
+      {% if track.deezertrack.deezermp3 %}
+        {{ track.deezertrack.deezermp3.artist_name }} -
+        {{ track.deezertrack.deezermp3.title }} (mp3)
+      {% else %}
+        {% for contributor in track.recording.contributors.all %}
+          {{ contributor.name }}{% if not forloop.last %},
+            {% else %} - {% endif %}
+        {% endfor %}
+        {{ track.recording.title}}
+      {% endif %}
+    {% endif %}
+    
+    ({{ track.entry_count }} écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté durant cette période.</p>
+  {% endfor %}
+</ol>
+
+
+<h2>Tout l'historique</h2>
+<h3>Artistes les plus écoutés</h3>
+<ol>
+  {% for artist in artists_all_time %}
+  <li>
+    {{ artist.name }}
+    ({{ artist.entry_count }} 
+      écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté.</p>
+  {% endfor %}
+</ol>
+
+<h3>Morceaux les plus écoutés</h3>
+<ol>
+  {% for track in tracks_all_time %}
+  <li>
+    {% if track.deezertrack %}
+      {% if track.deezertrack.deezermp3 %}
+        {{ track.deezertrack.deezermp3.artist_name }} -
+        {{ track.deezertrack.deezermp3.title }} (mp3)
+      {% else %}
+        {% for contributor in track.recording.contributors.all %}
+          {{ contributor.name }}{% if not forloop.last %},
+            {% else %} - {% endif %}
+        {% endfor %}
+        {{ track.recording.title}}
+      {% endif %}
+    {% endif %}
+    
+    ({{ track.entry_count }} écoutes)
+  </li>
+  {% empty %}
+  <p>Vous n'avez rien écouté durant cette période.</p>
+  {% endfor %}
+</ol>
+{% endif %}
+{% endblock %}

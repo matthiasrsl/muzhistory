@@ -6,10 +6,12 @@ from django.core.paginator import Paginator, EmptyPage
 from django.db.models import Sum, Count
 from django.db.models.query import EmptyQuerySet
 from django.shortcuts import redirect, render
+from django.utils import timezone as tz
 from django.views import View
 
 from accounts.models import Profile
 from history.models import HistoryEntry
+from musicdata.models import Track, Artist
 
 
 class HistoryOverview(View, LoginRequiredMixin):
@@ -73,3 +75,119 @@ class HistoryOverview(View, LoginRequiredMixin):
 
         response = render(request, "history/history_overview.html", locals())
         return response
+
+
+class Statistics(View, LoginRequiredMixin):
+    """
+    Statistics regarding the complete history.
+    """
+
+    def get(self, request):
+        profile = request.user.profile
+        entries = HistoryEntry.objects.filter(profile=profile)
+        if not entries:
+            empty_history = True
+            return render(request, "history/statistics.html", locals())
+        else:
+            empty_history = False
+        now = tz.now()
+        entries_last_7days = entries.filter(
+            listening_datetime__gte=now.date() - dt.timedelta(days=7)
+        )
+        entries_this_month = entries.filter(
+            listening_datetime__gte=now.date() - dt.timedelta(days=30)
+        )
+        entries_this_year = entries.filter(listening_datetime__year=now.year)
+
+        # All time
+        artists_all_time = (
+            Artist.objects.filter(
+                recording__track__historyentry__profile=profile,
+                recording__track__historyentry__entry_type="listening",
+            )
+            .annotate(entry_count=Count("recording__track__historyentry"))
+            .order_by("-entry_count")[:5]
+        )
+
+        tracks_all_time = (
+            Track.objects.filter(
+                historyentry__profile=profile,
+                historyentry__entry_type="listening",
+            )
+            .annotate(entry_count=Count("historyentry"))
+            .order_by("-entry_count")[:10]
+        )
+
+        # This year
+        artists_this_year = (
+            Artist.objects.filter(
+                recording__track__historyentry__profile=profile,
+                recording__track__historyentry__entry_type="listening",
+                recording__track__historyentry__listening_datetime__year= \
+                    tz.now().year,
+            )
+            .annotate(entry_count=Count("recording__track__historyentry"))
+            .order_by("-entry_count")[:5]
+        )
+
+        tracks_this_year = (
+            Track.objects.filter(
+                historyentry__profile=profile,
+                historyentry__entry_type="listening",
+                historyentry__listening_datetime__year=tz.now().year,
+            )
+            .annotate(entry_count=Count("historyentry"))
+            .order_by("-entry_count")[:10]
+        )
+
+        # Last 30 days
+        artists_30_days = (
+            Artist.objects.filter(
+                recording__track__historyentry__profile=profile,
+                recording__track__historyentry__entry_type="listening",
+                recording__track__historyentry__listening_datetime__gte=(
+                    now.date() - dt.timedelta(days=30)
+                ),
+            )
+            .annotate(entry_count=Count("recording__track__historyentry"))
+            .order_by("-entry_count")[:5]
+        )
+
+        tracks_30_days = (
+            Track.objects.filter(
+                historyentry__profile=profile,
+                historyentry__entry_type="listening",
+                historyentry__listening_datetime__gte=(
+                    now.date() - dt.timedelta(days=30)
+                ),
+            )
+            .annotate(entry_count=Count("historyentry"))
+            .order_by("-entry_count")[:10]
+        )
+
+        # Last 7 days
+        artists_last_7days = (
+            Artist.objects.filter(
+                recording__track__historyentry__profile=profile,
+                recording__track__historyentry__entry_type="listening",
+                recording__track__historyentry__listening_datetime__gte=(
+                    now.date() - dt.timedelta(days=7)
+                ),
+            )
+            .annotate(entry_count=Count("recording__track__historyentry"))
+            .order_by("-entry_count")[:5]
+        )
+
+        tracks_last_7days = (
+            Track.objects.filter(
+                historyentry__profile=profile,
+                historyentry__entry_type="listening",
+                historyentry__listening_datetime__gte=(
+                    now.date() - dt.timedelta(days=7)
+                ),
+            )
+            .annotate(entry_count=Count("historyentry"))
+            .order_by("-entry_count")[:10]
+        )
+
+        return render(request, "history/statistics.html", locals())
