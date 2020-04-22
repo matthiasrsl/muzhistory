@@ -9,12 +9,14 @@ from history.models import HistoryEntry
 from musicdata.models import *
 from platform_apis.models import *
 from tools.models import log_exceptions
+from .deezer_objects import DeezerTrack, DeezerMp3
 
 
 class DeezerAccount(PlatformAccount):
     """
     A user account on Deezer.
     """
+
     lastname = models.CharField(max_length=300, blank=True)
     firstname = models.CharField(max_length=300, blank=True)
     status_deezer = models.IntegerField(null=True, blank=True)
@@ -116,7 +118,6 @@ class DeezerAccount(PlatformAccount):
             ) = HistoryEntry.new_deezer_track_entry(
                 entry_json, self.profile, self
             )
-
         return (next_url, oldest_listening_datetime)
 
     @log_exceptions
@@ -130,7 +131,7 @@ class DeezerAccount(PlatformAccount):
                     next_url,
                     oldest_listening_datetime,
                 ) = self.retrieve_history_iteration()
-                while next_url:
+                while next_url != "":
                     (
                         next_url,
                         oldest_listening_datetime,
@@ -153,3 +154,59 @@ class DeezerAccount(PlatformAccount):
 
             self.last_history_request = tz.now()
             self.save()
+
+    @log_exceptions
+    def restore_backup_v29(self, backup_str):
+        """
+        Restores a history backup generated on DeezHistory
+        database verion 29.
+        Warning: may cause duplicate entries.
+        """
+        backup = json.loads(backup_str)
+        if backup["version"] != 29:
+            raise ValueError("Invalid backup version.")
+
+        if int(backup["dz_user_id"]) != int(self.user_id):
+            raise ValueError("user ids don't match.")
+
+        for entry in backup["history_entries"]:
+            entry_listening_datetime = tz.make_aware(
+                dt.datetime.fromtimestamp(entry["timestamp"]),
+                tz.get_current_timezone(),
+            )
+            if entry["entry_type"] == "history_ellipsis":
+                entry_db = HistoryEntry.objects.create(
+                    profile=self.profile,
+                    deezer_account=self,
+                    listening_datetime=entry_listening_datetime,
+                    timestamp=entry["timestamp"],
+                    entry_type=HistoryEntry.SpecialHistoryEntryChoices.DEEZER_ELLIPSIS,
+                )
+            elif entry["entry_type"] == "deezer_track":
+                entry_db = HistoryEntry.objects.create(
+                    profile=self.profile,
+                    deezer_account=self,
+                    listening_datetime=entry_listening_datetime,
+                    timestamp=entry["timestamp"],
+                    entry_type=HistoryEntry.SpecialHistoryEntryChoices.LISTENING,
+                )
+                track, created = DeezerTrack.get_or_retrieve(
+                    entry["dz_track_id"]
+                )
+                entry_db.track = track
+            elif entry["entry_type"] == "deezer_mp3":
+                entry_db = HistoryEntry.objects.create(
+                    profile=self.profile,
+                    deezer_account=self,
+                    listening_datetime=entry_listening_datetime,
+                    timestamp=entry["timestamp"],
+                    entry_type=HistoryEntry.SpecialHistoryEntryChoices.LISTENING,
+                )
+                mp3, created = DeezerMp3.get_or_retrieve(
+                    entry["dz_track_id"], self
+                )
+                entry_db.track = mp3
+            else:
+                raise ValueError("Invalid entry type.")
+
+            entry_db.save()

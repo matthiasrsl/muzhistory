@@ -2,6 +2,7 @@ import datetime as dt
 
 from django.conf import settings
 from django.db import models
+from django.db.models import Count
 
 # from history.models import HistoryEntry
 from musicdata.models import *
@@ -78,9 +79,10 @@ class DeezerAlbum(Release):
                 except KeyError:
                     pass  # No API-related error occured.
 
-                # Creation of the ReleaseGroup. A new ReleaseGroup is created
-                # each time, we assume that the duplicates will be merged by a
-                # cron task.
+                # Creation of the ReleaseGroup. A ReleaseGroup can be
+                # uniquely indetified by its title and its set of
+                # contributors. If we don't find a ReleaseGroup matching
+                # these criteria, we create a new one.
                 if (
                     json_data["record_type"]
                     not in ReleaseGroup.AlbumTypeChoices.values
@@ -89,9 +91,26 @@ class DeezerAlbum(Release):
                 else:
                     album_type = json_data["record_type"]
 
-                release_group, rl_created = ReleaseGroup.objects.get_or_create(
-                    title=json_data["title"], album_type=album_type,
+                existing_release_groups = (
+                    ReleaseGroup.objects.filter(
+                        title=json_data["title"], album_type=album_type,
+                    )
+                    .annotate(contrib_count=Count("contributors"))
+                    .filter(contrib_count=len(json_data["contributors"]))
                 )
+                for json_contrib in json_data["contributors"]:
+                    existing_release_groups = existing_release_groups.filter(
+                        contributors__deezer_id=json_contrib["id"]
+                    )
+
+                if existing_release_groups.count() == 0:
+                    release_group = ReleaseGroup.objects.create(
+                        title=json_data["title"], album_type=album_type,
+                    )
+                    rl_created = True
+                else:
+                    release_group = existing_release_groups[0]
+                    rl_created = False
 
                 instance.cover_small = json_data["cover_small"]
                 instance.cover_medium = json_data["cover_medium"]
@@ -99,7 +118,10 @@ class DeezerAlbum(Release):
                 instance.cover_xl = json_data["cover_xl"]
                 release_date_list = json_data["release_date"].split("-")
                 release_date_list = [int(elt) for elt in release_date_list]
-                instance.release_date = dt.date(*release_date_list)
+                try:  #  Avoid errors with date 0000-00-00
+                    instance.release_date = dt.date(*release_date_list)
+                except ValueError:
+                    pass  # release_date is set to NULL
                 instance.label_name = json_data["label"]
                 instance.barcode_type = Release.BarcodeTypeChoices.UPC
                 instance.barcode = json_data["upc"]
@@ -142,7 +164,7 @@ class DeezerAlbum(Release):
                         genre.save()
                     instance.release_group.genres.add(genre)
 
-                if not created:  #  To avoid duplicate contributions
+                if not rl_created:  #  To avoid duplicate contributions
                     ReleaseGroupContribution.objects.filter(
                         release_group=release_group
                     ).delete()
@@ -285,7 +307,10 @@ class DeezerTrack(Track):
                 instance.rank = json_data["rank"]
                 release_date_list = json_data["release_date"].split("-")
                 release_date_list = [int(elt) for elt in release_date_list]
-                instance.release_date = dt.date(*release_date_list)
+                try:  #  Avoid errors with date 0000-00-00
+                    instance.release_date = dt.date(*release_date_list)
+                except ValueError:
+                    pass  # release_date is set to NULL
                 instance.disc_number = json_data["disk_number"]
                 instance.track_number = json_data["track_position"]
                 instance.explicit_lyrics = json_data["explicit_lyrics"]
@@ -316,7 +341,7 @@ class DeezerTrack(Track):
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
 
-                if not created:  # To avoid duplicate contributions
+                if not recording_created:  # To avoid duplicate contributions
                     RecordingContribution.objects.filter(
                         recording=recording
                     ).delete()

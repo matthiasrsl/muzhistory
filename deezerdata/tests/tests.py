@@ -47,6 +47,14 @@ class DeezerAlbumTest(TestCase):
             "deezerdata.models.deezer_objects.DeezerAlbum.download_data",
             new=MagicMock(return_value=inexistant_track_response),
         )
+        custom_album_response = json.loads(
+            data.custom_album_test_response_text
+        )
+        self.custom_album_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerAlbum.download_data",
+            new=MagicMock(return_value=custom_album_response),
+        )
+
 
     def test_retrieve_existent(self):
         """
@@ -177,7 +185,7 @@ class DeezerAlbumTest(TestCase):
 
     def test_retrieve_no_duplicate_contributions(self):
         """
-        Github issue #26:
+        Github issues #26 and #27:
         Tests that when a album is updated, its release_group's 
         contributions are not duplicated.
         """
@@ -188,9 +196,15 @@ class DeezerAlbumTest(TestCase):
         album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
             6575789, update=True
         )  # Daft Punk's Random Access Memories
+        # Issue #26
+        self.assertEqual(album.release_group.contributors.count(), 1)
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            1, update=True
+        )  # We change the id, but the album data is the same
+        # Issue #27
         self.assertEqual(album.release_group.contributors.count(), 1)
 
-    def test_update_no_duplicate_release_group(self):
+    def test_update_no_duplicate_release_group_same_release(self):
         """
         Tests that when a track is updated, its release's release_group
         is not duplicated.
@@ -198,13 +212,48 @@ class DeezerAlbumTest(TestCase):
         album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
             6575789
         )  # Daft Punk's Random Access Memories
-        query = musicdata_models.ReleaseGroup.objects.filter(title="Random Access Memories")
+        query = musicdata_models.ReleaseGroup.objects.filter(
+            title="Random Access Memories"
+        )
         self.assertEqual(query.count(), 1)
         album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
             6575789, update=True
         )  # Daft Punk's Random Access Memories
-        query = musicdata_models.ReleaseGroup.objects.filter(title="Random Access Memories")
+        query = musicdata_models.ReleaseGroup.objects.filter(
+            title="Random Access Memories"
+        )
         self.assertEqual(query.count(), 1)
+
+    def test_retrieve_no_dumplicate_release_group_different_releases(self):
+        """
+        Issue #28:
+        Tests that if an album corresponding to an existing release 
+        group (i.e. with the same title and the same contributors),
+        the release_group is not duplicated.
+        """
+        self.custom_album_patch.start()
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789
+        )  # Daft Punk's Random Access Memories with Pink Floyd as contributor.
+        query = musicdata_models.ReleaseGroup.objects.filter(
+            title="Random Access Memories"
+        )
+        self.assertEqual(query.count(), 1)
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789, update=True
+        )  # Daft Punk's Random Access Memories with Pink Floyd as contributor.
+        query = musicdata_models.ReleaseGroup.objects.filter(
+            title="Random Access Memories"
+        )
+        self.assertEqual(query.count(), 1)
+        self.custom_album_patch.stop()
+        album, created = deezer_objects_models.DeezerAlbum.get_or_retrieve(
+            6575789, update=True
+        )  # Daft Punk's Random Access Memories WITHOUT Pink Floyd.
+        query = musicdata_models.ReleaseGroup.objects.filter(
+            title="Random Access Memories"
+        )
+        self.assertEqual(query.count(), 2)
 
 
 class DeezerTrackTest(TestCase):
@@ -217,7 +266,7 @@ class DeezerTrackTest(TestCase):
             return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
-        
+
         inexistant_track_response = json.loads(
             data.inexistant_track_response_text
         )
@@ -390,7 +439,7 @@ class DeezerTrackTest(TestCase):
 
     def test_update_no_duplicate_contributions(self):
         """
-        Github issue #26:
+        Github issues #26 and #27:
         Tests that when a track is updated, its recording's
         contributions are not duplicated.
         """
@@ -402,6 +451,12 @@ class DeezerTrackTest(TestCase):
         track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             67238735, update=True
         )  # Get Lucky
+        # Issue #26
+        self.assertEqual(track.recording.contributors.count(), 3)
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            1, update=True
+        )  # We change the id but the track data is the same
+        # Issue #27
         self.assertEqual(track.recording.contributors.count(), 3)
         self.existing_track_patch.stop()
 
@@ -667,7 +722,7 @@ class DeezerMp3Test(TestCase):
         self.download_inexistant_patch.start()
         mp3, created = deezer_objects_models.DeezerMp3.get_or_retrieve(
             -2902124464, self.deezer_account, update=True
-        ) 
+        )
         self.assertFalse(created)
         self.assertTrue(mp3.deleted)
         self.download_inexistant_patch.stop()
