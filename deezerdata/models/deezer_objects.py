@@ -451,6 +451,7 @@ class DeezerMp3(DeezerTrack):
                     isrc=json_data["isrc"], title=json_data["title"]
                 )
                 recording.title = json_data["title"]
+                recording.deezer_track = instance
                 recording.save()
                 instance.recording = recording
 

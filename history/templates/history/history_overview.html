@@ -72,15 +72,7 @@ Historique de {{ profile.user.username }} - MuzHistory
         {% endif %}
       </div>
       <div class='track_metadata'>
-        <p class='track_title'>
-        {% if entry.track.deezertrack %}
-          {% if entry.track.deezertrack.deezermp3 %}
-            {{ entry.track.deezertrack.deezermp3.title }}
-          {% else %}
-            {{ entry.track.recording.title }}
-          {% endif %}
-        {% endif %}
-        </p>
+        <p class='track_title'>{{ entry.track.recording.title }}</p>
         <p class='artist_and_album'>
           {% if entry.track.deezertrack %}
             {% if entry.track.deezertrack.deezermp3 %}
