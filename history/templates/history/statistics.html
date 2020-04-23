@@ -18,6 +18,7 @@
 
   {% for section in stats_sections %}
   <h2>{{ section.title }}</h2>
+  <h3>Artistes les plus écoutés</h3>
   <ol>
     {% for artist in section.objects.artists %}
     <li>
@@ -41,20 +42,20 @@
 
   <h3>Morceaux les plus écoutés</h3>
   <ol>
-    {% for track in section.objects.tracks %}
+    {% for recording in section.objects.tracks %}
     <li>
       <div class='album_cover' onclick="playaudio({{ track.id }});">
-        {% if track.deezertrack %}
+        {% if recording.deezer_track %}
           <img 
-            {% if track.deezertrack.deezermp3 %}
+            {% if recording.deezer_track.deezermp3 %}
               src="{{ DEFAULT_ALBUM_COVER_URL }}"
               alt="Generic album cover" 
               title="Pas d'extrait disponible" 
             {% else %}
               class="play_extract"
-              src="{{ track.deezertrack.release.cover_medium }}"
+              src="{{ recording.deezer_track.release.cover_medium }}"
               alt="
-                Album cover: {{ track.deezertrack.release.release_group.title }}
+                Album cover: {{ recording.deezer_track.release.release_group.title }}
               " 
               title="Écouter un extrait" 
             {% endif %}
@@ -63,20 +64,20 @@
       </div>
       <div class='track_metadata'>
         <p class='track_title'>
-        {% if track.deezertrack %}
-          {% if track.deezertrack.deezermp3 %}
+        {% comment %}{% if track.deezer_track %}
+          {% if track.deezer_track.deezermp3 %}
             {{ track.deezertrack.deezermp3.title }}
-          {% else %}
-            {{ track.recording.title }}
-          {% endif %}
-        {% endif %}
+          {% else %}{% endcomment %}
+            {{ recording.title }}
+          {% comment %}{% endif %}
+        {% endif %}{% endcomment %}
         </p>
         <p class='artist_and_album'>
-            {% if track.deezertrack %}
-              {% if track.deezertrack.deezermp3 %}
-                {{ track.deezertrack.deezermp3.artist_name }}
+            {% if recording.deezer_track %}
+              {% if recording.deezer_track.deezermp3 %}
+                {{recording.deezer_track.deezermp3.artist_name }}
               {% else %}
-                {% for contrib in track.recording.recordingcontribution_set.all %}
+                {% for contrib in recording.recordingcontribution_set.all %}
                   <span class='
                       artist_name artist_name_role_{{ contrib.role }}
                   '>
@@ -86,23 +87,12 @@
                 {% endfor %}
               {% endif %}
             {% endif %}
-          <span class='album_name'>
-            {% if track.deezertrack %}
-              {% if track.deezertrack.deezermp3 %}
-                {% if track.deezertrack.deezermp3.album_name %}
-                  - {{ track.deezertrack.deezermp3.album_name }}
-                {% endif %}
-              {% else %}
-                - {{ track.deezertrack.release.release_group.title}}
-              {% endif %}
-            {% endif %}
-          </span>
         </p>
         <p class='listenings_count'>
-          {{ track.entry_count }} écoute{{ track.entry_count|pluralize }}
+          {{ recording.entry_count }} écoute{{ recording.entry_count|pluralize }}
         </p>
         {% if track.deezertrack %}
-          <audio id={{ track.id }} src="{{ track.deezertrack.preview }}" 
+          <audio id={{ recording.id }} src="{{ recording.deezertrack.preview }}" 
               preload='none'>
           </audio>
         {% endif %}

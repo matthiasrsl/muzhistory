@@ -647,6 +647,7 @@ class DeezerMp3Test(TestCase):
             dz_id=-2902124464
         )
         self.assertEqual(query.count(), 1)
+        self.assertEqual(query[0].recording.isrc, "")
         self.assertEqual(query[0].deezer_account, self.deezer_account)
         self.download_mp3_data_patch.stop()
 

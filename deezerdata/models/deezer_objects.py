@@ -446,12 +446,22 @@ class DeezerMp3(DeezerTrack):
                         instance.save()
                         return instance, created
                 except KeyError:  # No API-related error occured.
-                    if json_data["isrc"]:
-                        raise ValueError("This is not a user mp3.")
-                    instance.title = instance.title_short = json_data["title"]
-                    instance.artist_name = json_data["artist"]["name"]
-                    instance.album_title = json_data["album"]["title"]
-                    instance.save()
+                    pass
+
+                recording, recording_created = Recording.objects.get_or_create(
+                    isrc=json_data["isrc"]
+                )
+                instance.recording = recording
+                recording.title = json_data["title"]
+                recording.deezer_track = instance
+                recording.save()
+
+                if json_data["isrc"]:
+                    raise ValueError("This is not a user mp3.")
+                instance.title = instance.title_short = json_data["title"]
+                instance.artist_name = json_data["artist"]["name"]
+                instance.album_title = json_data["album"]["title"]
+                instance.save()
 
                 instance.last_update = tz.now()
                 instance.save()

@@ -12,7 +12,7 @@ from django.views import View
 
 from accounts.models import Profile
 from history.models import HistoryEntry
-from musicdata.models import Track, Artist
+from musicdata.models import Track, Artist, Recording
 
 
 class HistoryOverview(View, LoginRequiredMixin):
@@ -36,9 +36,8 @@ class HistoryOverview(View, LoginRequiredMixin):
                 "track__deezertrack__release__release_group",
                 "track__recording",
             )
-            #.annotate(contrib='track__recording__recordingcontribution_set')
-            .filter(profile=profile)
-            .order_by("-listening_datetime")
+            # .annotate(contrib='track__recording__recordingcontribution_set')
+            .filter(profile=profile).order_by("-listening_datetime")
         )
         paginator = Paginator(
             entries, 150, orphans=50, allow_empty_first_page=True
@@ -55,7 +54,9 @@ class HistoryOverview(View, LoginRequiredMixin):
             date_first_entry = entries.earliest(
                 "listening_datetime"
             ).listening_datetime
-        total_listening_duration_hours = total_listening_duration_seconds // 60
+        total_listening_duration_hours = (
+            total_listening_duration_seconds // 3600
+        )
         total_listening_timedelta = dt.timedelta(
             seconds=total_listening_duration_seconds
         )
@@ -95,13 +96,6 @@ class Statistics(View, LoginRequiredMixin):
         else:
             empty_history = False
         now = tz.now()
-        entries_last_7days = entries.filter(
-            listening_datetime__gte=now.date() - dt.timedelta(days=7)
-        )
-        entries_this_month = entries.filter(
-            listening_datetime__gte=now.date() - dt.timedelta(days=30)
-        )
-        entries_this_year = entries.filter(listening_datetime__year=now.year)
 
         # All time
         artists_all_time = (
@@ -114,11 +108,11 @@ class Statistics(View, LoginRequiredMixin):
         )
 
         tracks_all_time = (
-            Track.objects.filter(
-                historyentry__profile=profile,
-                historyentry__entry_type="listening",
+            Recording.objects.filter(
+                track__historyentry__profile=profile,
+                track__historyentry__entry_type="listening",
             )
-            .annotate(entry_count=Count("historyentry"))
+            .annotate(entry_count=Count("track__historyentry"))
             .order_by("-entry_count")[:10]
         )
 
@@ -134,14 +128,15 @@ class Statistics(View, LoginRequiredMixin):
         )
 
         tracks_this_year = (
-            Track.objects.filter(
-                historyentry__profile=profile,
-                historyentry__entry_type="listening",
-                historyentry__listening_datetime__year=tz.now().year,
+            Recording.objects.filter(
+                track__historyentry__profile=profile,
+                track__historyentry__entry_type="listening",
+                track__historyentry__listening_datetime__year=tz.now().year,
             )
-            .annotate(entry_count=Count("historyentry"))
+            .annotate(entry_count=Count("track__historyentry"))
             .order_by("-entry_count")[:10]
         )
+
 
         # Last 30 days
         artists_30_days = (
@@ -149,7 +144,7 @@ class Statistics(View, LoginRequiredMixin):
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
                 recording__track__historyentry__listening_datetime__gte=(
-                    now.date() - dt.timedelta(days=30)
+                    now - dt.timedelta(days=30)
                 ),
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
@@ -157,14 +152,14 @@ class Statistics(View, LoginRequiredMixin):
         )
 
         tracks_30_days = (
-            Track.objects.filter(
-                historyentry__profile=profile,
-                historyentry__entry_type="listening",
-                historyentry__listening_datetime__gte=(
-                    now.date() - dt.timedelta(days=30)
+            Recording.objects.filter(
+                track__historyentry__profile=profile,
+                track__historyentry__entry_type="listening",
+                track__historyentry__listening_datetime__gte=(
+                    now - dt.timedelta(days=30)
                 ),
             )
-            .annotate(entry_count=Count("historyentry"))
+            .annotate(entry_count=Count("track__historyentry"))
             .order_by("-entry_count")[:10]
         )
 
@@ -174,7 +169,7 @@ class Statistics(View, LoginRequiredMixin):
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
                 recording__track__historyentry__listening_datetime__gte=(
-                    now.date() - dt.timedelta(days=7)
+                    now - dt.timedelta(days=7)
                 ),
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
@@ -182,14 +177,14 @@ class Statistics(View, LoginRequiredMixin):
         )
 
         tracks_last_7days = (
-            Track.objects.filter(
-                historyentry__profile=profile,
-                historyentry__entry_type="listening",
-                historyentry__listening_datetime__gte=(
-                    now.date() - dt.timedelta(days=7)
+            Recording.objects.filter(
+                track__historyentry__profile=profile,
+                track__historyentry__entry_type="listening",
+                track__historyentry__listening_datetime__gte=(
+                    now - dt.timedelta(days=7)
                 ),
             )
-            .annotate(entry_count=Count("historyentry"))
+            .annotate(entry_count=Count("track__historyentry"))
             .order_by("-entry_count")[:10]
         )
 
