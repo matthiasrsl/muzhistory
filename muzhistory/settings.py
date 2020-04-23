@@ -186,7 +186,7 @@ ADMIN_REORDER = (
 
 OLDEST_DATE = tz.make_aware(dt.datetime(year=1970, month=1, day=1))
 
-MH_VERSION = 30
+MH_VERSION = 32
 
 LOG_RETRIEVAL = False
 

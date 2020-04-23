@@ -25,7 +25,7 @@ class DeezerTrackAdmin(admin.ModelAdmin):
 
 
 class DeezerMp3Admin(admin.ModelAdmin):
-    list_display = ("title", "artist_name", "album_name", "version")
+    list_display = ("title_short", "artist_name", "album_name", "version")
     list_filter = ("version",)
     search_fields = ("title", "dz_id")
 

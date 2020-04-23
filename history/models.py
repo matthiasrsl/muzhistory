@@ -78,21 +78,19 @@ class HistoryEntry(models.Model):
                 if track_id > 0:  # Deezer track.
                     track = DeezerTrack.get_or_retrieve(track_id)[0]
 
-                else:  # User's mp3: no need for retrieval as all data
-                    # is already in the current api response.
-                    track, created = DeezerMp3.objects.get_or_create(
-                        dz_id=track_id, deezer_account=deezer_account
-                    )
-                    if created:
-                        track.title = track.title_short = entry_json["title"]
-                        track.artist_name = entry_json["artist"]["name"]
-                        track.album_title = entry_json["album"]["title"]
-                        track.save()
+                else:  # User's mp3:
+                    track = DeezerMp3.get_or_retrieve(
+                        track_id, deezer_account
+                    )[0]
 
                 db_entry.track = track
 
             except DeezerApiError:
-                db_entry.entry_type = SpecialHistoryEntryChoices.DEEZER_ERROR
+                """ print("ERROR")
+                db_entry.entry_type = (
+                    cls.SpecialHistoryEntryChoices.DEEZER_ERROR
+                ) """
+                raise
 
             db_entry.save()  # Do not save before, as a corrupted entry could
             # be stored in case of an unexpected exception.

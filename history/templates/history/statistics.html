@@ -44,7 +44,7 @@
   <ol>
     {% for recording in section.objects.tracks %}
     <li>
-      <div class='album_cover' onclick="playaudio({{ track.id }});">
+      <div class='album_cover' onclick="playaudio({{ recording.id }});">
         {% if recording.deezer_track %}
           <img 
             {% if recording.deezer_track.deezermp3 %}
@@ -91,8 +91,8 @@
         <p class='listenings_count'>
           {{ recording.entry_count }} écoute{{ recording.entry_count|pluralize }}
         </p>
-        {% if track.deezertrack %}
-          <audio id={{ recording.id }} src="{{ recording.deezertrack.preview }}" 
+        {% if recording.deezer_track %}
+          <audio id={{ recording.id }} src="{{ recording.deezer_track.preview }}" 
               preload='none'>
           </audio>
         {% endif %}

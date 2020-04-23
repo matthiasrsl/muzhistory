@@ -387,7 +387,6 @@ class DeezerTrack(Track):
 
 
 class DeezerMp3(DeezerTrack):
-    title = models.CharField(max_length=1000)
     artist_name = models.CharField(max_length=500)
     album_name = models.CharField(max_length=1000)
     deezer_account = models.ForeignKey(
@@ -395,7 +394,7 @@ class DeezerMp3(DeezerTrack):
     )
 
     def __str__(self):
-        return f"{self.title} (Deezer Mp3)"
+        return f"{self.recording.title} (Deezer Mp3)"
 
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_MP3
@@ -449,12 +448,11 @@ class DeezerMp3(DeezerTrack):
                     pass
 
                 recording, recording_created = Recording.objects.get_or_create(
-                    isrc=json_data["isrc"]
+                    isrc=json_data["isrc"], title=json_data["title"]
                 )
-                instance.recording = recording
                 recording.title = json_data["title"]
-                recording.deezer_track = instance
                 recording.save()
+                instance.recording = recording
 
                 if json_data["isrc"]:
                     raise ValueError("This is not a user mp3.")

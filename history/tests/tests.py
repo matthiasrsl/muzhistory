@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 import json
 
 from django.contrib.auth.models import User
@@ -53,6 +53,11 @@ class HistoryEntryTest(TestCase):
         self.deezer_account = deezer_account_models.DeezerAccount.objects.get()
         self.entry1_json = json.loads(data.entry1_test_text)
         self.entry2_json = json.loads(data.entry2_test_text)
+        mp3_data = json.loads(data.mp3_test_response_text)
+        self.download_mp3_data_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerMp3.download_data",
+            new=MagicMock(return_value=mp3_data),
+        )
 
     def test_saves_deezer_track_history_entry_correctly(self):
         """
@@ -76,7 +81,10 @@ class HistoryEntryTest(TestCase):
 
     def test_saves_deezer_mp3_history_entry_correctly(self):
         """
+        Tests the retrieval of a Deezer HistoryEntry with
+        a DeezerMp3.
         """
+        self.download_mp3_data_patch.start()
         self.entry_mp3 = json.loads(data.entry_deezer_mp3_response_text)
         (
             ignored,
@@ -85,10 +93,11 @@ class HistoryEntryTest(TestCase):
             self.entry_mp3, self.profile, self.deezer_account
         )
         entry = HistoryEntry.objects.all().order_by("-id")[0]
-        self.assertEqual(entry.track.deezertrack.deezermp3.title, "La Noyée")
+        self.assertEqual(entry.track.recording.title, "La Noyée")
         self.assertEqual(
             entry.track.deezertrack.deezermp3.artist_name, "Serge Gainsbourg"
         )
+        self.download_mp3_data_patch.stop()
 
     def test_does_not_stores_same_deezer_track_entry_twice(self):
         """

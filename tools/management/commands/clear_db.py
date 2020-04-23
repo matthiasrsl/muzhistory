@@ -17,6 +17,7 @@ class Command(BaseCommand):
         ReleaseGroupContribution.objects.all().delete()
         RecordingContribution.objects.all().delete()
         DeezerTrack.objects.all().delete()
+        DeezerMp3.objects.all().delete()
         Recording.objects.all().delete()
         DeezerAlbum.objects.all().delete()
         ReleaseGroup.objects.all().delete()

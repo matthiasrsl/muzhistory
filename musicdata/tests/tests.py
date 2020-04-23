@@ -156,7 +156,6 @@ class TrackTest(TestCase):
         deezer_track.save()
         deezer_mp3 = DeezerMp3.objects.create(
             dz_id=-1,
-            title="Title",
             artist_name="Artist",
             album_name="Album",
             deezer_account=dz_account,
