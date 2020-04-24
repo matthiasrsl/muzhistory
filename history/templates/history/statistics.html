@@ -25,6 +25,9 @@
       <ol>
         {% for artist in section.objects.artists %}
         <li>
+          <div class="rank">
+            <p>#{{ artist.rank }}</p>
+          </div>
           <div class="artist_image">
             {% if artist.image_url_deezer_small %}
               <img src="{{ artist.image_url_deezer_medium }}"
@@ -32,7 +35,9 @@
             {% endif %}
           </div>
           <div class="artist_metadata">
-            <p class="artist_name">{{ artist.name }}</p>
+            <p class="artist_name" title="{{ artist.name }}">
+              {{ artist.name }}
+            </p>
             <p class="listenings_count">
               {{ artist.entry_count }} écoute{{ artist.entry_count|pluralize }}
             </p>
@@ -49,6 +54,9 @@
       <ol>
         {% for recording in section.objects.tracks %}
         <li>
+          <div class="rank">
+            <p>#{{ recording.rank }}</p>
+          </div>
           <div class='album_cover' onclick="playaudio({{ recording.id }});">
             {% if recording.deezer_track %}
               <img 
@@ -68,8 +76,11 @@
             {% endif %}
           </div>
           <div class='track_metadata'>
-            <p class='track_title'>
-                {{ recording.title }}
+            <p class='track_title' title="{{ recording.title }}">
+                {{ recording.deezer_track.title_short }}
+                <span class="track_title_version">
+                  {{ recording.deezer_track.title_version }}
+                </span>
             </p>
             <p class='artist_and_album'>
                 {% if recording.deezer_track %}

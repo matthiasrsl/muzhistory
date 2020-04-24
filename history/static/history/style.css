@@ -76,7 +76,7 @@ p {
 .stat_section {
     display: flex;
     flex-direction: column;
-    margin-left: 40px;
+    max-width: 1200px;
 }
 
 .stat_subsection ol {
@@ -89,6 +89,8 @@ p {
 
 .subsection_artists li {
     flex: 1 0 30%;
+    max-width: 32%;
+    margin: 5px;
 }
 
 .subsection_tracks ol {
@@ -100,7 +102,31 @@ p {
 .subsection_tracks li {
     width: auto;
     margin: 5px;
-    width: 40%;
+    width: 48%;
+}
+
+div.rank {
+    min-width: 65px;
+    margin: 0 15px;
+}
+
+.subsection_artists div.rank {
+    margin: 0 0 0 15px;;
+}
+
+.rank p {
+    font-size: 2.5em;
+    color: #ccc;
+}
+
+.subsection_tracks .rank p {
+    position: relative;
+    top: 10px;
+}
+
+.subsection_artists .rank p {
+    position: relative;
+    top: 17px;
 }
 
 .artist_image img {
@@ -113,10 +139,24 @@ p {
 .artist_metadata {
     position: relative;
     top: 22px;
+    max-width: 55%;
 }
 
-.artist_metadata .artist_name{
+.artist_metadata .artist_name {
     font-size: 1.4em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.subsection_tracks .track_metadata {
+    max-width: 65%;
+}
+
+.subsection_tracks .track_title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .listenings_count {

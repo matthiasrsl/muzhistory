@@ -85,6 +85,22 @@ class Statistics(View, LoginRequiredMixin):
     """
     Statistics regarding the complete history.
     """
+    def rank_elements(self, queryset):
+        """
+        Sorts elements and assign a rank to each, taking care of
+        ex aequos.
+        """
+        rank, count, previous, result = 0, 0, None, {}
+        for elt in queryset:
+            count += 1
+            if elt.entry_count != previous:
+                rank += count
+                previous = elt.entry_count
+                count = 0
+            elt.rank = rank
+
+        return queryset
+            
 
     def get(self, request):
         DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL
@@ -98,7 +114,7 @@ class Statistics(View, LoginRequiredMixin):
         now = tz.now()
 
         # All time
-        artists_all_time = (
+        artists_all_time = self.rank_elements(
             Artist.objects.filter(
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
@@ -107,7 +123,7 @@ class Statistics(View, LoginRequiredMixin):
             .order_by("-entry_count")[:9]
         )
 
-        tracks_all_time = (
+        tracks_all_time = self.rank_elements(
             Recording.objects.filter(
                 track__historyentry__profile=profile,
                 track__historyentry__entry_type="listening",
@@ -117,7 +133,7 @@ class Statistics(View, LoginRequiredMixin):
         )
 
         # This year
-        artists_this_year = (
+        artists_this_year = self.rank_elements(
             Artist.objects.filter(
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
@@ -127,7 +143,7 @@ class Statistics(View, LoginRequiredMixin):
             .order_by("-entry_count")[:6]
         )
 
-        tracks_this_year = (
+        tracks_this_year = self.rank_elements(
             Recording.objects.filter(
                 track__historyentry__profile=profile,
                 track__historyentry__entry_type="listening",
@@ -139,7 +155,7 @@ class Statistics(View, LoginRequiredMixin):
 
 
         # Last 30 days
-        artists_30_days = (
+        artists_30_days = self.rank_elements(
             Artist.objects.filter(
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
@@ -151,7 +167,7 @@ class Statistics(View, LoginRequiredMixin):
             .order_by("-entry_count")[:6]
         )
 
-        tracks_30_days = (
+        tracks_30_days = self.rank_elements(
             Recording.objects.filter(
                 track__historyentry__profile=profile,
                 track__historyentry__entry_type="listening",
@@ -160,11 +176,11 @@ class Statistics(View, LoginRequiredMixin):
                 ),
             )
             .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count")[:10]
+            .order_by("-entry_count")[:8]
         )
 
         # Last 7 days
-        artists_last_7days = (
+        artists_last_7days = self.rank_elements(
             Artist.objects.filter(
                 recording__track__historyentry__profile=profile,
                 recording__track__historyentry__entry_type="listening",
@@ -176,7 +192,7 @@ class Statistics(View, LoginRequiredMixin):
             .order_by("-entry_count")[:3]
         )
 
-        tracks_last_7days = (
+        tracks_last_7days = self.rank_elements(
             Recording.objects.filter(
                 track__historyentry__profile=profile,
                 track__historyentry__entry_type="listening",
@@ -185,7 +201,7 @@ class Statistics(View, LoginRequiredMixin):
                 ),
             )
             .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count")[:10]
+            .order_by("-entry_count")[:6]
         )
 
         stats_sections = [
@@ -204,7 +220,7 @@ class Statistics(View, LoginRequiredMixin):
                 },
             },
             {
-                "title": tz.now().year,
+                "title": "Cette année",
                 "objects": {
                     "artists": artists_this_year,
                     "tracks": tracks_this_year,
