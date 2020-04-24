@@ -186,7 +186,7 @@ ADMIN_REORDER = (
 
 OLDEST_DATE = tz.make_aware(dt.datetime(year=1970, month=1, day=1))
 
-MH_VERSION = 32
+MH_VERSION = 33
 
 LOG_RETRIEVAL = False
 
@@ -211,6 +211,8 @@ DEEZER_API_USER_URL = "https://api.deezer.com/user/me"
 DEEZER_API_HISTORY_URL = "https://api.deezer.com/user/{}/history"
 
 DEEZER_API_TRACK_URL = "https://api.deezer.com/track/{}"
+
+DEEZER_API_TRACK_BY_ISRC_URL = "https://api.deezer.com/2.0/track/isrc:{}"
 
 DEEZER_API_ALBUM_URL = "https://api.deezer.com/album/{}"
 

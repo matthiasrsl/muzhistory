@@ -138,6 +138,7 @@ class TrackTest(TestCase):
         deezer_track = DeezerTrack.objects.create(
             dz_id=67238735,
             title_version="",
+            title="Get Lucky",
             title_short="Get Lucky",
             duration=369,
             readable=True,
@@ -178,3 +179,4 @@ class TrackTest(TestCase):
         self.assertEqual(str(mp3), "Title (Deezer Mp3)")
         track3 = Track.objects.all()[2]
         self.assertEqual(str(track3), "Track object (3)")
+

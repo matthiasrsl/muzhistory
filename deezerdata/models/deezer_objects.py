@@ -4,7 +4,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import Count
 
-# from history.models import HistoryEntry
 from musicdata.models import *
 from platform_apis.models import DeezerApiError, Market
 from tools.models import log_exceptions
@@ -209,6 +208,7 @@ class DeezerTrack(Track):
         blank=True,
     )
     readable = models.BooleanField(null=True, blank=True)
+    title = models.CharField(max_length=1000)
     title_short = models.CharField(max_length=1000)
     title_version = models.CharField(max_length=1000)
     link = models.URLField(max_length=2000)
@@ -228,12 +228,23 @@ class DeezerTrack(Track):
 
     def __str__(self):
         return (
-            f"{self.recording.title} (Deezer)" if self.recording else "ERROR"
+            f"{self.title} (Deezer)" if self.recording else "ERROR"
         )
 
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_TRACK
         super().save(*args, **kwargs)
+
+    @classmethod
+    def download_deezer_track_by_isrc(cls, isrc):  # pragma: no cover
+        """
+        Downloads the default Deezer track with this isrc.
+        """
+        api_request = requests.get(
+            settings.DEEZER_API_TRACK_BY_ISRC_URL.format(isrc)
+        )
+        json_data = api_request.json()
+        return json_data
 
     def download_data(self):  # pragma: no cover
         """
@@ -278,10 +289,12 @@ class DeezerTrack(Track):
                         return instance, created
                 except KeyError:
                     pass  # No API-related error occured.
-
+                
+                instance.save()
                 recording, recording_created = Recording.objects.get_or_create(
                     isrc=json_data["isrc"]
                 )
+                recording.save()
                 instance.recording = recording
 
                 if (
@@ -289,9 +302,19 @@ class DeezerTrack(Track):
                     or update
                     or settings.ALWAYS_UPDATE_DEEZER_DATA
                 ):
+                    default_deezer_track_json = cls.download_deezer_track_by_isrc(
+                        recording.isrc
+                    )  #  The default Deezer Track with this ISRC.
+                    if default_deezer_track_json["id"] == instance.dz_id:
+                        recording.deezer_track = instance
+                        recording.title = json_data["title"]
+                    else:
+                        default_deezer_track, ddt_created = cls.get_or_retrieve(
+                            default_deezer_track_json["id"]
+                        )
+                        recording.deezer_track = default_deezer_track
+                        recording.title = default_deezer_track.title
 
-                    recording.title = json_data["title"]
-                    recording.deezer_track = instance
                 recording.save()
 
                 try:
@@ -299,6 +322,7 @@ class DeezerTrack(Track):
                 except KeyError:
                     track_title_version = ""
                 instance.title_version = track_title_version
+                instance.title = json_data["title"]
                 instance.title_short = json_data["title_short"]
                 instance.duration = json_data["duration"]
                 instance.readable = json_data["readable"]

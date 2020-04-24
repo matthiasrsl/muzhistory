@@ -55,7 +55,6 @@ class DeezerAlbumTest(TestCase):
             new=MagicMock(return_value=custom_album_response),
         )
 
-
     def test_retrieve_existent(self):
         """
         Checks that the retrieval of an existing album from 
@@ -266,7 +265,12 @@ class DeezerTrackTest(TestCase):
             return_value=json.loads(data.album_test_response_text)
         )
         deezer_objects_models.DeezerAlbum.download_data = download_album
-
+        download_track_by_isrc = MagicMock(
+            return_value=json.loads(data.isrc_query_reponse_text_1)
+        )
+        deezer_objects_models.DeezerTrack.download_deezer_track_by_isrc = (
+            download_track_by_isrc
+        )
         inexistant_track_response = json.loads(
             data.inexistant_track_response_text
         )
@@ -279,6 +283,25 @@ class DeezerTrackTest(TestCase):
         self.inexistent_track_patch = patch(
             "deezerdata.models.deezer_objects.DeezerTrack.download_data",
             new=MagicMock(return_value=inexistant_track_response),
+        )
+        track_panic_response = json.loads(data.track_panic_response_text)
+        track_panic_remaster_response = json.loads(
+            data.track_panic_remaster_response_text
+        )
+        isrc_query_reponse_2 = json.loads(data.isrc_query_reponse_text_2)
+        self.download_track_by_isrc_panic_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack."
+            "download_deezer_track_by_isrc",
+            new=MagicMock(return_value=isrc_query_reponse_2),
+        )
+        self.download_data_not_default_isrc_then_default_isrc = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack.download_data",
+            new=MagicMock(
+                side_effect=[
+                    track_panic_remaster_response,
+                    track_panic_response,
+                ]
+            ),
         )
 
     def test_retrieve_existent(self):
@@ -459,6 +482,30 @@ class DeezerTrackTest(TestCase):
         # Issue #27
         self.assertEqual(track.recording.contributors.count(), 3)
         self.existing_track_patch.stop()
+
+    def test_default_recording_deezer_track(self):
+        """
+        Tests that the default deezer track corresponding to an
+        ISRC is set as its Recording deezer_track attribute.
+        """
+        self.download_data_not_default_isrc_then_default_isrc.start()
+        self.download_track_by_isrc_panic_patch.start()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            5093618
+        )  # The Smith's Panic (2008 Remaster)
+        recording = track.recording
+        self.assertNotEqual(recording.deezer_track, track)
+        self.assertEqual(recording.deezer_track.dz_id, 2480596)
+        self.assertEqual(recording.title, "Panic")
+        self.download_data_not_default_isrc_then_default_isrc.stop()
+        self.download_track_by_isrc_panic_patch.stop()
+
+        # Same with a track that is the default track for its ISRC:
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            67238735
+        )  # Daft Punk's Get Lucky
+        self.assertEqual(track.recording.title, "Get Lucky")
+        self.assertEqual(track.recording.deezer_track, track)
 
 
 class DeezerAccountTest(TestCase):
