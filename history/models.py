@@ -82,15 +82,12 @@ class HistoryEntry(models.Model):
                     track = DeezerMp3.get_or_retrieve(
                         track_id, deezer_account
                     )[0]
-
                 db_entry.track = track
 
-            except DeezerApiError:
-                """ print("ERROR")
+            except DeezerApiError as e:
                 db_entry.entry_type = (
                     cls.SpecialHistoryEntryChoices.DEEZER_ERROR
-                ) """
-                raise
+                )
 
             db_entry.save()  # Do not save before, as a corrupted entry could
             # be stored in case of an unexpected exception.

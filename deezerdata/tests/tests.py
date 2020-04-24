@@ -504,6 +504,11 @@ class DeezerAccountTest(TestCase):
             "deezerdata.models.deezer_account.DeezerAccount.download_history_data",
             new=MagicMock(return_value=oauth_blocked),
         )
+        mp3_data = json.loads(data.mp3_test_response_text)
+        self.download_mp3_data_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerMp3.download_data",
+            new=MagicMock(return_value=mp3_data),
+        )
 
     def test_retrieve_history_normal_case(self):
         """
@@ -511,6 +516,7 @@ class DeezerAccountTest(TestCase):
         normal conditions.
         """
         self.download_history_data_patch.start()
+        self.download_mp3_data_patch.start()
         original_datetime = (
             self.dz_account.last_history_request
         )  # Sould be the Epoch.
@@ -521,6 +527,7 @@ class DeezerAccountTest(TestCase):
         query = HistoryEntry.objects.filter(timestamp=1586441751)
         self.assertEqual(len(query), 1)
         self.download_history_data_patch.stop()
+        self.download_mp3_data_patch.stop()
 
     def test_retrieve_history_network_error(self):
         """
@@ -550,6 +557,7 @@ class DeezerAccountTest(TestCase):
         ellispsis history entry is created.
         """
         self.download_history_data_patch.start()
+        self.download_mp3_data_patch.start()
         deezer_account = deezer_account_models.DeezerAccount.objects.get()
         deezer_account.last_history_request = tz.make_aware(
             dt.datetime(year=2020, month=1, day=1), tz.get_current_timezone()
@@ -561,6 +569,7 @@ class DeezerAccountTest(TestCase):
         )
         self.assertEqual(entries.count(), 1)
         self.download_history_data_patch.stop()
+        self.download_mp3_data_patch.stop()
 
     def test_blocked_from_deezer(self):
         """
@@ -629,11 +638,13 @@ class DeezerMp3Test(TestCase):
         during a history retrieval.
         """
         self.download_history_data_patch.start()
+        self.download_mp3_data_patch.start()
         self.deezer_account = deezer_account_models.DeezerAccount.objects.get()
         self.deezer_account.retrieve_history()
         deezer_mp3 = deezer_objects_models.DeezerMp3.objects.get()
         self.assertEqual(deezer_mp3.deezer_account, self.deezer_account)
         self.download_history_data_patch.stop()
+        self.download_mp3_data_patch.stop()
 
     def test_retrieve_existing(self):
         """

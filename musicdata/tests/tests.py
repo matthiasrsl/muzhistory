@@ -132,6 +132,9 @@ class TrackTest(TestCase):
         recording = Recording.objects.create(
             isrc="USQX91300108", title="Get Lucky",
         )
+        recording2 = Recording.objects.create(
+            isrc="", title="Title",
+        )
         deezer_track = DeezerTrack.objects.create(
             dz_id=67238735,
             title_version="",
@@ -156,6 +159,7 @@ class TrackTest(TestCase):
         deezer_track.save()
         deezer_mp3 = DeezerMp3.objects.create(
             dz_id=-1,
+            recording=recording2,
             artist_name="Artist",
             album_name="Album",
             deezer_account=dz_account,
