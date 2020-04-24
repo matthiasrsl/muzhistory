@@ -75,4 +75,4 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
                 "pu être lié.",
             )
 
-        return redirect(DisplayProfile.as_view())
+        return redirect("display-profile")

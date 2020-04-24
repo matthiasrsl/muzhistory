@@ -297,23 +297,20 @@ class DeezerTrack(Track):
                 recording.save()
                 instance.recording = recording
 
-                if (
-                    recording_created
-                    or update
-                    or settings.ALWAYS_UPDATE_DEEZER_DATA
-                ):
-                    default_deezer_track_json = cls.download_deezer_track_by_isrc(
-                        recording.isrc
-                    )  #  The default Deezer Track with this ISRC.
-                    if default_deezer_track_json["id"] == instance.dz_id:
-                        recording.deezer_track = instance
-                        recording.title = json_data["title"]
-                    else:
-                        default_deezer_track, ddt_created = cls.get_or_retrieve(
-                            default_deezer_track_json["id"]
-                        )
-                        recording.deezer_track = default_deezer_track
-                        recording.title = default_deezer_track.title
+                is_recording_default_deezer_track = False
+                default_deezer_track_json = cls.download_deezer_track_by_isrc(
+                    recording.isrc
+                )  #  The default Deezer Track with this ISRC.
+                if default_deezer_track_json["id"] == instance.dz_id:
+                    recording.deezer_track = instance
+                    recording.title = json_data["title"]
+                    is_recording_default_deezer_track = True
+                else:
+                    default_deezer_track, ddt_created = cls.get_or_retrieve(
+                        default_deezer_track_json["id"]
+                    )
+                    recording.deezer_track = default_deezer_track
+                    recording.title = default_deezer_track.title
 
                 recording.save()
 
@@ -364,26 +361,27 @@ class DeezerTrack(Track):
                     )[0]
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
+                
+                if is_recording_default_deezer_track:
+                    if not recording_created:  # To avoid duplicate contributions
+                        RecordingContribution.objects.filter(
+                            recording=recording
+                        ).delete()
 
-                if not recording_created:  # To avoid duplicate contributions
-                    RecordingContribution.objects.filter(
-                        recording=recording
-                    ).delete()
-
-                for json_contrib in json_data["contributors"]:
-                    contributor = Artist.get_or_retrieve_from_deezer(
-                        json_contrib["id"]
-                    )[0]
-                    if json_contrib["role"] == "Main":
-                        role = "main"
-                    elif json_contrib["role"] == "Featured":
-                        role = "feat"
-                    else:
-                        role = "undef"
-                    contrib = RecordingContribution.objects.create(
-                        artist=contributor, recording=recording, role=role
-                    )
-                    contrib.save()
+                    for json_contrib in json_data["contributors"]:
+                        contributor = Artist.get_or_retrieve_from_deezer(
+                            json_contrib["id"]
+                        )[0]
+                        if json_contrib["role"] == "Main":
+                            role = "main"
+                        elif json_contrib["role"] == "Featured":
+                            role = "feat"
+                        else:
+                            role = "undef"
+                        contrib = RecordingContribution.objects.create(
+                            artist=contributor, recording=recording, role=role
+                        )
+                        contrib.save()
 
                 available_markets = []
                 for market_code in json_data["available_countries"]:

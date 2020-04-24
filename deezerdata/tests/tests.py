@@ -300,6 +300,8 @@ class DeezerTrackTest(TestCase):
                 side_effect=[
                     track_panic_remaster_response,
                     track_panic_response,
+                    track_panic_remaster_response,
+                    track_panic_response,
                 ]
             ),
         )
@@ -482,6 +484,26 @@ class DeezerTrackTest(TestCase):
         # Issue #27
         self.assertEqual(track.recording.contributors.count(), 3)
         self.existing_track_patch.stop()
+
+        # The same with a track that is not its Recording's default track:
+        self.download_data_not_default_isrc_then_default_isrc.start()
+        self.download_track_by_isrc_panic_patch.start()
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            5093618
+        )  # The Smith's Panic (2008 Remaster)
+        self.assertEqual(track.recording.contributors.count(), 1)
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            5093618, update=True
+        )  # The Smith's Panic (2008 Remaster)
+        # Issue #26
+        self.assertEqual(track.recording.contributors.count(), 1)
+        track, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
+            1, update=True
+        )  # We change the id but the track data is the same
+        # Issue #27
+        self.assertEqual(track.recording.contributors.count(), 1)
+        self.download_track_by_isrc_panic_patch.stop()
+        self.download_data_not_default_isrc_then_default_isrc.stop()
 
     def test_default_recording_deezer_track(self):
         """
