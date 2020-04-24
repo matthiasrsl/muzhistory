@@ -156,7 +156,7 @@ class DeezerAccount(PlatformAccount):
             self.save()
 
     @log_exceptions
-    def restore_backup_v29(self, backup_str):
+    def restore_backup_v29(self, backup_str):  # pragma: no cover
         """
         Restores a history backup generated on DeezHistory
         database verion 29.

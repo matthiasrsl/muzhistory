@@ -54,6 +54,12 @@ class DeezerAlbumTest(TestCase):
             "deezerdata.models.deezer_objects.DeezerAlbum.download_data",
             new=MagicMock(return_value=custom_album_response),
         )
+        isrc_query_reponse_2 = json.loads(data.isrc_query_reponse_text_2)
+        self.download_track_by_isrc_panic_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack."
+            "download_deezer_track_by_isrc",
+            new=MagicMock(return_value=isrc_query_reponse_2),
+        )
 
     def test_retrieve_existent(self):
         """
@@ -153,6 +159,7 @@ class DeezerAlbumTest(TestCase):
         Tests that if a known album is deleted from the Deezer API,
         its deleted attribute is set to True.
         """
+        self.download_track_by_isrc_panic_patch.start()
         album, created = deezer_objects_models.DeezerTrack.get_or_retrieve(
             6575789
         )  # Daft Punk's Random Access Memories
@@ -165,6 +172,7 @@ class DeezerAlbumTest(TestCase):
         self.assertFalse(created)
         self.assertTrue(album.deleted)
         self.inexistent_album_patch.stop()
+        self.download_track_by_isrc_panic_patch.stop()
 
     def test_set_last_update(self):
         """
@@ -557,6 +565,12 @@ class DeezerAccountTest(TestCase):
             return_value=json.loads(data.track_test_response_text)
         )
         deezer_objects_models.DeezerTrack.download_data = download_track
+        isrc_query_reponse_2 = json.loads(data.isrc_query_reponse_text_2)
+        self.download_track_by_isrc_panic_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack."
+            "download_deezer_track_by_isrc",
+            new=MagicMock(return_value=isrc_query_reponse_2),
+        )
 
         self.connection_error_patch = patch(
             "musicdata.models.Artist.download_data_from_deezer",
@@ -584,6 +598,7 @@ class DeezerAccountTest(TestCase):
         Tests that DeezerAccount.retrieve_history works in
         normal conditions.
         """
+        self.download_track_by_isrc_panic_patch.start()
         self.download_history_data_patch.start()
         self.download_mp3_data_patch.start()
         original_datetime = (
@@ -595,6 +610,7 @@ class DeezerAccountTest(TestCase):
         )
         query = HistoryEntry.objects.filter(timestamp=1586441751)
         self.assertEqual(len(query), 1)
+        self.download_track_by_isrc_panic_patch.stop()
         self.download_history_data_patch.stop()
         self.download_mp3_data_patch.stop()
 
@@ -625,6 +641,7 @@ class DeezerAccountTest(TestCase):
         is older that the oldest entry in the data retrieved, an 
         ellispsis history entry is created.
         """
+        self.download_track_by_isrc_panic_patch.start()
         self.download_history_data_patch.start()
         self.download_mp3_data_patch.start()
         deezer_account = deezer_account_models.DeezerAccount.objects.get()
@@ -639,6 +656,7 @@ class DeezerAccountTest(TestCase):
         self.assertEqual(entries.count(), 1)
         self.download_history_data_patch.stop()
         self.download_mp3_data_patch.stop()
+        self.download_track_by_isrc_panic_patch.stop()
 
     def test_blocked_from_deezer(self):
         """
@@ -700,6 +718,12 @@ class DeezerMp3Test(TestCase):
             "deezerdata.models.deezer_objects.DeezerMp3.download_data",
             new=MagicMock(return_value=negative_id_reponse),
         )
+        isrc_query_reponse_2 = json.loads(data.isrc_query_reponse_text_2)
+        self.download_track_by_isrc_panic_patch = patch(
+            "deezerdata.models.deezer_objects.DeezerTrack."
+            "download_deezer_track_by_isrc",
+            new=MagicMock(return_value=isrc_query_reponse_2),
+        )
 
     def test_retrieve_history_check_mp3_account(self):
         """
@@ -707,12 +731,14 @@ class DeezerMp3Test(TestCase):
         during a history retrieval.
         """
         self.download_history_data_patch.start()
+        self.download_track_by_isrc_panic_patch.start()
         self.download_mp3_data_patch.start()
         self.deezer_account = deezer_account_models.DeezerAccount.objects.get()
         self.deezer_account.retrieve_history()
         deezer_mp3 = deezer_objects_models.DeezerMp3.objects.get()
         self.assertEqual(deezer_mp3.deezer_account, self.deezer_account)
         self.download_history_data_patch.stop()
+        self.download_track_by_isrc_panic_patch.stop()
         self.download_mp3_data_patch.stop()
 
     def test_retrieve_existing(self):
