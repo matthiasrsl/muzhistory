@@ -16,11 +16,13 @@ Including another URLconf
 from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
+from history.views import HistoryOverview
 
 urlpatterns = [
+    path("", HistoryOverview.as_view(), name="overview"),
     path("admin_fgcrel/", admin.site.urls),
     path("tools_nqztht/", include("tools.urls", namespace="tools")),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("accounts/", include("accounts.urls")),
+    path("accounts/", include("accounts.urls", namespace="accounts")),
     path("history/", include("history.urls", namespace="history")),
 ]

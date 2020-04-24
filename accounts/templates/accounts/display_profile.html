@@ -4,13 +4,12 @@
 
   <h1>{{ profile.user.username }}</h1>
   
-  <p>We
+  <a href="{% url 'history:overview' %}">Historique d'écoute</a>
+
+  <p>
     {% if profile.track_location %}
-      are
-    {% else %}
-      are not
+      We are tracking your location.
     {% endif %}
-    tracking your location.
   </p>
   
   <ul>

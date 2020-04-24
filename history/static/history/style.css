@@ -35,13 +35,14 @@ p {
 .track_metadata {
     display: flex;
     flex-direction: column;
+    position: relative;
+    top: -3px;
 }
 
 .track_title {
     font-size: 1.4em;
     padding: 0;
     margin: 2px 0;
-    line-height: 80%;
 }
 
 .track_title_version {
@@ -72,9 +73,39 @@ p {
 
 /* Statistics */
 
+.stat_section {
+    display: flex;
+    flex-direction: column;
+    margin-left: 40px;
+}
+
+.stat_subsection ol {
+    padding: 0;
+}
+.subsection_artists ol {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.subsection_artists li {
+    flex: 1 0 30%;
+}
+
+.subsection_tracks ol {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+}
+
+.subsection_tracks li {
+    width: auto;
+    margin: 5px;
+    width: 40%;
+}
+
 .artist_image img {
     width: 80px;
-    margin: auto 10px auto auto;
+    margin: auto 15px auto auto;
     border: 1px solid white;
     border-radius: 40px;
 }
