@@ -65,12 +65,22 @@
                   alt="Generic album cover" 
                   title="Pas d'extrait disponible" 
                 {% else %}
-                  class="play_extract"
-                  src="{{ recording.deezer_track.release.cover_medium }}"
+                  {% if recording.deezer_track.preview %}
+                    class="play_extract"
+                  {% endif %}
+                  {% if recording.deezer_track.release.cover_medium %}
+                    src="{{ recording.deezer_track.release.cover_medium }}"
+                  {% else %}
+                    src="{{ DEFAULT_ALBUM_COVER_URL }}"
+                  {% endif %}
                   alt="
                     Album cover: {{ recording.deezer_track.release.release_group.title }}
                   " 
-                  title="Écouter un extrait" 
+                  {% if recording.deezer_track.preview %}
+                    title="Écouter un extrait" 
+                  {% else %}
+                    title="Pas d'extrait disponible"
+                  {% endif %} 
                 {% endif %}
               />
             {% endif %}

@@ -60,13 +60,23 @@ Historique de {{ profile.user.username }} - MuzHistory
               alt="Generic album cover" 
               title="Pas d'extrait disponible" 
             {% else %}
-              class="play_extract"
-              src="{{ entry.track.deezertrack.release.cover_medium }}"
+              {% if entry.track.deezertrack.preview %}
+                class="play_extract"
+              {% endif %}
+              {% if entry.track.deezertrack.release.cover_medium %}
+                src="{{ entry.track.deezertrack.release.cover_medium }}"
+              {% else %}
+                src="{{ DEFAULT_ALBUM_COVER_URL }}"
+              {% endif %}
               alt="
                 Album cover: 
                 {{ entry.track.deezertrack.release.release_group.title }}
               " 
-              title="Écouter un extrait" 
+              {% if entry.track.deezertrack.preview %}
+                title="Écouter un extrait" 
+              {% else %}
+                title="Pas d'extrait disponible"
+              {% endif %}
             {% endif %}
           />
         {% endif %}
@@ -100,7 +110,9 @@ Historique de {{ profile.user.username }} - MuzHistory
                   - {{ entry.track.deezertrack.deezermp3.album_name }}
                 {% endif %}
               {% else %}
-                - {{ entry.track.deezertrack.release.release_group.title}}
+                {% if  entry.track.deezertrack.release.release_group.title %}
+                  - {{ entry.track.deezertrack.release.release_group.title }}
+                {% endif %}
               {% endif %}
             {% endif %}
           </span>
