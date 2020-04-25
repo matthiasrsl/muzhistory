@@ -136,6 +136,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Security
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_REFERRER_POLICY = "same-origin"
+
 # Authentication
 
 LOGOUT_REDIRECT_URL = "/accounts/login/"
