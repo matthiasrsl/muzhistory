@@ -32,7 +32,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["deezhistory.pythonanywhere.com"]
+ALLOWED_HOSTS = ["muzhistory.eu.pythonanywhere.com"]
 
 
 # Application definition
@@ -92,10 +92,10 @@ WSGI_APPLICATION = "muzhistory.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "deezhistory$default",
-        "USER": "deezhistory",
+        "NAME": "muzhistory$default",
+        "USER": "muzhistory",
         "PASSWORD": env("MYSQL_PASSWORD"),
-        "HOST": "deezhistory.mysql.pythonanywhere-services.com",
+        "HOST": "muzhistory.mysql.eu.pythonanywhere-services.com",
         "OPTIONS": {
             "read_default_file": "/path/to/my.cnf",
             "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
@@ -146,7 +146,7 @@ EMAIL_HOST = "smtp.gmail.com"
 
 EMAIL_HOST_USER = "contact.muzhistory@gmail.com"
 
-EMAIL_HOST_PASSWORD = "6M6VteJDkbRqDh8"
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
 
 EMAIL_PORT = 587
 
@@ -199,6 +199,10 @@ OPENWEATHER_API_FORECAST_URL = (
 )
 
 OPENWEATHER_API_KEY = env("OPENWEATHER_API_KEY")
+
+DEEZER_API_APP_ID = 409782
+
+DEEZER_API_SECRET_KEY = env("DEEZER_API_SECRET_KEY")
 
 DEEZER_AUTH_REDIRECT_URI = "https://vocab.pythonanywhere.com"
 
