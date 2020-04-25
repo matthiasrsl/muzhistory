@@ -198,8 +198,6 @@ OPENWEATHER_API_FORECAST_URL = (
     "https://api.openweathermap.org/data/2.5/forecast"
 )
 
-OPENWEATHER_API_KEY = env("OPENWEATHER_API_KEY")
-
 DEEZER_API_APP_ID = 409782
 
 DEEZER_API_SECRET_KEY = env("DEEZER_API_SECRET_KEY")
