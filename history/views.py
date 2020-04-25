@@ -15,13 +15,13 @@ from history.models import HistoryEntry
 from musicdata.models import Track, Artist, Recording
 
 
-class HistoryOverview(View, LoginRequiredMixin):
+class HistoryOverview(LoginRequiredMixin, View):
     """
     Displays the listening history of the logged user.
     """
-
     def get(self, request):
-        profile = request.user.profile
+
+        profile = Profile.objects.all()[0]
         last_history_request = (
             profile.platformaccount_set.all()
             .order_by("-last_history_request")[0]
@@ -40,7 +40,7 @@ class HistoryOverview(View, LoginRequiredMixin):
             .filter(profile=profile).order_by("-listening_datetime")
         )
         paginator = Paginator(
-            entries, 150, orphans=50, allow_empty_first_page=True
+            entries, 70, orphans=50, allow_empty_first_page=True
         )
         total_listening_duration = entries.aggregate(
             Sum("track__deezertrack__duration")
@@ -81,7 +81,7 @@ class HistoryOverview(View, LoginRequiredMixin):
         return response
 
 
-class Statistics(View, LoginRequiredMixin):
+class Statistics(LoginRequiredMixin, View):
     """
     Statistics regarding the complete history.
     """
@@ -100,7 +100,7 @@ class Statistics(View, LoginRequiredMixin):
             elt.rank = rank
 
         return queryset
-            
+
 
     def get(self, request):
         DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL

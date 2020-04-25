@@ -9,7 +9,7 @@ from requests.exceptions import RequestException
 from deezerdata.models.deezer_account import DeezerAccount
 
 
-class DisplayProfile(View, LoginRequiredMixin):
+class DisplayProfile(LoginRequiredMixin, View):
     """
     Displays the profile of the current user.
     """
@@ -75,4 +75,4 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
                 "pu être lié.",
             )
 
-        return redirect("display-profile")
+        return redirect("accounts:display-profile")
