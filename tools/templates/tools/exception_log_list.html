@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'tools/style.css' %}" />
+{% endblock %}
+
+{% block title %}Error logs{% endblock %}
+
+{% block section %}
+
+<h1 class="log_list_h1">Error logs</h1>
+
+{% if logs %}
+    <a href="{% url 'tools:log_list' %}">First page</a>
+    {% if page.has_previous %}
+        - <a href="{% url 'tools:log_list' %}?page={{ page.previous_page_number }}">
+            Previous page
+        </a>
+    {% endif %}
+    {% if page.has_next %}
+        - <a href="{% url 'tools:log_list' %}?page={{ page.next_page_number }}">
+            Next page
+        </a>
+    {% endif %}
+{% endif %}
+<table class="log_list">
+    {% for log in page %}
+    <tr class="log_row">
+        <td></td>
+        <td>
+            <a href="{% url 'tools:log_display' log.id %}">
+                {{ log.exception_name }}
+            </a>
+        </td>
+        <td>{{ log.function_name }}</td>
+        <td>{{ log.occured_on }}</td>
+    </tr>
+    {% empty %}
+    No error logs.
+    {% endfor %}
+</table>
+
+
+
+{% endblock %}

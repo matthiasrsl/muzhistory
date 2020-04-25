@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'tools/style.css' %}" />
+{% endblock %}
+
+{% block title %}Error log{% endblock %}
+
+{% block section %}
+
+<h1>
+    {{ log.exception_name }}
+    <span class="exc_module">
+        from <strong>{{ log.exception_module }}</strong>
+    </span>
+</h1>
+<p class="exc_infos">
+    Occured on {{ log.occured_on }} in {{ log.function_name }}
+</p>
+
+<pre class="traceback">
+{% for line in traceback_list %}
+<span class="tb_line tb_line_{{ line.0 }}">{{ line.1 }}</span>{% empty %}
+    No traceback.
+{% endfor %}
+</pre>
+
+
+{% endblock %}

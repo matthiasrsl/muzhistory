@@ -8,12 +8,11 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Artist',
+            name="Artist",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -35,7 +34,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Recording',
+            name="Recording",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -47,7 +46,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ReleaseGroup',
+            name="ReleaseGroup",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -57,7 +56,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ReleaseGroupContribution',
+            name="ReleaseGroupContribution",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -68,9 +67,7 @@ class Migration(migrations.Migration):
                 ('release_group', models.ForeignKey(
                     on_delete=django.db.models.deletion.CASCADE, to='musicdata.ReleaseGroup')),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False, },
         ),
         migrations.AddField(
             model_name='releasegroup',
@@ -79,7 +76,7 @@ class Migration(migrations.Migration):
                 through='musicdata.ReleaseGroupContribution', to='musicdata.Artist'),
         ),
         migrations.CreateModel(
-            name='RecordingContribution',
+            name="RecordingContribution",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -90,9 +87,7 @@ class Migration(migrations.Migration):
                 ('recording', models.ForeignKey(
                     on_delete=django.db.models.deletion.CASCADE, to='musicdata.Recording')),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False, },
         ),
         migrations.AddField(
             model_name='recording',

@@ -9,12 +9,12 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('musicdata', '0002_genre_market'),
+        ("musicdata", "0002_genre_market"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='DeezerTrack',
+            name="DeezerTrack",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -38,12 +38,10 @@ class Migration(migrations.Migration):
                 ('recording', models.ForeignKey(
                     on_delete=django.db.models.deletion.PROTECT, to='musicdata.Recording')),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False, },
         ),
         migrations.CreateModel(
-            name='DeezerMp3',
+            name="DeezerMp3",
             fields=[
                 ('deezertrack_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE,
                                                          parent_link=True, primary_key=True, serialize=False, to='deezerdata.DeezerTrack')),
@@ -51,13 +49,11 @@ class Migration(migrations.Migration):
                 ('artist_name', models.CharField(max_length=500)),
                 ('album_name', models.CharField(max_length=1000)),
             ],
-            options={
-                'abstract': False,
-            },
-            bases=('deezerdata.deezertrack',),
+            options={"abstract": False, },
+            bases=("deezerdata.deezertrack",),
         ),
         migrations.CreateModel(
-            name='DeezerAlbum',
+            name="DeezerAlbum",
             fields=[
                 ('id', models.AutoField(auto_created=True,
                                         primary_key=True, serialize=False, verbose_name='ID')),
@@ -89,8 +85,6 @@ class Migration(migrations.Migration):
                 ('release_group', models.ForeignKey(
                     on_delete=django.db.models.deletion.PROTECT, to='musicdata.ReleaseGroup')),
             ],
-            options={
-                'abstract': False,
-            },
+            options={"abstract": False, },
         ),
     ]

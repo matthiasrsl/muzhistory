@@ -1,0 +1,165 @@
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+    font-size: 2.2em;
+}
+
+h2 {
+    font-size: 1.6em;
+}
+
+ul {
+    list-style-type: none;
+}
+
+li {
+    display: flex;
+    margin: 5px auto 15px auto;
+}
+
+.album_cover img {
+    width: 65px;
+    margin: auto 10px auto auto;
+}
+
+.album_cover img.play_extract {
+    cursor: pointer;
+}
+
+p {
+    margin: 0;
+}
+
+.track_metadata {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: -3px;
+}
+
+.track_title {
+    font-size: 1.4em;
+    padding: 0;
+    margin: 2px 0;
+}
+
+.track_title_version {
+    font-size: 0.7em;
+}
+
+.track_metadata .artist_name {
+    font-size: 0.9em;
+}
+
+.artist_name_role_feat {
+    color: #777;
+}
+
+.album_name {
+    font-size: 0.9em;
+}
+
+.listening_datetime {
+    font-size: 0.7em;
+    color: #777;
+}
+
+.empty_history_message {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Statistics */
+
+.stat_section {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+}
+
+.stat_subsection ol {
+    padding: 0;
+}
+.subsection_artists ol {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.subsection_artists li {
+    flex: 1 0 30%;
+    max-width: 32%;
+    margin: 5px;
+}
+
+.subsection_tracks ol {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+}
+
+.subsection_tracks li {
+    width: auto;
+    margin: 5px;
+    width: 48%;
+}
+
+div.rank {
+    min-width: 65px;
+    margin: 0 15px;
+}
+
+.subsection_artists div.rank {
+    margin: 0 0 0 15px;;
+}
+
+.rank p {
+    font-size: 2.5em;
+    color: #ccc;
+}
+
+.subsection_tracks .rank p {
+    position: relative;
+    top: 10px;
+}
+
+.subsection_artists .rank p {
+    position: relative;
+    top: 17px;
+}
+
+.artist_image img {
+    width: 80px;
+    margin: auto 15px auto auto;
+    border: 1px solid white;
+    border-radius: 40px;
+}
+
+.artist_metadata {
+    position: relative;
+    top: 22px;
+    max-width: 55%;
+}
+
+.artist_metadata .artist_name {
+    font-size: 1.4em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.subsection_tracks .track_metadata {
+    max-width: 65%;
+}
+
+.subsection_tracks .track_title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.listenings_count {
+    font-size: 0.9em;
+    color: #777;
+}

@@ -1,0 +1,139 @@
+<!-- -*- mode: html; indent-tabs-mode: nil; tab-width: 2 -*- -->
+
+{% extends 'base.html' %}
+{% load static humanize %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'history/style.css'%}" />
+{% endblock %}
+
+{% block section %}
+<h1>Statistiques</h1>
+<a href="{% url 'history:overview' %}">Historique</a>
+<a href="{% url 'accounts:display-profile' %}">Profil</a>
+{% if empty_history %}
+<p>Votre historique d'écoute est vide.</p>
+{% else %}
+
+  {% for section in stats_sections %}
+  <h2>{{ section.title }}</h2>
+  <div class="stat_section">
+    <div class="stat_subsection subsection_artists">
+      <h3>Artistes les plus écoutés</h3>
+      <ol>
+        {% for artist in section.objects.artists %}
+        <li>
+          <div class="rank">
+            <p>#{{ artist.rank }}</p>
+          </div>
+          <div class="artist_image">
+            {% if artist.image_url_deezer_small %}
+              <img src="{{ artist.image_url_deezer_medium }}"
+                alt="{{ artist.name }}" />
+            {% endif %}
+          </div>
+          <div class="artist_metadata">
+            <p class="artist_name" title="{{ artist.name }}">
+              {{ artist.name }}
+            </p>
+            <p class="listenings_count">
+              {{ artist.entry_count }} écoute{{ artist.entry_count|pluralize }}
+            </p>
+          </div>
+        </li>
+        {% empty %}
+        <p>Vous n'avez rien écouté durant cette période.</p>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <div class="stat_subsection subsection_tracks">
+      <h3>Morceaux les plus écoutés</h3>
+      <ol>
+        {% for recording in section.objects.tracks %}
+        <li>
+          <div class="rank">
+            <p>#{{ recording.rank }}</p>
+          </div>
+          <div class='album_cover' onclick="playaudio({{ recording.id }});">
+            {% if recording.deezer_track %}
+              <img 
+                {% if recording.deezer_track.deezermp3 %}
+                  src="{{ DEFAULT_ALBUM_COVER_URL }}"
+                  alt="Generic album cover" 
+                  title="Pas d'extrait disponible" 
+                {% else %}
+                  class="play_extract"
+                  src="{{ recording.deezer_track.release.cover_medium }}"
+                  alt="
+                    Album cover: {{ recording.deezer_track.release.release_group.title }}
+                  " 
+                  title="Écouter un extrait" 
+                {% endif %}
+              />
+            {% endif %}
+          </div>
+          <div class='track_metadata'>
+            <p class='track_title' title="{{ recording.title }}">
+                {{ recording.deezer_track.title_short }}
+                <span class="track_title_version">
+                  {{ recording.deezer_track.title_version }}
+                </span>
+            </p>
+            <p class='artist_and_album'>
+                {% if recording.deezer_track %}
+                  {% if recording.deezer_track.deezermp3 %}
+                    {{recording.deezer_track.deezermp3.artist_name }}
+                  {% else %}
+                    {% for contrib in recording.recordingcontribution_set.all %}
+                      <span class='
+                          artist_name artist_name_role_{{ contrib.role }}
+                      '>
+                        {{ contrib.artist.name }}{% if not forloop.last %}, 
+                        {% endif %}
+                      </span>
+                    {% endfor %}
+                  {% endif %}
+                {% endif %}
+            </p>
+            <p class='listenings_count'>
+              {{ recording.entry_count }} 
+              écoute{{ recording.entry_count|pluralize }}
+            </p>
+            {% if recording.deezer_track %}
+              <audio id={{ recording.id }} 
+                  src="{{ recording.deezer_track.preview }}" 
+                  preload='none'>
+              </audio>
+            {% endif %}
+          </div>
+        </li>
+        {% empty %}
+        <p>Vous n'avez rien écouté.</p>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+
+  {% endfor %}
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function playaudio(id) {
+      var allaudios = document.querySelectorAll('audio');
+      var audio = document.getElementById(id);
+      if (audio.paused) {
+          for (var i = 0; i < allaudios.length; i++) {
+              allaudios[i].pause();
+          }
+          audio.play();
+      } else {
+          audio.pause();
+      }
+  }
+</script>
+{% endblock %}

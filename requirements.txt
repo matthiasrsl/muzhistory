@@ -1,4 +1,7 @@
 Django==3.0
 django-environ
 requests
-django-json-field
+django-modeladmin-reorder
+django-extensions
+coverage
+django-nose
