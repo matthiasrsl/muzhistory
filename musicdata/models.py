@@ -1,13 +1,15 @@
-import requests
+import json
 
 from django.conf import settings
 from django.db import models
 from django.utils import timezone as tz
 
+import requests
 from platform_apis.models import DeezerApiError
 from tools.models import log_exceptions
 
 # from deezerdata import DeezerTrack
+
 
 
 class ImpossibleMerge(Exception):
@@ -244,16 +246,6 @@ class Track(models.Model):
             return super().__str__()
 
 
-    '''def _get_duration(self):
-        if self.track_type == self.TrackTypeChoices.DEEZER_TRACK:
-            return self.deezertrack.duration
-
-    def _set_duration(self, value):
-        pass
-
-    duration = property(_get_duration, _set_duration)'''
-
-
 class Genre(models.Model):
     version = models.IntegerField(default=settings.MH_VERSION)
     name = models.CharField(max_length=100)
@@ -288,7 +280,6 @@ class ReleaseGroupContribution(Contribution):
     """
     Intermediary model for M2M between a Artist and a ReleaseGroup.
     """
-
     release_group = models.ForeignKey("ReleaseGroup", on_delete=models.CASCADE)
 
     def __str__(self):
