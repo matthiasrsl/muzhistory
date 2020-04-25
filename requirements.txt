@@ -5,3 +5,4 @@ django-modeladmin-reorder
 django-extensions
 coverage
 django-nose
+mysqlclient

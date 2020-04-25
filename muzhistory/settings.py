@@ -136,6 +136,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Security
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_REFERRER_POLICY = "same-origin"
+
 # Authentication
 
 LOGOUT_REDIRECT_URL = "/accounts/login/"
@@ -166,9 +176,7 @@ SESSION_COOKIE_AGE = 365 * 24 * 3600
 
 STATIC_URL = "/static/"
 
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 LOGIN_URL = "/accounts/login/"
 

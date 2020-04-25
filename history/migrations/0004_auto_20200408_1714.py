@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historyentry',
             name='track',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.PROTECT, to='musicdata.Track'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.PROTECT, to='musicdata.Track'),
             preserve_default=False,
         ),
     ]

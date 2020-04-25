@@ -20,7 +20,7 @@ class HistoryOverview(LoginRequiredMixin, View):
     Displays the listening history of the logged user.
     """
     def get(self, request):
-        
+
         profile = Profile.objects.all()[0]
         last_history_request = (
             profile.platformaccount_set.all()
@@ -40,7 +40,7 @@ class HistoryOverview(LoginRequiredMixin, View):
             .filter(profile=profile).order_by("-listening_datetime")
         )
         paginator = Paginator(
-            entries, 150, orphans=50, allow_empty_first_page=True
+            entries, 70, orphans=50, allow_empty_first_page=True
         )
         total_listening_duration = entries.aggregate(
             Sum("track__deezertrack__duration")
@@ -100,7 +100,7 @@ class Statistics(LoginRequiredMixin, View):
             elt.rank = rank
 
         return queryset
-            
+
 
     def get(self, request):
         DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL
