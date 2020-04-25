@@ -120,7 +120,7 @@ class Statistics(LoginRequiredMixin, View):
                 recording__track__historyentry__entry_type="listening",
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
-            .order_by("-entry_count")[:9]
+            .order_by("-entry_count", "name")[:9]
         )
 
         tracks_all_time = self.rank_elements(
@@ -129,7 +129,7 @@ class Statistics(LoginRequiredMixin, View):
                 track__historyentry__entry_type="listening",
             )
             .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count")[:20]
+            .order_by("-entry_count", "title")[:20]
         )
 
         # This year
@@ -140,7 +140,7 @@ class Statistics(LoginRequiredMixin, View):
                 recording__track__historyentry__listening_datetime__year=tz.now().year,
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
-            .order_by("-entry_count")[:6]
+            .order_by("-entry_count", "name")[:6]
         )
 
         tracks_this_year = self.rank_elements(
@@ -150,7 +150,7 @@ class Statistics(LoginRequiredMixin, View):
                 track__historyentry__listening_datetime__year=tz.now().year,
             )
             .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count")[:16]
+            .order_by("-entry_count", "track")[:16]
         )
 
 
@@ -164,7 +164,7 @@ class Statistics(LoginRequiredMixin, View):
                 ),
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
-            .order_by("-entry_count")[:6]
+            .order_by("-entry_count", "name")[:6]
         )
 
         tracks_30_days = self.rank_elements(
@@ -176,7 +176,7 @@ class Statistics(LoginRequiredMixin, View):
                 ),
             )
             .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count")[:8]
+            .order_by("-entry_count", "track")[:8]
         )
 
         # Last 7 days
@@ -189,7 +189,7 @@ class Statistics(LoginRequiredMixin, View):
                 ),
             )
             .annotate(entry_count=Count("recording__track__historyentry"))
-            .order_by("-entry_count")[:3]
+            .order_by("-entry_count", "name")[:3]
         )
 
         tracks_last_7days = self.rank_elements(
@@ -201,7 +201,7 @@ class Statistics(LoginRequiredMixin, View):
                 ),
             )
             .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count")[:6]
+            .order_by("-entry_count", "track")[:6]
         )
 
         stats_sections = [

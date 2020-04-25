@@ -154,6 +154,10 @@ SECURE_HSTS_PRELOAD = True
 
 # Authentication
 
+LOGIN_URL = "/accounts/login/"
+
+LOGIN_REDIRECT_URL = "history:overview"
+
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
 # Email sending
@@ -183,8 +187,6 @@ SESSION_COOKIE_AGE = 365 * 24 * 3600
 STATIC_URL = "/static/"
 
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-LOGIN_URL = "/accounts/login/"
 
 ADMIN_REORDER = (
     "auth",
