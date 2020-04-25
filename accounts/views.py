@@ -9,7 +9,7 @@ from requests.exceptions import RequestException
 from deezerdata.models.deezer_account import DeezerAccount
 
 
-class DisplayProfile(View, LoginRequiredMixin):
+class DisplayProfile(LoginRequiredMixin, View):
     """
     Displays the profile of the current user.
     """
