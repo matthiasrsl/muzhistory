@@ -58,6 +58,10 @@ class Migration(migrations.Migration):
             name='disc_number',
         ),
         migrations.RemoveField(
+            model_name='deezermp3',
+            name='deezertrack_ptr',
+        ),
+        migrations.RemoveField(
             model_name='deezertrack',
             name='id',
         ),
@@ -76,23 +80,19 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='deezeraccount',
             name='platformaccount_ptr',
-            field=models.OneToOneField(auto_created=True, default=0, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='platform_apis.PlatformAccount'),
+            field=models.OneToOneField(auto_created=True, default=1, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='platform_apis.PlatformAccount'),
             preserve_default=False,
-        ),
-        migrations.RemoveField(
-            model_name='deezermp3',
-            name='deezertrack_ptr',
         ),
         migrations.AddField(
             model_name='deezertrack',
             name='track_ptr',
-            field=models.OneToOneField(auto_created=True, default=0, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='musicdata.Track'),
+            field=models.OneToOneField(auto_created=True, default=1, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='musicdata.Track'),
             preserve_default=False,
         ),
         migrations.AddField(
             model_name='deezermp3',
             name='deezertrack_ptr',
-            field=models.OneToOneField(auto_created=True, default=0,
+            field=models.OneToOneField(auto_created=True, default=1,
                 on_delete=django.db.models.deletion.CASCADE,
                 parent_link=True, primary_key=True, serialize=False,
                 to='deezerdata.DeezerTrack'),
