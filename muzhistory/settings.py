@@ -166,7 +166,7 @@ SESSION_COOKIE_AGE = 365 * 24 * 3600
 
 STATIC_URL = "/static/"
 
-#STATIC_ROOT = os.path.join(BASE_DIR, "static")
+# STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
@@ -204,7 +204,9 @@ DEEZER_API_APP_ID = 409782
 
 DEEZER_API_SECRET_KEY = env("DEEZER_API_SECRET_KEY")
 
-DEEZER_AUTH_REDIRECT_URI = "https://vocab.pythonanywhere.com"
+DEEZER_AUTH_REDIRECT_URI = (
+    "https://muzhistory.eu.pythonanywhere.com/accounts/link_deezer/"
+)
 
 DEEZER_ACCESS_TOKEN_URL = "https://connect.deezer.com/oauth/access_token.php"
 
