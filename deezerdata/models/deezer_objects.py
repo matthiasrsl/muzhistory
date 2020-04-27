@@ -3,6 +3,7 @@ import datetime as dt
 from django.conf import settings
 from django.db import models
 from django.db.models import Count
+from django.views.decorators.debug import sensitive_variables
 
 from musicdata.models import *
 from platform_apis.models import DeezerApiError, Market
@@ -422,6 +423,7 @@ class DeezerMp3(DeezerTrack):
         self.track_type = Track.TrackTypeChoices.DEEZER_MP3
         super(Track, self).save(*args, **kwargs)
 
+    @sensitive_variables('params')
     def download_data(self, deezer_account):  # pragma: no cover
         """
         Downloads the track data from the Deezer Api.

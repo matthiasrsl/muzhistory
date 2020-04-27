@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.views import View
+from django.views.decorators.debug import sensitive_variables
 
 from platform_apis.models import DeezerOAuthError
 from requests.exceptions import RequestException
@@ -34,10 +35,9 @@ class GetDeezerOAuthCode(View, LoginRequiredMixin):
     View linked to the url to which the user is redirected after
     authorizing acces to his account on Deezer.
     """
-
+    @sensitive_variables('access_token', 'code')
     def get(self, request):
         profile = request.user.profile
-
         try:
             if "code" in request.GET:
                 code = request.GET["code"]

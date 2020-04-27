@@ -3,7 +3,8 @@ import json
 
 from django.conf import settings
 from django.db import models
-from django.utils import timezone as tz
+from django.utils import timezone as te
+from django.views.decorators.debug import sensitive_variables
 
 from history.models import HistoryEntry
 from musicdata.models import *
@@ -33,6 +34,7 @@ class DeezerAccount(PlatformAccount):
     explicit_content_level = models.CharField(max_length=100)
     flow_url = models.URLField(max_length=2000)
 
+    @sensitive_variables('params', )
     @log_exceptions
     def update(self):
         url = settings.DEEZER_API_USER_URL

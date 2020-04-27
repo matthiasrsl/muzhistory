@@ -174,6 +174,10 @@ EMAIL_USE_TLS = True
 
 EMAIL_USE_SSL = False
 
+ADMINS = (
+    ("Matthias Roussel", "mbluesblack01@gmail.com"),
+)
+
 # Misc
 
 APPEND_SLASH = True

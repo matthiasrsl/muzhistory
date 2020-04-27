@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db import models
 from django.utils import timezone as tz
+from django.views.decorators.debug import sensitive_variables
 
 import requests
 from deezerdata.models.deezer_account import DeezerAccount
@@ -28,6 +29,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
+    @sensitive_variables('code', 'params', '')
     def get_deezer_access_token(self, code):
         """
         Retrieves the user's access token from Deezer after authentication.
@@ -58,6 +60,7 @@ class Profile(models.Model):
             else:
                 raise DeezerOAuthError("Unknown error.")
 
+    @sensitive_variables('params_deezer_user', 'access_token')
     def add_deezer_account(self, access_token):
         # We retrieve the Deezer user id to check if it is already
         # in the database.
