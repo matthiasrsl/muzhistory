@@ -28,6 +28,8 @@ class HistoryOverview(LoginRequiredMixin, View):
             .last_history_request
         )
 
+        current_crush = profile.get_current_crush()
+
         DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL
         entries = (
             HistoryEntry.objects.select_related(

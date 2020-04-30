@@ -4,10 +4,12 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.db import models
+from django.db.models import Count
 from django.utils import timezone as tz
 from django.views.decorators.debug import sensitive_variables
 
 import requests
+from musicdata.models import Recording
 from deezerdata.models.deezer_account import DeezerAccount
 from platform_apis.models import (
     DeezerApiError,
@@ -29,7 +31,7 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username
 
-    @sensitive_variables('code', 'params', '')
+    @sensitive_variables("code", "params", "")
     def get_deezer_access_token(self, code):
         """
         Retrieves the user's access token from Deezer after authentication.
@@ -60,7 +62,7 @@ class Profile(models.Model):
             else:
                 raise DeezerOAuthError("Unknown error.")
 
-    @sensitive_variables('params_deezer_user', 'access_token')
+    @sensitive_variables("params_deezer_user", "access_token")
     def add_deezer_account(self, access_token):
         # We retrieve the Deezer user id to check if it is already
         # in the database.
@@ -100,3 +102,22 @@ class Profile(models.Model):
         deezer_account.status = DeezerAccount.StatusChoices.ACTIVE
         deezer_account.update()
         deezer_account.save()
+
+    def get_current_crush(self):
+        """
+        Get the current crush of the user:
+        the recording most listened to recently.
+        """
+        crush = (
+            Recording.objects.filter(
+                track__historyentry__profile=self,
+                track__historyentry__entry_type="listening",
+                track__historyentry__listening_datetime__gte=(
+                    tz.now() - dt.timedelta(days=14)
+                ),
+            )
+            .annotate(entry_count=Count("track__historyentry"))
+            .order_by("-entry_count", "track")[0]
+        )
+
+        return crush
