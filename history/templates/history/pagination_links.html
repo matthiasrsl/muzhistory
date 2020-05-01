@@ -1,13 +1,15 @@
-<p>
-  {% for num in page_numbers %}
-    {% if num == 0 %}
-      <span class="page_number page_number_ellipsis">...</span>
-    {% elif num == current %}
-      <span class="page_number">{{num }}</span>
-    {% else %}
-      <a class="page_number" 
-          href="{% url view_name %}{{ suffix }}{{ num }}"
-      >{{ num }}</a>
-    {% endif %}
-  {% endfor %}
-</p>
+<div class="pagination_links">
+  <p>
+    {% for num in page_numbers %}
+      {% if num == 0 %}
+        <span class="page_number page_number_ellipsis">...</span>
+      {% elif num == current %}
+        <span class="page_number">{{num }}</span>
+      {% else %}
+        <a class="page_number" 
+            href="{% url view_name %}{{ suffix }}{{ num }}"
+        >{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+  </p>
+</div>
