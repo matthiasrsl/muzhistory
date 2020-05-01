@@ -52,23 +52,25 @@
             {% endfor %}
           {% endif %}
         {% endif %}
+      </p>
 
-        {% if not as_recording %}
-          <span class='album_name'>
-            {% if track.deezertrack %}
-              {% if track.deezertrack.deezermp3 %}
-                {% if track.deezertrack.deezermp3.album_name %}
-                    - {{ track.deezertrack.deezermp3.album_name }}
-                {% endif %}
-              {% else %}
-                {% if  track.deezertrack.release.release_group.title %}
-                    - {{ track.deezertrack.release.release_group.title }}
-                {% endif %}
+      {% if not as_recording %}
+        <p class="album_name">
+          {% if track.deezertrack %}
+            {% if track.deezertrack.deezermp3 %}
+              {% if track.deezertrack.deezermp3.album_name %}
+                <span class="album_hard_text">Album </span>
+                {{ track.deezertrack.deezermp3.album_name }}
+              {% endif %}
+            {% else %}
+              {% if  track.deezertrack.release.release_group.title %}
+                <span class="album_hard_text">Album </span>
+                {{ track.deezertrack.release.release_group.title }}
               {% endif %}
             {% endif %}
-          </span>
-        {% endif %}
-      </p>
+          {% endif %}
+        </p>
+      {% endif %}
       <p class='additional_info'>{{ additional_info }}</p>
       {% if track.deezertrack %}
         <audio id={{ track.deezertrack.id }} src="{{ track.deezertrack.preview }}" 

@@ -1,5 +1,14 @@
+* {
+    outline: none;
+}
+
 body {
     font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
 }
 
 h1 {
@@ -14,14 +23,15 @@ ul {
     list-style-type: none;
 }
 
-.track, .current_crush {
+.track {
     display: flex;
     margin: 5px auto 15px auto;
 }
 
 .album_cover img {
-    width: 65px;
+    width: 80px;
     margin: auto 10px auto auto;
+    border-radius: 3px;
 }
 
 .album_cover img.play_extract {
@@ -40,9 +50,9 @@ p {
 }
 
 .track_title {
-    font-size: 1.4em;
+    font-size: 1.45em;
     padding: 0;
-    margin: 2px 0;
+    margin: 0px 0;
 }
 
 .track_title_version {
@@ -50,7 +60,7 @@ p {
 }
 
 .track_metadata .artist_name {
-    font-size: 0.9em;
+    font-size: 1em;
 }
 
 .artist_name_role_feat {
@@ -58,17 +68,17 @@ p {
 }
 
 .album_name {
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
-.listening_datetime, .additional_info {
-    font-size: 0.7em;
+.album_name .album_hard_text {
+    color: #111;
+}
+
+.additional_info {
+    font-size: 0.65em;
     color: #777;
 }
 
-.empty_history_message {
-    font-size: 1.2em;
-    font-weight: bold;
-}
 
 

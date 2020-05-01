@@ -1,0 +1,118 @@
+#page {
+    background: #f6fafa;
+}
+
+p, a, a:visited {
+    color: #0a2628;
+}
+
+/* Header */
+
+header {
+    background: #c2dfe1;
+    min-height: 200px;
+    padding-top: 15px;
+}
+
+.inner_header {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+}
+
+.icon * {
+    fill: #2c7275;
+}
+
+/* Main heading and links */
+
+.heading_and_links {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.heading_and_links h1 {
+    color: #2c7275;
+    margin: 0;
+}
+
+.heading_and_links .icon {
+    width: 30px;
+    height: 30px;
+    margin: auto 5px;
+}
+
+.icon_stats {
+    position: relative;
+    top: 2px;
+}
+
+/* History infos */
+
+.history_infos {
+    margin: 10px auto;
+}
+
+.history_infos span {
+    font-size: 0.85em;
+    color: #2c7275;
+    position: relative;
+    top: -3px;
+}
+
+
+/* Current Cruch */
+
+.current_crush {
+    max-width: 70%;
+    height: 50px;
+    overflow: visible;
+}
+
+.current_crush p {
+    color: #2c7275;
+}
+
+.current_crush .track_title {
+    font-size: 1.8em;
+}
+
+.current_crush .artist_name {
+    font-size: 1.1em;
+}
+
+.current_crush .additional_info {
+    font-size: 0.8em;
+}
+
+.current_crush img {
+    width: 130px;
+    border-radius: 4px;
+}
+
+
+/* Empty history */
+.empty_history_message {
+    font-size: 1.2em;
+    color: #2c7275;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+
+/* Entries */
+
+section.entries_wrapper {
+    width: auto;
+}
+
+ul.entries {
+    width: 55%;
+    margin: 50px auto auto auto;
+    padding: 0;
+}
