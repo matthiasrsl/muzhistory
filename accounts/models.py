@@ -108,16 +108,19 @@ class Profile(models.Model):
         Get the current crush of the user:
         the recording most listened to recently.
         """
-        crush = (
-            Recording.objects.filter(
-                track__historyentry__profile=self,
-                track__historyentry__entry_type="listening",
-                track__historyentry__listening_datetime__gte=(
-                    tz.now() - dt.timedelta(days=14)
-                ),
+        try:
+            crush = (
+                Recording.objects.filter(
+                    track__historyentry__profile=self,
+                    track__historyentry__entry_type="listening",
+                    track__historyentry__listening_datetime__gte=(
+                        tz.now() - dt.timedelta(days=14)
+                    ),
+                )
+                .annotate(entry_count=Count("track__historyentry"))
+                .order_by("-entry_count", "track")[0]
             )
-            .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count", "track")[0]
-        )
+        except IndexError:
+            return None
 
         return crush
