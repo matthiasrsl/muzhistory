@@ -7,11 +7,7 @@
   </head>
   
   <body>
-    <header>
-    
-    </header>
-    
-    <section>
+    <div class="message_wrapper">
       {% if messages %}
         <ul class="messages">
             {% for message in messages %}
@@ -21,13 +17,13 @@
             {% endfor %}
         </ul>
       {% endif %}
-    </section>
+    </div>
     
-    <section>
-      {% block section %}
+    <div id="page">
+      {% block page %}
       
       {% endblock %}
-    </section>
+    </div>
   </body>
 
   {% block scripts %}{% endblock %}
