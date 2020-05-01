@@ -182,6 +182,7 @@ ADMINS = (
 
 APPEND_SLASH = True
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 SESSION_COOKIE_AGE = 365 * 24 * 3600
 
