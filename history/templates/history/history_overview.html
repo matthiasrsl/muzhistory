@@ -79,17 +79,7 @@ Historique de {{ profile.user.username }} - MuzHistory
   {% endif %}
 </section>
 
-<section class="player">
-  {% track current_crush.deezer_track "" True %}
-  <div class="player_time_infos">
-    <progress value="30" max="{{ current_crush.deezer_track.duration }}">
-    </progress>
-    <p class="player_time">
-      <span id="player_current_time">00:30</span> / 
-      <span is="player_total_time">5:19</span>
-    </p>
-  </div>
-</section>
+{% include 'history/player.html' %}
 {% endblock %}
 
 {% block scripts %}

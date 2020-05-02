@@ -6,9 +6,11 @@
     padding: 15px 50px;
     background: #ffe6b2;
     position: fixed;
-    bottom: 0;
+    bottom: -200px;
+    max-height: 200px;
     left: 0;
     right: 0;
+    transition: bottom 0.15s;
 }
 
 .player .track {

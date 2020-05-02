@@ -1,6 +1,15 @@
-<div class="track" id="track_{{ track.id }}">
+<div class="track" id="track_{{ track.id }}" 
   {% if track.deezertrack %}
-    <div class='album_cover' onclick="play({{ track.deezertrack.id }});">
+    data-duration="{{ track.deezertrack.duration }}"
+    data-audio-src="{{ track.deezertrack.preview }}"
+  {% endif %}
+>
+  {% if track.deezertrack %}
+    <div class='album_cover' 
+      {% if track.deezertrack.preview %}
+        onclick="play({{ track.deezertrack.id }});"
+      {% endif %}
+    >
       <img 
       {% if track.deezertrack.deezermp3 %}
           src="{{ DEFAULT_ALBUM_COVER_URL }}"
@@ -71,12 +80,6 @@
           </p>
         {% endif %}
         <p class='additional_info'>{{ additional_info }}</p>
-        {% if track.deezertrack %}
-          <audio id="audio_{{ track.deezertrack.id }}" 
-              src="{{ track.deezertrack.preview }}" 
-              preload='none'>
-          </audio>
-        {% endif %}
       </div>
     </div>
   {% endif %}
