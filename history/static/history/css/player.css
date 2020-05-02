@@ -1,0 +1,48 @@
+.player {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: auto;
+    padding: 15px 50px;
+    background: #ffe6b2;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.player .track {
+    margin: 0;
+}
+
+.player img.play_extract {
+    cursor: default;
+}
+
+.player .track_metadata {
+    position: relative;
+    top: 5px;
+}
+
+.player_time_infos {
+    display: flex;
+    width: 40%;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 15px;
+}
+
+.player progress {
+    height: 3px;
+    width: 100%; /* Do not add margins or paddings on the x axis,
+                    use the parent element. */
+    margin: auto 0 20px 0;
+    border: none;
+    background: #427073;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.player progress::-webkit-progress-bar, .player progress::-moz-progress-bar {
+    background: #f75652;
+}

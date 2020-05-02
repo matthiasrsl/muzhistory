@@ -9,6 +9,7 @@ Historique de {{ profile.user.username }} - MuzHistory
   <link rel="stylesheet" href="{% static 'history/css/common.css'%}" />
   <link rel="stylesheet" 
       href="{% static 'history/css/pagination_links.css' %}" />
+    <link rel="stylesheet" href="{% static 'history/css/player.css'%}" />
   <link rel="stylesheet" href="{% static 'history/css/overview.css'%}" />
 {% endblock %}
 
@@ -34,7 +35,7 @@ Historique de {{ profile.user.username }} - MuzHistory
             {{ paginator.count }} écoutes
           </span>
         </p>
-        <p class="history_info" title="Temps total d'écoute">
+        <p class="history_info" title="Durée d'écoute totale">
           {% include "history/svg/icon_time.svg" %}
           <span>
             {{ total_listening_duration_hours }} heures
@@ -53,15 +54,11 @@ Historique de {{ profile.user.username }} - MuzHistory
     </div>
     <aside class="current_crush">
         {% if current_crush.deezer_track %}
-          {% track current_crush.deezer_track "Current crush" True %}
+          {% track current_crush.deezer_track "Votre titre du moment" True %}
         {% endif %}
     </aside>
   </div>
 </header>
-
-
-
-  
 
 <section class="entries_wrapper">
   {% if entries %}
@@ -81,9 +78,22 @@ Historique de {{ profile.user.username }} - MuzHistory
     {% page_links paginator page_number 'history:overview' %}
   {% endif %}
 </section>
+
+<section class="player">
+  {% track current_crush.deezer_track "" True %}
+  <div class="player_time_infos">
+    <progress value="30" max="{{ current_crush.deezer_track.duration }}">
+    </progress>
+    <p class="player_time">
+      <span id="player_current_time">00:30</span> / 
+      <span is="player_total_time">5:19</span>
+    </p>
+  </div>
+</section>
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'history/js/player.js' %}"></script>
 <script>
   function playaudio(id) {
       var allaudios = document.querySelectorAll('audio');
