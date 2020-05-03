@@ -1,15 +1,20 @@
-{% load music_elements %}
+{% load static music_elements %}
 <section class="player">
-  {% track current_crush.deezer_track "" True %}
+  {% track current_crush.deezer_track "" "" "" %}
   <div class="player_time_infos">
-    <progress value="30" max="{{ current_crush.deezer_track.duration }}">
-    </progress>
-    <p class="player_time">
-      <span id="player_current_time">00:30</span> / 
-      <span id="player_total_time">5:19</span>
-    </p>
+    <div class="progress_container"></div>
+    <div>
+      <p class="player_label">Extrait</p>
+      <p class="player_time">
+        <span id="player_current_time">00:30</span> / 
+        <span id="player_total_time">5:19</span>
+      </p>
+    </div>
   </div>
   <audio class="player_audio" src="" data-currently-playing-id=""
       data-begin-time="">
   </audio> 
 </section>
+<script src="{% static 'history/js/vibrant.min.js' %}"></script>
+<script src="{% static 'history/js/progressbar.min.js' %}"></script>
+<script src="{% static 'history/js/tinycolor.js' %}"></script>

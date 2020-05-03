@@ -47,6 +47,13 @@ p {
     flex-direction: column;
     position: relative;
     top: -3px;
+    max-width: 100%;
+}
+
+.track_title, .artists, .album_name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .track_title {
@@ -76,6 +83,23 @@ p {
 }
 
 .additional_info {
+    display: flex;
+    margin-top: 2px;
+}
+
+.additional_info svg {
+    width: 10px;
+    height: 10px;
+    margin-right: 3px;
+    position: relative;
+    top: 1px;
+}
+
+.additional_info svg *{
+    fill: #777;
+}
+
+.additional_info p {
     font-size: 0.65em;
     color: #777;
 }

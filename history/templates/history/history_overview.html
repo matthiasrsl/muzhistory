@@ -54,12 +54,11 @@ Historique de {{ profile.user.username }} - MuzHistory
     </div>
     <aside class="current_crush">
         {% if current_crush.deezer_track %}
-          {% track current_crush.deezer_track "Votre titre du moment" True %}
+          {% track current_crush.deezer_track "Votre titre du moment" "" "" True %}
         {% endif %}
     </aside>
   </div>
 </header>
-
 <section class="entries_wrapper">
   {% if entries %}
     {% page_links paginator page_number 'history:overview' %}
@@ -68,8 +67,8 @@ Historique de {{ profile.user.username }} - MuzHistory
         {% if entry.entry_type == 'ellipsis_deezer' %}
           <li>Oups... Il y a des écoutes perdues.</li>
         {% elif entry.entry_type == 'listening' and  entry.deezer_account %}
-          {% with date=entry.listening_datetime|naturalday:"\l\e j F Y" time=entry.listening_datetime|time %} 
-            {% track entry.track "Écouté "|add:date|add:" à "|add:time %}
+          {% with date=entry.listening_datetime|naturalday:"\L\e j F Y" time=entry.listening_datetime|time %} 
+            {% track entry.track date|add:" à "|add:time "history/svg/icon_clock.svg" "Date d'écoute" False %}
           {% endwith %}
         {% endif %}
       {% endfor %}
@@ -84,18 +83,4 @@ Historique de {{ profile.user.username }} - MuzHistory
 
 {% block scripts %}
 <script src="{% static 'history/js/player.js' %}"></script>
-<script>
-  function playaudio(id) {
-      var allaudios = document.querySelectorAll('audio');
-      var audio = document.getElementById(id);
-      if (audio.paused) {
-          for (var i = 0; i < allaudios.length; i++) {
-              allaudios[i].pause();
-          }
-          audio.play();
-      } else {
-          audio.pause();
-      }
-  }
-</script>
 {% endblock %}

@@ -10,7 +10,7 @@
         onclick="play({{ track.deezertrack.id }});"
       {% endif %}
     >
-      <img 
+      <img crossorigin=""
       {% if track.deezertrack.deezermp3 %}
           src="{{ DEFAULT_ALBUM_COVER_URL }}"
           alt="Generic album cover" 
@@ -37,49 +37,52 @@
       />
     </div>
 
-    <div class="track_metadata_wrapper"> <!-- For js replacement. -->
-      <div class='track_metadata'>
-        <p class='track_title'>
-          {{ track.deezertrack.title_short }}
-          <span class="track_title_version">
-            {{ track.deezertrack.title_version}}
-          </span>
-        </p>
+    <div class='track_metadata'>
+      <p class='track_title' 
+          title="{{ track.deezertrack.title_short }} {{ track.deezertrack.title_version }}"
+      >
+        {{ track.deezertrack.title_short }}
+        <span class="track_title_version">
+          {{ track.deezertrack.title_version}}
+        </span>
+      </p>
 
-        <p class='artists'>
+      <p class='artists'>
+        {% if track.deezertrack %}
+          {% if track.deezertrack.deezermp3 %}
+            {{ track.deezertrack.deezermp3.artist_name }}
+          {% else %}
+            {% for contrib in track.recording.recordingcontribution_set.all %}
+              <span class='
+                  artist_name artist_name_role_{{ contrib.role }}
+              '>
+                {{ contrib.artist.name }}{% if not forloop.last %}, 
+                {% endif %}
+              </span>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      </p>
+
+      {% if not as_recording %}
+        <p class="album_name">
           {% if track.deezertrack %}
             {% if track.deezertrack.deezermp3 %}
-              {{ track.deezertrack.deezermp3.artist_name }}
+              {% if track.deezertrack.deezermp3.album_name %}
+                <span class="album_hard_text">Album </span>
+                {{ track.deezertrack.deezermp3.album_name }}
+              {% endif %}
             {% else %}
-              {% for contrib in track.recording.recordingcontribution_set.all %}
-                <span class='
-                    artist_name artist_name_role_{{ contrib.role }}
-                '>
-                  {{ contrib.artist.name }}{% if not forloop.last %}, 
-                  {% endif %}
-                </span>
-              {% endfor %}
+              {% if  track.deezertrack.release.release_group.title %}
+                {{ track.deezertrack.release.release_group.title }}
+              {% endif %}
             {% endif %}
           {% endif %}
         </p>
-
-        {% if not as_recording %}
-          <p class="album_name">
-            {% if track.deezertrack %}
-              {% if track.deezertrack.deezermp3 %}
-                {% if track.deezertrack.deezermp3.album_name %}
-                  <span class="album_hard_text">Album </span>
-                  {{ track.deezertrack.deezermp3.album_name }}
-                {% endif %}
-              {% else %}
-                {% if  track.deezertrack.release.release_group.title %}
-                  {{ track.deezertrack.release.release_group.title }}
-                {% endif %}
-              {% endif %}
-            {% endif %}
-          </p>
-        {% endif %}
-        <p class='additional_info'>{{ additional_info }}</p>
+      {% endif %}
+      <div class='additional_info' title="{{ label }}">
+        {% if icon %}{% include icon %}{% endif %}
+        <p>{{ additional_info }}</p>
       </div>
     </div>
   {% endif %}

@@ -7,7 +7,7 @@ register = template.Library()
 
 
 @register.inclusion_tag("history/track_snippet.html")
-def track(track, additional_info="", as_recording=False):
+def track(track, additional_info="", icon="", label="", as_recording=False):
     """
     Includes the metadata about a track.
     """
@@ -19,6 +19,8 @@ def track(track, additional_info="", as_recording=False):
     return {
         "track": track,
         "additional_info": str(additional_info),
+        "icon": str(icon),
+        "label": label,
         "as_recording": bool(as_recording),
         "DEFAULT_ALBUM_COVER_URL": settings.DEFAULT_ALBUM_COVER_URL,
     }
