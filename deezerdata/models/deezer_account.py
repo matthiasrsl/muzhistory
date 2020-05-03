@@ -77,6 +77,8 @@ class DeezerAccount(PlatformAccount):
         self.explicit_content_level = r_data["explicit_content_level"]
         self.flow_url = r_data["tracklist"]
 
+        self.save()
+
     def download_history_data(self, url):  # pragma: no cover
         """
         Downloads the account's listening history data from the Deezer Api.

@@ -13,6 +13,7 @@ from django.views import View
 from accounts.models import Profile
 from history.models import HistoryEntry
 from musicdata.models import Track, Artist, Recording
+from deezerdata.models.deezer_objects import DeezerTrack
 
 
 class HistoryOverview(LoginRequiredMixin, View):
@@ -29,6 +30,8 @@ class HistoryOverview(LoginRequiredMixin, View):
             )
         except IndexError:
             pass
+
+        empty_track = DeezerTrack.objects.create(dz_id=0)
 
         current_crush = profile.get_current_crush()
 

@@ -52,11 +52,13 @@ Historique de {{ profile.user.username }} - MuzHistory
         <p class="empty_history_message">Votre historique d'écoute est vide.</p>
       {% endif %}
     </div>
-    <aside class="current_crush">
-        {% if current_crush.deezer_track %}
-          {% track current_crush.deezer_track "Votre titre du moment" "" "" True %}
-        {% endif %}
-    </aside>
+    {% if current_crush %}
+      <aside class="current_crush">
+          {% if current_crush.deezer_track %}
+            {% track current_crush.deezer_track "Votre titre du moment" "" "" True %}
+          {% endif %}
+      </aside>
+    {% endif %}
   </div>
 </header>
 <section class="entries_wrapper">
