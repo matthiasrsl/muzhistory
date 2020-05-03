@@ -11,6 +11,7 @@
     display: inline-block;
     background:  #c2dfe1;
     border: 1px solid #9dc8ca;
+    border-radius: 2px;
     padding: 3px;
     color: #2c7275;
     margin: auto 1px;

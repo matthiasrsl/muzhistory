@@ -106,7 +106,7 @@ function play(id) {
         vibrant.getPalette((err, palette) => {
             var bg_color = tinycolor(palette.LightVibrant.hex)
             var bg_color_alt = tinycolor(palette.LightMuted.hex)
-            if (bg_color.getBrightness() > 200) {
+            if (bg_color.getBrightness() > 240) {
                 player.style.background = bg_color_alt;
             } else {
                 player.style.background = bg_color.desaturate(30).lighten(10);
