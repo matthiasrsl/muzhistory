@@ -6,3 +6,4 @@ django-extensions
 coverage
 django-nose
 mysqlclient
+djangorestframework

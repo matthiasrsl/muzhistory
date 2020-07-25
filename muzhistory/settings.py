@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "admin_reorder",
+    'rest_framework',
     "muzhistory.apps.MyAdminConfig",
     "tools",
     "platform_apis",
