@@ -1,6 +1,11 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 
+import '@ionic/react/css/core.css';
+import { IonTabs, IonTabBar, IonTabButton, IonIcon, IonLabel, IonBadge } from '@ionic/react';
+import { calendar, personCircle, map, informationCircle } from 'ionicons/icons';
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -33,15 +38,7 @@ class App extends Component {
 
   render() {
     return (
-      <ul>
-        {/*this.state.data.map(contact => {
-          return (
-            <li key={contact.id}>
-              {contact.name} - {contact.email}
-            </li>
-          );
-        })*/}
-      </ul>
+        <></>
     );
   }
 }

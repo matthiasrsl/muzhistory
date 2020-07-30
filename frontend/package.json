@@ -20,5 +20,10 @@
     "react-dom": "^16.13.1",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
+  },
+  "dependencies": {
+    "@ionic/react": "^5.3.1",
+    "css-loader": "^4.1.1",
+    "style-loader": "^1.2.1"
   }
 }
