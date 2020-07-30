@@ -24,7 +24,7 @@ class HistoryAPI(APIView):
         profile = request.user.profile
         entries = HistoryEntry.objects.filter(profile=profile).order_by(
             "-listening_datetime"
-        )
+        )[:30]
 
         serializer = HistoryEntrySerializer(entries, many=True)
         response = {"data": serializer.data}

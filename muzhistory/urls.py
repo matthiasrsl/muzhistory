@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import include
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from history.views import HistoryOverview
+from frontend.views import app
 
 urlpatterns = [
     path("", HistoryOverview.as_view(), name="overview"),
@@ -26,5 +27,5 @@ urlpatterns = [
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("history/", include("history.urls", namespace="history")),
     path("api/", include("api.urls", namespace="api")),
-    path('app/', include('frontend.urls')),
+    re_path('^(.*)$', app, name="app"),
 ]
