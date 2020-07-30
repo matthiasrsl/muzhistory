@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     "musicdata",
     "deezerdata",
     "api",
+    "frontend",
 ]
 
 MIDDLEWARE = [
