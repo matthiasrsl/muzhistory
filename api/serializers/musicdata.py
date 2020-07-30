@@ -109,7 +109,10 @@ class TrackSerializer(serializers.Serializer):
             try:
                 return obj.deezertrack.deezermp3.album_name
             except DeezerMp3.DoesNotExist:
-                return obj.deezertrack.release.release_group.title
+                try:
+                    return obj.deezertrack.release.release_group.title
+                except AttributeError:
+                    return "ERROR"
         else:
             return ""
 
