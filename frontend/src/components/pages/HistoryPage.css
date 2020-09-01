@@ -1,0 +1,7 @@
+ion-router-outlet {
+    overflow-y: scroll;
+}
+
+.listening_history {
+    margin: 20px 100px 100px 400px;
+}
