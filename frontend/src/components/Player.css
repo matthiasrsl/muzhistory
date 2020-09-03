@@ -4,9 +4,9 @@
     align-items: flex-end;
     width: auto;
     padding: 12px 50px 10px 30px;
-    background: #ffe6b2;
+    background: #fff;
     position: fixed;
-    bottom: 0;
+    bottom: -200px;
     max-height: 200px;
     left: 0;
     right: 0;
