@@ -9,6 +9,29 @@ var Tinycolor = require("tinycolor2");
 var Vibrant = require("node-vibrant");
 var Progressbar = require("progressbar.js");
 
+var empty_track = {
+  "id": 175,
+  "track_type": "empty",
+  "disc_number": null,
+  "track_number": null,
+  "duration": 600,
+  "album_title": "Album title",
+  "album_cover": "https://e-cdns-images.dzcdn.net/images/cover/d41d8cd98f00b204e9800998ecf8427e/380x380-000000-80-0-0.jpg",
+  "title": "Title ",
+  "title_refine": "(Title refine)",
+  "contributors": [
+    {
+      "name": "Main artist",
+      "role": "main"
+    },
+    {
+      "name": "Featured artist",
+      "role": "feat"
+    }
+  ],
+  "preview": "https://cdns-preview-7.dzcdn.net/stream/c-79a4f779d296204d674a37c8eb002978-5.mp3"
+};
+
 
 function formatDuration(duration) {
   return new Date(duration * 1000).toISOString().substr(14, 5);
@@ -18,16 +41,25 @@ function formatDuration(duration) {
 class Player extends Component {
   constructor(props) {
     super(props);
-    this.state = { track: this.props.track, position: 0 };
+    this.state = { track: empty_track, position: 0 };
+  }
+
+  click(track) {
+    this.setState((prevState, props) => ({ track: track }));
+    this.play();
+    this.show();
+    console.log(track.title);
   }
 
   play() {
     var audio = this.audio;
-    audio.play();
+    audio.src = this.state.track.preview;
+    console.log(audio.src);
+    audio.load();
     console.log("Playing !");
-    this.progressBar.type = "indeterminate";
+    //this.progressBar.type = "indeterminate";
     this.progressBar.value = (
-      this.audio.dataset.beginTime / this.props.track.duration
+      this.audio.dataset.beginTime / this.state.track.duration
     );
     audio.oncanplay = (event) => { this.audioLoaded(); }
     audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
@@ -38,7 +70,7 @@ class Player extends Component {
     var playerElement = document.querySelector(".player");
     playerElement.style.bottom = "0";
     this.totalTimeElement.firstChild.replaceWith(
-      formatDuration(this.props.track.duration)
+      formatDuration(this.state.track.duration)
     );
   }
 
@@ -48,41 +80,36 @@ class Player extends Component {
   }
 
   audioLoaded() {
+    this.audio.play();
     this.progressBar.type = "determinate";
   }
 
   updateProgressBar(event) {
     var begin_time = this.audio.dataset.beginTime;
-    var duration = this.props.track.duration;
+    var duration = this.state.track.duration;
     var current_time = parseInt(begin_time) + parseFloat(this.audio.currentTime);
     this.currentTimeElement.firstChild.replaceWith(
       formatDuration(current_time)
     );
     this.progressBar.value = (current_time / duration);
-    /*if (this.audio.readyState >= 1) {
-      /*this.progressBar.type = "determinate";
-      this.progressBar.buffer = 1;
-    } else {
-      this.progressBar.buffer = (current_time / duration);
-    }*/
   }
 
   componentDidUpdate() {
-    if (this.props.track.preview) {
+    /*if (this.props.track.preview) {
       this.play();
       this.show();
     } else {
       this.hide();
-    }
+    }*/
   }
 
   render() {
     return (
       <div className="player">
-        <TrackTile track={this.props.track} />
+        <TrackTile track={this.state.track} />
         <div className="player_time_infos">
           <div className="progress_container">
-            <IonProgressBar color="primary" value={0.5} ref={ref => this.progressBar = ref}>
+            <IonProgressBar color="primary" ref={ref => this.progressBar = ref}>
             </IonProgressBar>
           </div>
           <div>
@@ -96,7 +123,7 @@ class Player extends Component {
             </p>
           </div>
         </div>
-        <audio id="player_audio" src={this.props.track.preview} data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
+        <audio id="player_audio" src={this.state.track.preview} data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
       </div>
     )

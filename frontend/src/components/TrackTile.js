@@ -8,7 +8,7 @@ class TrackTile extends Component {
   render() {
     return (
       <div className="track" key={this.props.id}>
-        <div className="album_cover" onClick={() => this.props.changeTrack(this.props.track)}>
+        <div className="album_cover" onClick={() => this.props.coverClick(this.props.track)}>
           <img src={this.props.track.album_cover} alt="album" />
         </div>
         <div className="track_metadata">

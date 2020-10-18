@@ -55,9 +55,10 @@ class HistoryPage extends Component {
       });
   }
 
-  changeTrack(track) {
+
+  coverClick(track) {
+    this.player.click(track);
     this.setState({track_playing: track});
-    console.log(track)
   }
 
   render() {
@@ -66,11 +67,16 @@ class HistoryPage extends Component {
         <div className="listening_history">
           {this.state && this.state.data.data.map((entry) =>
             <TrackTile track={entry.track} key={entry.id} 
-                changeTrack={(track) => this.changeTrack(track)} 
+                coverClick={(track) => this.coverClick(track)}
             />
           )}
         </div>
-        {this.state && <Player track={this.state.track_playing} />}
+        {
+          this.state && 
+          <Player ref={ref => this.player = ref} 
+              /*track={this.state.track_playing} */
+          />
+        }
       </>
     )
   }
