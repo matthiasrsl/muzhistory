@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { IonProgressBar } from '@ionic/react';
+import { IonIcon, IonProgressBar } from '@ionic/react';
+
+import { play, pause } from 'ionicons/icons';
 
 import TrackTile from "./TrackTile.js";
 
@@ -7,7 +9,6 @@ import "./Player.css";
 
 var Tinycolor = require("tinycolor2");
 var Vibrant = require("node-vibrant");
-var Progressbar = require("progressbar.js");
 
 var empty_track = {
   "id": 175,
@@ -46,11 +47,12 @@ class Player extends Component {
 
   click(track) {
     this.setState((prevState, props) => ({ track: track }));
-    this.playPause(track);
+    this.changeTrack(track);
+    this.playPause();
     this.show();
   }
 
-  playPause(track) {
+  changeTrack(track) {
     var audio = this.audio;
     if (audio.src != track.preview) {
       audio.src = track.preview;
@@ -61,12 +63,17 @@ class Player extends Component {
       audio.oncanplay = (event) => { this.audioLoaded(); }
       audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
       audio.onended = (event) => { this.hide(); };
+    }
+  }
+
+  playPause() {
+    var audio = this.audio;
+    if (audio.paused) {
+      audio.play();
+      this.setState({ playing: true });
     } else {
-      if (audio.paused) {
-        audio.play();
-      } else {
-        audio.pause();
-      }
+      audio.pause();
+      this.setState({ playing: false });
     }
   }
 
@@ -85,6 +92,7 @@ class Player extends Component {
 
   audioLoaded() {
     this.audio.play();
+    this.setState({ playing: true });
     this.progressBar.type = "determinate";
   }
 
@@ -101,7 +109,9 @@ class Player extends Component {
   render() {
     return (
       <div className="player">
-        <TrackTile track={this.state.track} coverClick={(track) => {}}/>
+        <audio id="player_audio" src="#" data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
+        </audio>
+        <TrackTile track={this.state.track} coverClick={(track) => { }} />
         <div className="player_time_infos">
           <div className="progress_container">
             <IonProgressBar color="primary" ref={ref => this.progressBar = ref}>
@@ -117,9 +127,15 @@ class Player extends Component {
               > 0:00</span>
             </p>
           </div>
+          {this.state.playing ?
+            <IonIcon className="playpause-icon" icon={pause} onClick={
+              () => this.playPause()
+            } />
+            : <IonIcon className="playpause-icon" icon={play} onClick={
+              () => this.playPause()
+            } />
+          }
         </div>
-        <audio id="player_audio" src="#" data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
-        </audio>
       </div>
     )
   }
