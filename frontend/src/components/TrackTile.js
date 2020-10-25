@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import './TrackTile.css'
+
 class TrackTile extends Component {
   constructor(props) {
     super(props);
@@ -11,7 +13,10 @@ class TrackTile extends Component {
         <div className="album_cover" onClick={
           () => this.props.albumCoverClick(this.props.track)
         }>
-          <img src={this.props.track.album_cover} alt="album" />
+          <img className={this.props.track.preview && "play_extract"} 
+            title={this.props.track.preview && "Écouter un extrait"} 
+            src={this.props.track.album_cover} alt="album" 
+          />
         </div>
         <div className="track_metadata">
           <p className="track_title">
@@ -32,6 +37,7 @@ class TrackTile extends Component {
             )}
           </p>
           <p className="album_name">{this.props.track.album_title}</p>
+          <p className="additional_info">{this.props.additionalInfo}</p>
         </div>
       </div>
     )

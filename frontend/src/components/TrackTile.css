@@ -53,6 +53,8 @@ p {
 
 .album_name {
     font-size: 0.8em;
+    position: relative;
+    top: -2px;
 }
 
 .album_name .album_hard_text {
@@ -62,21 +64,14 @@ p {
 .additional_info {
     display: flex;
     margin-top: 2px;
-}
-
-.additional_info svg {
-    width: 10px;
-    height: 10px;
-    margin-right: 3px;
-    position: relative;
-    top: 1px;
-}
-
-.additional_info svg *{
-    fill: #777;
-}
-
-.additional_info p {
-    font-size: 0.65em;
+    font-size: 0.8em;
     color: #777;
+    position: relative;
+    top: -4px;
 }
+
+.additional_info ion-icon {
+    position: relative;
+    top: 2px;
+}
+

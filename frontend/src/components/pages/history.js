@@ -1,10 +1,11 @@
+import { IonIcon } from '@ionic/react';
 import React, { Component } from 'react';
 
 import TrackTile from "../TrackTile.js";
-import Player from "../Player.js";
 
-import "./track_snippet.css";
 import "./HistoryPage.css";
+
+import { timeOutline } from 'ionicons/icons';
 
 var empty_track = {
   "id": 175,
@@ -68,6 +69,7 @@ class HistoryPage extends Component {
           {this.state && this.state.data.data.map((entry) =>
             <TrackTile track={entry.track} key={entry.id} 
                 albumCoverClick={(track) => this.albumCoverClick(track)}
+                additionalInfo={<p><IonIcon icon={timeOutline} /> Écouté le</p>}
             />
           )}
         </div>
