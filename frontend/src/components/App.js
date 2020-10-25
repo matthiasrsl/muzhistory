@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
 import { Redirect, Route } from 'react-router-dom';
+import moment from 'moment';
 
 import {
   IonApp,
@@ -62,6 +63,7 @@ class App extends Component {
     this.setState({
       track_playing: empty_track
     })
+    moment.locale("fr");
   }
 
   albumCoverClick(track) {

@@ -1,6 +1,6 @@
 import { IonIcon } from '@ionic/react';
 import React, { Component } from 'react';
-import { formatRelative } from 'date-fns'
+import moment from 'moment';
 
 import TrackTile from "../TrackTile.js";
 
@@ -70,7 +70,17 @@ class HistoryPage extends Component {
           {this.state && this.state.data.data.map((entry) =>
             <TrackTile track={entry.track} key={entry.id} 
                 albumCoverClick={(track) => this.albumCoverClick(track)}
-                additionalInfo={<><IonIcon icon={timeOutline} /> <span>Écouté le</span></>}
+                additionalInfo={
+                  <>
+                    <IonIcon icon={timeOutline} /> 
+                    <span>
+                      Écouté {moment(entry.listening_datetime).calendar(
+                        null, 
+                        { sameElse: "[le] LL"}
+                      ).toLowerCase()}
+                    </span>
+                  </>
+                }
             />
           )}
         </div>
