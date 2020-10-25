@@ -46,24 +46,28 @@ class Player extends Component {
 
   click(track) {
     this.setState((prevState, props) => ({ track: track }));
-    this.play();
+    this.playPause(track);
     this.show();
-    console.log(track.title);
   }
 
-  play() {
+  playPause(track) {
     var audio = this.audio;
-    audio.src = this.state.track.preview;
-    console.log(audio.src);
-    audio.load();
-    console.log("Playing !");
-    //this.progressBar.type = "indeterminate";
-    this.progressBar.value = (
-      this.audio.dataset.beginTime / this.state.track.duration
-    );
-    audio.oncanplay = (event) => { this.audioLoaded(); }
-    audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
-    audio.onended = (event) => { this.hide(); };
+    if (audio.src != track.preview) {
+      audio.src = track.preview;
+      audio.load();
+      this.progressBar.value = (
+        this.audio.dataset.beginTime / this.state.track.duration
+      );
+      audio.oncanplay = (event) => { this.audioLoaded(); }
+      audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
+      audio.onended = (event) => { this.hide(); };
+    } else {
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
   }
 
   show() {
@@ -94,19 +98,10 @@ class Player extends Component {
     this.progressBar.value = (current_time / duration);
   }
 
-  componentDidUpdate() {
-    /*if (this.props.track.preview) {
-      this.play();
-      this.show();
-    } else {
-      this.hide();
-    }*/
-  }
-
   render() {
     return (
       <div className="player">
-        <TrackTile track={this.state.track} />
+        <TrackTile track={this.state.track} coverClick={(track) => {}}/>
         <div className="player_time_infos">
           <div className="progress_container">
             <IonProgressBar color="primary" ref={ref => this.progressBar = ref}>
@@ -123,7 +118,7 @@ class Player extends Component {
             </p>
           </div>
         </div>
-        <audio id="player_audio" src={this.state.track.preview} data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
+        <audio id="player_audio" src="#" data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
       </div>
     )
