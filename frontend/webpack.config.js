@@ -19,6 +19,6 @@ module.exports = {
       ]
     },
     output: {
-        publicPath: "/static/frontend/"   
+        publicPath: "/static/frontend/build/"   
     } 
   };
