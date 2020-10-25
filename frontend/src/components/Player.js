@@ -111,7 +111,11 @@ class Player extends Component {
       <div className="player">
         <audio id="player_audio" src="#" data-currently-playing-id="" data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
-        <TrackTile track={this.state.track} coverClick={(track) => { }} additionalInfo="Lecture en cours"/>
+        <TrackTile track={this.state.track} coverClick={(track) => { }} 
+          additionalInfo={
+            this.state.playing ? "Lecture en cours" : "En pause"
+          }
+        />
         <div className="player_time_infos">
           <div className="progress_container">
             <IonProgressBar color="primary" ref={ref => this.progressBar = ref}>

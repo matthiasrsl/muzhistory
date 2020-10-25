@@ -26,6 +26,8 @@ import '@ionic/react/css/normalize.css';
 import '@ionic/react/css/structure.css';
 import '@ionic/react/css/typography.css';
 
+import './App.css';
+
 var empty_track = {
   "id": 175,
   "track_type": "empty",
