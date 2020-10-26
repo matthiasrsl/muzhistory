@@ -69,7 +69,7 @@ class HistoryPage extends Component {
         {this.state &&
           <>
             <header>
-              <div className="inner_eader">
+              <div className="inner_header">
                 <h1>Historique de {this.state.data.profile.user.username}</h1>
                 <p title="Nombre total d'écoutes">
                   {this.state.data.profile.nb_listenings} écoutes
@@ -87,6 +87,13 @@ class HistoryPage extends Component {
                     { sameElse: "[le] LL" }
                   ).toLowerCase()}
                 </p>
+                {this.state.data.profile.current_crush &&
+                  <aside class="current_crush">
+                    <TrackTile track={this.state.data.profile.current_crush}
+                      albumCoverClick={(track) => this.albumCoverClick(track)}
+                      additionalInfo="Votre titre du moment" />
+                  </aside>
+                }
               </div>
             </header>
             <section>

@@ -5,16 +5,40 @@ ion-router-outlet {
 /* Header */
 
 header {
-    height: 150px;
+    height: 180px;
     background: #c2dfe1;
-    padding: 20px 70px;
+    padding: 20px 150px;
+    margin-bottom: 100px;
+}
+
+header h1, header p, header ion-icon {
+    color: #1d585a;
 }
 
 header h1 {
     margin: 0;
 }
 
+.inner_header > p {
+    font-size: 0.8em;
+}
 
+.current_crush .track_title {
+    font-size: 1.5em;
+}
+
+.current_crush .artist_name {
+    font-size: 1.05em;
+}
+
+.current_crush .additional_info {
+    font-size: 0.85em;
+}
+
+.current_crush img {
+    width: 120px;
+    border: 1px dashed grey;
+}
 
 
 .listening_history {
