@@ -36,7 +36,7 @@ class DeezerAlbum(Release):
     last_update = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"{self.release_group.title} (Deezer)"
+        return f"{self.release_group} (Deezer)" if self else "No release"
 
     def download_data(self):  # pragma: no cover
         """
@@ -228,9 +228,7 @@ class DeezerTrack(Track):
     last_update = models.DateTimeField(null=True)
 
     def __str__(self):
-        return (
-            f"{self.title} (Deezer)" if self.recording else "ERROR"
-        )
+        return f"{self.title} (Deezer)" if self.recording else "ERROR"
 
     def save(self, *args, **kwargs):
         self.track_type = Track.TrackTypeChoices.DEEZER_TRACK
@@ -290,7 +288,7 @@ class DeezerTrack(Track):
                         return instance, created
                 except KeyError:
                     pass  # No API-related error occured.
-                
+
                 instance.save()
                 recording, recording_created = Recording.objects.get_or_create(
                     isrc=json_data["isrc"]
@@ -362,9 +360,11 @@ class DeezerTrack(Track):
                     )[0]
                 except DeezerApiError:
                     pass  # Orphan track, not a problem.
-                
+
                 if is_recording_default_deezer_track:
-                    if not recording_created:  # To avoid duplicate contributions
+                    if (
+                        not recording_created
+                    ):  # To avoid duplicate contributions
                         RecordingContribution.objects.filter(
                             recording=recording
                         ).delete()
@@ -423,7 +423,7 @@ class DeezerMp3(DeezerTrack):
         self.track_type = Track.TrackTypeChoices.DEEZER_MP3
         super(Track, self).save(*args, **kwargs)
 
-    @sensitive_variables('params')
+    @sensitive_variables("params")
     def download_data(self, deezer_account):  # pragma: no cover
         """
         Downloads the track data from the Deezer Api.
