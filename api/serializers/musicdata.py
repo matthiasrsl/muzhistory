@@ -42,6 +42,7 @@ class RecordingSerializer(serializers.Serializer):
     contributors = serializers.SerializerMethodField("get_contributors")
     album_cover = serializers.SerializerMethodField("get_album_cover")
     preview = serializers.SerializerMethodField("get_preview")
+    duration = serializers.SerializerMethodField("get_duration")
 
     def get_title(self, obj):
         if obj.deezer_track:
@@ -81,6 +82,12 @@ class RecordingSerializer(serializers.Serializer):
             return obj.deezer_track.preview
         else:
             return ""
+
+    def get_duration(self, obj):
+        if obj.deezer_track:
+            return obj.deezer_track.duration
+        else:
+            return 0
 
 class TrackSerializer(serializers.Serializer):
     id = serializers.IntegerField()

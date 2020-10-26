@@ -90,7 +90,7 @@ class HistoryPage extends Component {
                   </p>
                 </div>
                 {this.state.data.profile.current_crush &&
-                  <aside class="current_crush">
+                  <aside className="current_crush">
                     <TrackTile track={this.state.data.profile.current_crush}
                       albumCoverClick={(track) => this.albumCoverClick(track)}
                       additionalInfo="Votre titre du moment" />
