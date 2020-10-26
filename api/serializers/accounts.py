@@ -5,6 +5,7 @@ from rest_framework import serializers
 
 from accounts.models import Profile
 from history.models import HistoryEntry
+from api.serializers.musicdata import RecordingSerializer
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -22,6 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         "get_listening_duration"
     )
     last_update = serializers.SerializerMethodField("get_last_update")
+    current_crush = serializers.SerializerMethodField("get_current_crush")
 
     def get_nb_listenings(self, obj):
         entries = HistoryEntry.objects.filter(profile=obj)
@@ -38,6 +40,10 @@ class ProfileSerializer(serializers.ModelSerializer):
             result=Min("last_history_request")
         )["result"]
 
+    def get_current_crush(self, obj):
+        serializer = RecordingSerializer(obj.get_current_crush())
+        return serializer.data
+
     class Meta:
         model = Profile
         fields = (
@@ -48,4 +54,5 @@ class ProfileSerializer(serializers.ModelSerializer):
             "nb_listenings",
             "listening_duration",
             "last_update",
+            "current_crush"
         )

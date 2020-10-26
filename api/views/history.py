@@ -8,6 +8,7 @@ from rest_framework import authentication, permissions
 
 from history.models import HistoryEntry
 from api.serializers.history import HistoryEntrySerializer
+from api.serializers.accounts import ProfileSerializer
 
 
 class HistoryAPI(APIView):
@@ -24,9 +25,13 @@ class HistoryAPI(APIView):
         profile = request.user.profile
         entries = HistoryEntry.objects.filter(profile=profile).order_by(
             "-listening_datetime"
-        )[:60]
+        )[:15]
 
-        serializer = HistoryEntrySerializer(entries, many=True)
-        response = {"data": serializer.data}
+        serializer_entries = HistoryEntrySerializer(entries, many=True)
+        serializer_profile = ProfileSerializer(profile)
+        response = {
+            "data": serializer_entries.data,
+            "profile": serializer_profile.data,
+        }
 
         return Response(response)
