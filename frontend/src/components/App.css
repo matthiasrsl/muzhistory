@@ -1,3 +1,7 @@
+.ion-page {
+    background: #f6fafa;
+}
+
 img {
     max-width: initial;
 }
@@ -9,4 +13,10 @@ ion-tab-bar, ion-tab-button {
 ion-tab-bar {
     border: 0;
     height: 40px;
+}
+
+p > ion-icon {
+    position: relative;
+    top: 3px;
+    margin-right: 3px;
 }

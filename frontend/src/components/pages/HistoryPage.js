@@ -70,23 +70,25 @@ class HistoryPage extends Component {
           <>
             <header>
               <div className="inner_header">
-                <h1>Historique de {this.state.data.profile.user.username}</h1>
-                <p title="Nombre total d'écoutes">
-                  {this.state.data.profile.nb_listenings} écoutes
+                <div className="profile_infos">
+                  <h1>Historique de {this.state.data.profile.user.username}</h1>
+                  <p title="Nombre total d'écoutes">
+                    {this.state.data.profile.nb_listenings} écoutes
                 </p>
-                <p title="Durée totale d'écoute">
-                  <IonIcon icon={hourglassOutline} />
-                  {moment.duration(
-                    this.state.data.profile.listening_duration, 'seconds'
-                  ).hours()} heures
+                  <p title="Durée totale d'écoute">
+                    <IonIcon icon={hourglassOutline} />
+                    {moment.duration(
+                      this.state.data.profile.listening_duration, 'seconds'
+                    ).hours()} heures
                 </p>
-                <p title="Dernière mise à jour">
-                  <IonIcon icon={timeOutline} />
-                  {moment(this.state.data.profile.last_update).calendar(
-                    null,
-                    { sameElse: "[le] LL" }
-                  ).toLowerCase()}
-                </p>
+                  <p title="Dernière mise à jour">
+                    <IonIcon icon={timeOutline} />
+                    {moment(this.state.data.profile.last_update).calendar(
+                      null,
+                      { sameElse: "[le] LL" }
+                    ).toLowerCase()}
+                  </p>
+                </div>
                 {this.state.data.profile.current_crush &&
                   <aside class="current_crush">
                     <TrackTile track={this.state.data.profile.current_crush}
