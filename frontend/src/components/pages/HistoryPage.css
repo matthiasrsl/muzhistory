@@ -2,6 +2,21 @@ ion-router-outlet {
     overflow-y: scroll;
 }
 
+/* Header */
+
+header {
+    height: 150px;
+    background: #c2dfe1;
+    padding: 20px 70px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+
+
+
 .listening_history {
     margin: 20px 100px 100px 400px;
 }

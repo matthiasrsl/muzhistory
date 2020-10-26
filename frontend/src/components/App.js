@@ -14,8 +14,8 @@ import {
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { timeOutline, barChartOutline } from 'ionicons/icons';
-import HistoryPage from './pages/history';
-import StatsPage from './pages/stats';
+import HistoryPage from './pages/HistoryPage';
+import StatsPage from './pages/StatsPage';
 import Player from "./Player.js";
 
 /* Core CSS required for Ionic components to work properly */
