@@ -6,6 +6,7 @@ img {
     max-width: initial;
 }
 
+
 ion-tab-bar, ion-tab-button {
     background: #c2dfe1;
 }
@@ -13,6 +14,15 @@ ion-tab-bar, ion-tab-button {
 ion-tab-bar {
     border: 0;
     height: 40px;
+}
+
+ion-router-outlet {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+ion-router-outlet::-webkit-scrollbar {
+    display: none;
 }
 
 p > ion-icon {

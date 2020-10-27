@@ -14,13 +14,17 @@ class TrackTile extends Component {
           () => this.props.albumCoverClick(this.props.track)
         }>
           <img className={this.props.track.preview && "play_extract"} 
-            title={this.props.track.preview && "Écouter un extrait"} 
+            title={
+              this.props.clickable && 
+              this.props.track.preview && 
+              "Écouter un extrait"
+            } 
             src={this.props.track.album_cover} alt="album" 
           />
         </div>
         <div className="track_metadata">
           <p className="track_title">
-            {this.props.track.title}
+            {this.props.track.title} 
             <span className="track_title_refine">
               {this.props.track.title_refine}
             </span>

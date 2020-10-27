@@ -54,8 +54,8 @@ class Player extends Component {
 
   changeTrack(track) {
     var audio = this.audio;
-    this.setState({ loaded: false });
     if (audio.src != track.preview) {
+      this.setState({ loaded: false });
       audio.src = track.preview;
       audio.load();
       this.progressBar.value = (
@@ -119,6 +119,7 @@ class Player extends Component {
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
         <TrackTile track={this.state.track} coverClick={(track) => { }}
+          clickable={false}
           additionalInfo={
             this.state.loaded ?
               this.state.playing ? "Lecture en cours" : "En pause"

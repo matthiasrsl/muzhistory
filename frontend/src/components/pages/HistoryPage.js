@@ -72,30 +72,34 @@ class HistoryPage extends Component {
               <div className="inner_header">
                 <div className="profile_infos">
                   <h1>Historique de {this.state.data.profile.user.username}</h1>
-                  <p title="Nombre total d'écoutes">
-                    {this.state.data.profile.nb_listenings} écoutes
-                </p>
-                  <p title="Durée totale d'écoute">
-                    <IonIcon icon={hourglassOutline} />
-                    {moment.duration(
-                      this.state.data.profile.listening_duration, 'seconds'
-                    ).hours()} heures
-                </p>
-                  <p title="Dernière mise à jour">
-                    <IonIcon icon={timeOutline} />
-                    {moment(this.state.data.profile.last_update).calendar(
-                      null,
-                      { sameElse: "[le] LL" }
-                    ).toLowerCase()}
-                  </p>
                 </div>
-                {this.state.data.profile.current_crush &&
-                  <aside className="current_crush">
-                    <TrackTile track={this.state.data.profile.current_crush}
-                      albumCoverClick={(track) => this.albumCoverClick(track)}
-                      additionalInfo="Votre titre du moment" />
-                  </aside>
-                }
+                <div className="lower_header">
+                  <div className="history_metadata">
+                    <p title="Nombre total d'écoutes">
+                      {this.state.data.profile.nb_listenings} écoutes
+                    </p>
+                    <p title="Durée totale d'écoute">
+                      <IonIcon icon={hourglassOutline} />
+                      {moment.duration(
+                        this.state.data.profile.listening_duration, 'seconds'
+                      ).hours()} heures
+                    </p>
+                    <p title="Dernière mise à jour">
+                      <IonIcon icon={timeOutline} />
+                      {moment(this.state.data.profile.last_update).calendar(
+                        null,
+                        { sameElse: "[le] LL" }
+                      ).toLowerCase()}
+                    </p>
+                  </div>
+                  {this.state.data.profile.current_crush &&
+                    <aside className="current_crush">
+                      <TrackTile track={this.state.data.profile.current_crush}
+                        albumCoverClick={(track) => this.albumCoverClick(track)}
+                        additionalInfo="Votre titre du moment" />
+                    </aside>
+                  }
+                </div>
               </div>
             </header>
             <section>
@@ -103,6 +107,7 @@ class HistoryPage extends Component {
                 {this.state.data.data.map((entry) =>
                   <TrackTile track={entry.track} key={entry.id}
                     albumCoverClick={(track) => this.albumCoverClick(track)}
+                    clickable={true}
                     additionalInfo={
                       <>
                         <IonIcon icon={timeOutline} />

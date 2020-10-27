@@ -5,9 +5,9 @@ ion-router-outlet {
 /* Header */
 
 header {
-    height: 200px;
+    height: 135px;
     background: #c2dfe1;
-    padding: 20px 120px;
+    padding: 20px 20px 20px 120px;
     margin-bottom: 50px;
 }
 
@@ -15,15 +15,27 @@ header h1, header p, header ion-icon {
     color: #1d585a;
 }
 
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.lower_header {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
 .profile_infos {
     position: relative;
     top: -20px;
 }
 
-header h1 {
-    margin: 0;
-    font-size: 2em;
-    font-weight: bold;
+.history_metadata {
+    text-align: end;
+    position: relative;
+    top: 6px;
 }
 
 .inner_header > p {
@@ -39,7 +51,7 @@ header h1 {
 }
 
 .current_crush .additional_info {
-    font-size: 0.85em;
+    font-size: 0.8em;
     color: #1d585a;
 }
 
