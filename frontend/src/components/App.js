@@ -65,7 +65,7 @@ class App extends Component {
     this.setState({
       track_playing: empty_track
     })
-    moment.locale("fr");
+    moment.locale("en-US");
   }
 
   albumCoverClick(track) {

@@ -71,27 +71,27 @@ class HistoryPage extends Component {
             {this.state &&
               <>
                 <div className="profile_infos">
-                  <h1>Historique de {
+                  <h1>{
                     this.state.data.profile.user.first_name ?
                       this.state.data.profile.user.first_name
                       : this.state.data.profile.user.username
-                  }
+                  }'s listening history
                   </h1>
                 </div>
                 <div className="lower_header">
                   <div className="history_metadata">
-                    <p title="Nombre total d'écoutes">
-                      {this.state.data.profile.nb_listenings} écoutes
+                    <p title="Number of listenings">
+                      {this.state.data.profile.nb_listenings} listenings
                     </p>
-                    <p title="Durée totale d'écoute">
+                    <p title="Total listening time">
                       <IonIcon icon={hourglassOutline} />
-                      {Math.floor(this.state.data.profile.listening_duration / 3600)} heures
+                      {Math.floor(this.state.data.profile.listening_duration / 3600)} hours
                     </p>
-                    <p title="Dernière mise à jour">
+                    <p title="Last update">
                       <IonIcon icon={timeOutline} />
                       {moment(this.state.data.profile.last_update).calendar(
                         null,
-                        { sameElse: "[le] LL" }
+                        { sameElse: "LL" }
                       ).toLowerCase()}
                     </p>
                   </div>
@@ -99,7 +99,7 @@ class HistoryPage extends Component {
                     <aside className="current_crush">
                       <TrackTile track={this.state.data.profile.current_crush}
                         albumCoverClick={(track) => this.albumCoverClick(track)}
-                        additionalInfo="Votre titre du moment" />
+                        additionalInfo="Your current crush" />
                     </aside> : undefined
                   }
                 </div>
@@ -119,9 +119,9 @@ class HistoryPage extends Component {
                       <>
                         <IonIcon icon={timeOutline} />
                         <span>
-                          Écouté {moment(entry.listening_datetime).calendar(
+                          Listened to {moment(entry.listening_datetime).calendar(
                           null,
-                          { sameElse: "[le] LL" }
+                          { sameElse: "[on] LL" }
                         ).toLowerCase()}
                         </span>
                       </>

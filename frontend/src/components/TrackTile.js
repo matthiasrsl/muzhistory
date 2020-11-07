@@ -17,7 +17,7 @@ class TrackTile extends Component {
             title={
               this.props.clickable && 
               this.props.track.preview ? 
-              "Écouter un extrait" : undefined
+              "Play extract" : undefined
             } 
             src={this.props.track.album_cover} alt="album" 
           />

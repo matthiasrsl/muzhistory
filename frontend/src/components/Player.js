@@ -122,8 +122,8 @@ class Player extends Component {
           clickable={false}
           additionalInfo={
             this.state.loaded ?
-              this.state.playing ? "Lecture en cours" : "En pause"
-              : "Chargement..."
+              this.state.playing ? "Now playing" : "Paused"
+              : "Loading..."
           }
         />
         <div className="player_time_infos">
@@ -133,7 +133,7 @@ class Player extends Component {
             </IonProgressBar>
           </div>
           <div>
-            <p className="player_label">30 secondes d'extrait</p>
+            <p className="player_label">30-second extract</p>
             <p className="player_time">
               <span id="player_current_time"
                 ref={ref => this.currentTimeElement = ref}
