@@ -20,12 +20,12 @@ from history.views import HistoryOverview
 from frontend.views import app
 
 urlpatterns = [
-    path("", HistoryOverview.as_view(), name="overview"),
+    #path("", HistoryOverview.as_view(), name="overview"),
     path("admin_fgcrel/", admin.site.urls),
     path("tools_nqztht/", include("tools.urls", namespace="tools")),
     path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
-    path("history/", include("history.urls", namespace="history")),
+    path("oldhistory/", include("history.urls", namespace="history")),
     path("api/", include("api.urls", namespace="api")),
     re_path('^(.*)$', app, name="app"),
 ]

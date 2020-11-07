@@ -66,10 +66,10 @@ class HistoryPage extends Component {
   render() {
     return (
       <>
-        {this.state &&
-          <>
-            <header>
-              <div className="inner_header">
+        <header>
+          <div className="inner_header">
+            {this.state &&
+              <>
                 <div className="profile_infos">
                   <h1>Historique de {this.state.data.profile.user.username}</h1>
                 </div>
@@ -80,9 +80,7 @@ class HistoryPage extends Component {
                     </p>
                     <p title="Durée totale d'écoute">
                       <IonIcon icon={hourglassOutline} />
-                      {moment.duration(
-                        this.state.data.profile.listening_duration, 'seconds'
-                      ).hours()} heures
+                      {Math.floor(this.state.data.profile.listening_duration / 3600)} heures
                     </p>
                     <p title="Dernière mise à jour">
                       <IonIcon icon={timeOutline} />
@@ -92,16 +90,20 @@ class HistoryPage extends Component {
                       ).toLowerCase()}
                     </p>
                   </div>
-                  {this.state.data.profile.current_crush &&
+                  {this.state.data.profile.current_crush ?
                     <aside className="current_crush">
                       <TrackTile track={this.state.data.profile.current_crush}
                         albumCoverClick={(track) => this.albumCoverClick(track)}
                         additionalInfo="Votre titre du moment" />
-                    </aside>
+                    </aside> : undefined
                   }
                 </div>
-              </div>
-            </header>
+              </>
+            }
+          </div>
+        </header>
+        {this.state &&
+          <>
             <section>
               <div className="listening_history">
                 {this.state.data.data.map((entry) =>

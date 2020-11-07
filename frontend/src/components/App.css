@@ -7,8 +7,12 @@ img {
 }
 
 
-ion-tab-bar, ion-tab-button {
+ion-tab-bar {
     background: #c2dfe1;
+}
+
+ion-tab-button {
+    background: rgba(255, 255, 255, 0);
 }
 
 ion-tab-bar {

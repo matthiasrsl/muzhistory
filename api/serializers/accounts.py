@@ -4,6 +4,7 @@ from django.db.models import Sum, Min
 from rest_framework import serializers
 
 from accounts.models import Profile
+from musicdata.models import Recording
 from history.models import HistoryEntry
 from api.serializers.musicdata import RecordingSerializer
 
@@ -41,8 +42,11 @@ class ProfileSerializer(serializers.ModelSerializer):
         )["result"]
 
     def get_current_crush(self, obj):
-        serializer = RecordingSerializer(obj.get_current_crush())
-        return serializer.data
+        current_crush = obj.get_current_crush()
+        if isinstance(current_crush, Recording):
+            serializer = RecordingSerializer(obj.get_current_crush())
+            return serializer.data
+        return False
 
     class Meta:
         model = Profile

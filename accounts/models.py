@@ -120,6 +120,7 @@ class Profile(models.Model):
                 .annotate(entry_count=Count("track__historyentry"))
                 .order_by("-entry_count", "track")[0]
             )
+            print(type(crush))
         except IndexError:
             return None
 

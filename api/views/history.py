@@ -22,7 +22,8 @@ class HistoryAPI(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
-        profile = request.user.profile
+        if request.user.is_authenticated:
+            profile = request.user.profile
         entries = HistoryEntry.objects.filter(profile=profile).order_by(
             "-listening_datetime"
         )[:30]
