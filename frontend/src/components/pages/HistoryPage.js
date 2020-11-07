@@ -71,7 +71,12 @@ class HistoryPage extends Component {
             {this.state &&
               <>
                 <div className="profile_infos">
-                  <h1>Historique de {this.state.data.profile.user.username}</h1>
+                  <h1>Historique de {
+                    this.state.data.profile.user.first_name ?
+                      this.state.data.profile.user.first_name
+                      : this.state.data.profile.user.username
+                  }
+                  </h1>
                 </div>
                 <div className="lower_header">
                   <div className="history_metadata">

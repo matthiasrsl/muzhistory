@@ -25,6 +25,9 @@ class Profile(models.Model):
     """
 
     version = models.IntegerField(default=settings.MH_VERSION)
+    showcase_profile = models.BooleanField(
+        default=False
+    )  # Whether the profile is used to showcase the app to anonymous users.
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     track_location = models.BooleanField(default=False)
 
