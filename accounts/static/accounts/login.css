@@ -8,6 +8,7 @@
 * {
     scrollbar-width: none;
     font-family: Cocogoose;
+    outline: none;
 }
 
 *::-webkit-scrollbar {
