@@ -1,0 +1,192 @@
+@font-face {
+    font-family: 'Cocogoose';
+    src: url('/static/fonts/Cocogoose-Classic-Medium-trial.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    scrollbar-width: none;
+    font-family: Cocogoose;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    margin: 0;
+}
+
+body, #page, #background, #foreground, #bg_login_and_links, #inner_login_and_links, .background_layer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#page {
+    background: linear-gradient(to bottom, #a5b4ff, #000c58);
+    height: 1100px;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.background_layer {
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes colorblock_move {
+    0% { top: -700px; }
+    50% { top: -780px; }
+    100% { top: -700px; }
+}
+
+#background > .background_layer:nth-child(1) .colorblock {
+    width: 200vw;
+    /*rotate: -20deg;*/
+    position: relative;
+    /*top: -340px;
+    left: -380px;*/
+    /*animation-name: colorblock_move;
+    animation-duration: 30s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;*/
+}
+
+#background #colorblock0 {
+    height: 200px;
+    rotate: 0deg;
+    top: 0;
+    left: 0;
+    background-color: #212e7d;
+    opacity: 1;
+    background-image:  linear-gradient(30deg, #ff9058 12%, transparent 12.5%, transparent 87%, #ff9058 87.5%, #ff9058), linear-gradient(150deg, #ff9058 12%, transparent 12.5%, transparent 87%, #ff9058 87.5%, #ff9058), linear-gradient(30deg, #ff9058 12%, transparent 12.5%, transparent 87%, #ff9058 87.5%, #ff9058), linear-gradient(150deg, #ff9058 12%, transparent 12.5%, transparent 87%, #ff9058 87.5%, #ff9058), linear-gradient(60deg, #ff905877 25%, transparent 25.5%, transparent 75%, #ff905877 75%, #ff905877), linear-gradient(60deg, #ff905877 25%, transparent 25.5%, transparent 75%, #ff905877 75%, #ff905877);
+    background-size: 16px 28px;
+    background-position: 0 0, 0 0, 8px 14px, 8px 14px, 0 0, 8px 14px;
+}
+
+#colorblock1 {
+    height: 300px;
+    background: linear-gradient(to bottom, #04126d, #1b2da5);
+}
+
+#colorblock2 {
+    height: 70px;
+    background: linear-gradient(to bottom, #2538af, #3e4eb6);
+}
+
+#colorblock3 {
+    height: 135px;
+    background: linear-gradient(to bottom, #5567df, #7280db);
+}
+
+#colorblock4 {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: transparent;
+    opacity: 1;
+    background-image: radial-gradient(rgba(168, 179, 253, 0.6), 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+
+#foreground {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+}
+
+h1 {
+    font-family: Cocogoose;
+    color: #ffffff;
+    font-size: 5em;
+}
+
+h1 ion-icon {
+    position: relative;
+    top: 20px;
+    left: 3px;
+}
+
+#login_and_links {
+    position: relative;
+    width: 600px;
+    height: 350px;
+    top: 10px;
+    border-radius: 13px;
+    box-shadow: 5px 5px 8px rgba(68, 68, 68, 0.5);
+    background: #fff;
+}
+
+
+#inner_login_and_links {
+    display: flex;
+    border-radius: 14px;
+    padding: 30px;
+    background: transparent;
+}
+
+form {
+    width: 45%;
+    border-right: 3px solid #212e7d;
+    padding-right: 30px;
+}
+
+#form_inner {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: -40px;
+}
+
+#form_inner label {
+    margin-top: 15px;
+}
+
+#form_inner input {
+    height: 30px;
+    padding: 5px;
+    border: 1px solid #04126d;
+    border-radius: 15px;
+}
+
+#form_inner button, .showcase_links a {
+    color: #fff;
+    border: none;
+    padding: 10px;
+    width: 100px;    
+    margin: 30px 0 30px 120px;
+    font-size: 1.2em;
+}
+
+#form_inner button {
+    background-color: #fb3548;
+}
+
+#inner_login_and_links p {
+    font-size: 2em;
+    font-family: Cocogoose;
+    color: #04126d;
+    position: relative;
+    top: -10px;
+}
+
+.showcase_links a {
+    font-size: 0.6em;
+    background-color: #ff7a36;
+    margin-left: 20px;
+    position: relative;
+    top: -4px;
+    text-decoration: none;
+}
+
+.showcase_links {
+    padding: 110px 30px;
+}

@@ -1,15 +1,55 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block static %}
+<link rel="stylesheet" href="{% static 'accounts/login.css' %}" />
+{% endblock %}
 
 {% block page %}
+<div id="background">
+  <div class="background_layer">
+    <!--<div class="colorblock" id="colorblock0"></div>-->
+    <div class="colorblock" id="colorblock1"></div>
+    <div class="colorblock" id="colorblock2"></div>
+    <div class="colorblock" id="colorblock3"></div>
+  </div>
+  <div class="background_layer">
+    <div class="colorblock card" id="colorblock4"></div>
+  </div>
+</div>
 
-  <h1>Login</h1>
-  
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
+<div id="foreground">
+  <h1>Muzhist<ion-icon name="time-outline"></ion-icon>ry</h1>
 
-  <p>Or <a href="{% url 'app' '' %}?showcase=1">test the demo</a>.</p>
-  
+  <div id="login_and_links">
+    <div id="bg_login_and_links"></div>
+    <div id="inner_login_and_links">
+      <form method="post">
+        {% csrf_token %}
+
+        <p>Login</p>
+
+        <div id="form_inner">
+          {{ form.non_field_error }}
+
+          {{ form.username.errors }}
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+
+          {{ form.password.errors }}
+          <label for="{{ form.password.id_for_label }}">Password</label>
+          {{ form.password }}
+
+          <button type="submit">Login</button>
+        </div>
+      </form>
+      <div class="showcase_links">
+        <p>Or <a href="{% url 'app' '' %}?showcase=1">Test the demo</a></p> 
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
 {% endblock %}
