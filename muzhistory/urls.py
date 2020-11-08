@@ -27,5 +27,6 @@ urlpatterns = [
     path("accounts/", include("accounts.urls", namespace="accounts")),
     path("oldhistory/", include("history.urls", namespace="history")),
     path("api/", include("api.urls", namespace="api")),
-    re_path('^(.*)$', app, name="app"),
+    re_path("^showcase/(.*)$", app, name="app", kwargs={"showcase": False}),
+    re_path('^(.*)$', app, name="app", kwargs={"showcase": False}),
 ]
