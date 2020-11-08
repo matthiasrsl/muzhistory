@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block page %}
+
+  <h1>Login</h1>
+  
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Login</button>
+  </form>
+
+  <p>Or <a href="{% url 'app' '' %}?showcase=1">test the demo</a>.</p>
+  
+{% endblock %}

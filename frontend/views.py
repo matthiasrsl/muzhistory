@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 
 
-def app(request, route, **kwargs):
+def app(request, route=""):
     if request.method == "GET":
         showcase = request.GET.get("showcase", False)
     else:

@@ -19,14 +19,14 @@ from django.urls import path, re_path
 from history.views import HistoryOverview
 from frontend.views import app
 
+
 urlpatterns = [
     #path("", HistoryOverview.as_view(), name="overview"),
     path("admin_fgcrel/", admin.site.urls),
     path("tools_nqztht/", include("tools.urls", namespace="tools")),
-    path("accounts/", include("django.contrib.auth.urls")),
     path("accounts/", include("accounts.urls", namespace="accounts")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("oldhistory/", include("history.urls", namespace="history")),
     path("api/", include("api.urls", namespace="api")),
-    re_path("^showcase/(.*)$", app, name="app", kwargs={"showcase": False}),
-    re_path('^(.*)$', app, name="app", kwargs={"showcase": False}),
+    re_path('^(.*)$', app, name="app"),
 ]
