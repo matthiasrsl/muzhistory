@@ -296,17 +296,25 @@ form {
 .showcase_links img {
     position: relative;
     top: -40px;
-    left: -65px;
+    left: -55px;
     width: 100px;
+    transition: all 100ms ease;
+}
+
+.showcase_links img:hover {
+    width: 110px;
+    left: -60px;
+    top: -45px;
 }
 
 a.showcase_link {
     color: white;
     background-color: #f58032;
-    position: relative;
+    position: absolute;
     margin: auto;
-    top: -40px;
-    left: 20px;
+    bottom: 60px;
+    right: 68px;
+    width: 113px;
     text-decoration: none;
 }
 
