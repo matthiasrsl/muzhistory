@@ -7,14 +7,77 @@
 
 {% block page %}
 <div id="background">
-  <div class="background_layer">
-    <!--<div class="colorblock" id="colorblock0"></div>-->
+  <div class="background_layer" id="bglayer1">
+    <video src="{% static 'accounts/battery.mp4' %}" autoplay loop></video>
+  </div>
+  <div class="background_layer" id="bglayer2">
+    <div class="colorblock" id="colorblock0"></div>
     <div class="colorblock" id="colorblock1"></div>
     <div class="colorblock" id="colorblock2"></div>
     <div class="colorblock" id="colorblock3"></div>
   </div>
-  <div class="background_layer">
-    <div class="colorblock card" id="colorblock4"></div>
+  <div class="background_layer" id="bglayer3">
+    <img src="https://cdns-images.dzcdn.net/images/cover/f521259784968d8d031110d287beed00/250x250-000000-80-0-0.jpg"
+      title="" id="cover_1" alt="album cover: Madisen Ward and The Mama Bear: Dreams" />
+    <img src="https://e-cdns-images.dzcdn.net/images/cover/b8894bf272cc703027d6c2d6bc0205e2/250x250-000000-80-0-0.jpg"
+      title="" id="cover_2" alt="album cover: Pomplamoose: Best of 2019" />
+    <img src="https://cdns-images.dzcdn.net/images/cover/549d889629afc71d698f4274173d5496/250x250-000000-80-0-0.jpg"
+      title="" id="cover_3" alt="album cover: The Airborne Toxic Event: Hollywood Park" />
+    <img src="https://cdns-images.dzcdn.net/images/cover/69b7dbf04ac2f1b429d2ec35a11b74ff/250x250-000000-80-0-0.jpg"
+      title="" id="cover_4" alt="album cover: Pomplamoose: Instant Crush" />
+    <img src="https://cdns-images.dzcdn.net/images/cover/b298094528702627877720d0be4448b5/250x250-000000-80-0-0.jpg"
+      title="" id="cover_5" alt="album cover: Daft Punk: Random Access Memories" />
+    <img src="https://e-cdns-images.dzcdn.net/images/cover/f47c0aa413d2f3fcf571f249f265ff1e/250x250-000000-80-0-0.jpg"
+      title="" id="cover_6" alt="album cover: CAKE: Sinking Ship" />
+    <img src="https://cdns-images.dzcdn.net/images/cover/ff84ff9cc326dcb829caca09b3da8561/250x250-000000-80-0-0.jpg"
+      title="" id="cover_7" alt="album cover: The Osmonds: Very Best of The OSmonds" />
+    <img src="https://e-cdns-images.dzcdn.net/images/cover/9be1aa05ac33f70a83dfc7cc530fa327/250x250-000000-80-0-0.jpg"
+      title="" id="cover_8" alt="album cover: The Killers: Hot Fuss" />
+    <img src="https://e-cdns-images.dzcdn.net/images/cover/fb558d511023ec09ac0713516026d8ab/264x264-000000-80-0-0.jpg"
+      title="" id="cover_9" alt="album cover: Pink Floyd: The Division Bell" />
+    <img src="https://cdns-images.dzcdn.net/images/cover/a38ef87aa2917be1fe62866357f8ade1/250x250-000000-80-0-0.jpg"
+      title="" id="cover_10" alt="album cover: The Weeknd: Blinding Lights" />
+    <img src="https://e-cdns-images.dzcdn.net/images/cover/4a2360324af313f73b56fd1f7faaac88/250x250-000000-80-0-0.jpg"
+      title="" id="cover_11" alt="album cover: Angèle: BROL" />
+
+
+    <audio id="audio_cover_1" src="https://cdns-preview-3.dzcdn.net/stream/c-3756e63893017f05bb580876c049b3ac-4.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_2" src="https://cdns-preview-5.dzcdn.net/stream/c-5c375750bba3cfb333bdce218151f8b1-3.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_3" src="https://cdns-preview-7.dzcdn.net/stream/c-79a4f779d296204d674a37c8eb002978-5.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_4" src="https://cdns-preview-5.dzcdn.net/stream/c-507b0b7ddfdb6d1a7df4d5fc8ec6c1b1-4.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_5" src="https://cdns-preview-8.dzcdn.net/stream/c-853d19a12a694ccc74b2501acd802500-3.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_6" src="https://cdns-preview-1.dzcdn.net/stream/c-18be437e098067da7284684b2a32f6e3-3.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_7" src="https://cdns-preview-b.dzcdn.net/stream/c-b5069a3ba4bea504d9e9f8b59dfb8b2d-9.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_8" src="https://cdns-preview-4.dzcdn.net/stream/c-4dc96d99edd87a3bfe2bbd8c4c8c67a9-6.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_9" src="https://cdns-preview-7.dzcdn.net/stream/c-76f99bfd43105d75063911b9650d8576-5.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_10" src="https://cdns-preview-9.dzcdn.net/stream/c-92e1e84e8071d6ab417a236dc95ab0a9-4.mp3"
+      preload="auto">
+    </audio>
+    <audio id="audio_cover_11" src="https://cdns-preview-a.dzcdn.net/stream/c-a3b3b7ed0b11d698ceab1c83446f9759-4.mp3"
+      preload="auto">
+    </audio>
+  </div>
+  <div class="background_layer" id="bglayer4">
+    <img src="{% static 'accounts/people_playing_music.png' %}" alt="People playing music" />
+    <img src="{% static 'accounts/human_playing_music.png' %}" alt="Man playing music" />
   </div>
 </div>
 
@@ -44,12 +107,47 @@
         </div>
       </form>
       <div class="showcase_links">
-        <p>Or <a href="{% url 'app' '' %}?showcase=1">Test the demo</a></p> 
+        <p>Or test the demo</p>
+        <a href="{% url 'app' '' %}?showcase=1">
+          <img src="{% static 'accounts/music-player.svg' %}" alt="Test the demo" />
+        </a>
+        <br />
+        <a class="showcase_link" href="{% url 'app' '' %}?showcase=1">
+          Test the demo
+        </a>
       </div>
     </div>
   </div>
 
+  <p class="footer_text">Matthias Roussel, 2020</p>
+
 </div>
 
+<script>
+  function playaudio(e) {
+    var id = "audio_" + e.target.id;
+    var audio = document.getElementById(id);
+    //audio.play();
+    fadeIn(audio, 500);
+  }
+
+  function pauseaudio(e) {
+    var id = "audio_" + e.target.id;
+    var audio = document.getElementById(id);
+    //audio.pause();
+    fadeOut(audio, 500);
+  }
+
+  function registerEvents() {
+    var covers = document.querySelectorAll("#bglayer3 img");
+    for (var i = 0; i < covers.length; i++) {
+      covers[i].addEventListener("mouseover", function (e) { playaudio(e); });
+      covers[i].addEventListener("mouseout", function (e) { pauseaudio(e); });
+    }
+  }
+
+  registerEvents();
+</script>
+<script src="{% static 'accounts/fade.js' %}"></script>
 <script type="module" src="https://unpkg.com/ionicons@5.2.3/dist/ionicons/ionicons.esm.js"></script>
 {% endblock %}
