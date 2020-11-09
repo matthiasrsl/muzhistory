@@ -4,15 +4,15 @@
     align-items: flex-end;
     width: auto;
     padding: 12px 50px 10px 30px;
-    background: #c2dfe1;
-    border-top: 1px solid #A1C9CB;
+    background: #cae7df;
+    border-top: 1px solid #9acebf;
     position: fixed;
     bottom: -200px;
     max-height: 200px;
     left: 0;
     right: 0;
     transition: bottom 0.15s;
-    color: #1d585a;
+    color: #2a3166;
 }
 
 .player .track {

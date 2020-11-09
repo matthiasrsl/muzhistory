@@ -1,3 +1,6 @@
+
+
+
 ion-router-outlet {
     overflow-y: scroll;
 }
@@ -6,13 +9,14 @@ ion-router-outlet {
 
 header {
     height: 135px;
-    background: #c2dfe1;
+    background: #f4abaa;
+    border-bottom: 1px solid #db8785;
     padding: 20px 20px 20px 120px;
     margin-bottom: 50px;
 }
 
 header h1, header p, header ion-icon {
-    color: #1d585a;
+    color: #2a3166;
 }
 
 header h1 {
@@ -62,4 +66,8 @@ header h1 {
 
 .listening_history {
     margin: 0px 100px 200px 400px;
+}
+
+.listening_history * {
+    color: #2a3166;
 }
