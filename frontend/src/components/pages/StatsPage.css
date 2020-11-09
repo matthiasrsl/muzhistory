@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Cocogoose';
+    src: url('../../../../static/fonts/Cocogoose-Classic-Medium-trial.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+div.wip {
+    padding: 50px;
+}
+
+.wip h1, .wip p {
+    color: #2a3166;
+}
+
+.wip h1 {
+    font-family: Cocogoose;
+    font-size: 4em;
+}
+
+.wip p {
+    font-size: 1.5em;
+}
