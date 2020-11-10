@@ -65,9 +65,11 @@ class HistoryEntry(models.Model):
             profile=profile,
             deezer_account=deezer_account,
             listening_datetime=entry_listening_datetime,
+            # timestamp=entry_json["timestamp"],
             track__deezertrack__dz_id=track_id,
         )
-        if len(existing_entries_with_this_datetime) == 0:
+        #if len(existing_entries_with_this_datetime) == 0:
+        if entry_listening_datetime > deezer_account.last_history_request:
             db_entry = HistoryEntry(
                 profile=profile,
                 deezer_account=deezer_account,
@@ -93,5 +95,6 @@ class HistoryEntry(models.Model):
             # be stored in case of an unexpected exception.
         else:
             ignored = True
+            print("Skipped")
 
         return ignored, entry_listening_datetime
