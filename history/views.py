@@ -13,6 +13,7 @@ from django.views import View
 from accounts.models import Profile
 from history.models import HistoryEntry
 from musicdata.models import Track, Artist, Recording
+from deezerdata.models.deezer_objects import DeezerTrack
 
 
 class HistoryOverview(LoginRequiredMixin, View):
@@ -20,13 +21,17 @@ class HistoryOverview(LoginRequiredMixin, View):
     Displays the listening history of the logged user.
     """
     def get(self, request):
+        profile = request.user.profile
+        try:
+            last_history_request = (
+                profile.platformaccount_set.all()
+                .order_by("-last_history_request")[0]
+                .last_history_request
+            )
+        except IndexError:
+            pass
 
-        profile = Profile.objects.all()[0]
-        last_history_request = (
-            profile.platformaccount_set.all()
-            .order_by("-last_history_request")[0]
-            .last_history_request
-        )
+        empty_track = DeezerTrack.objects.create(dz_id=0)
 
         current_crush = profile.get_current_crush()
 
@@ -41,6 +46,7 @@ class HistoryOverview(LoginRequiredMixin, View):
             # .annotate(contrib='track__recording__recordingcontribution_set')
             .filter(profile=profile).order_by("-listening_datetime")
         )
+
         paginator = Paginator(
             entries, 70, orphans=50, allow_empty_first_page=True
         )
@@ -69,6 +75,9 @@ class HistoryOverview(LoginRequiredMixin, View):
         except EmptyPage:  # We check that the requested page exists.
             # If not, the last page is displayed.
             page = paginator.page(paginator.num_pages)
+        
+        num_pages = paginator.num_pages
+        num_pages_m1 = num_pages - 1
 
         # Remember that the entries are displayed in reverse chronological
         # order.

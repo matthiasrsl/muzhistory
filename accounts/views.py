@@ -5,10 +5,12 @@ from django.shortcuts import redirect, render
 from django.views import View
 from django.views.decorators.debug import sensitive_variables
 
-from platform_apis.models import DeezerOAuthError
 from requests.exceptions import RequestException
+
+from platform_apis.models import DeezerOAuthError
 from deezerdata.models.deezer_account import DeezerAccount
 
+from .models import Profile
 
 class DisplayProfile(LoginRequiredMixin, View):
     """

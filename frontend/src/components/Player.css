@@ -1,0 +1,67 @@
+.player {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: auto;
+    padding: 12px 50px 10px 30px;
+    background: #cae7df;
+    border-top: 1px solid #9acebf;
+    position: fixed;
+    bottom: -200px;
+    max-height: 200px;
+    left: 0;
+    right: 0;
+    transition: bottom 0.15s;
+    color: #2a3166;
+}
+
+.player .track {
+    margin: 0;
+    width: 50%;
+}
+
+.player img.play_extract {
+    cursor: default;
+    width: 80px;
+}
+
+.player .track_metadata {
+    position: relative;
+    max-width: 100%;
+}
+
+.player .track_title, .player .artists, .player .album_name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player_time_infos {
+    display: flex;
+    width: 40%;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.player_time_infos div {
+    display: flex;
+    width: 100%; /* Do not add margins or paddings on the x axis,
+                    use the parent element. */
+    justify-content: space-between;
+}
+
+.player .progress_container {
+    height: 3px;
+    width: 100%; /* Do not add margins or paddings on the x axis,
+                    use the parent element. */
+    margin: auto 0 12px 0;
+    border: none;
+}
+
+.playpause-icon {
+    font-size: 22px;
+    color: #222;
+    position: relative;
+    top: 6px;
+    left: -4px;
+}

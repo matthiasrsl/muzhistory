@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "admin_reorder",
+    'rest_framework',
     "muzhistory.apps.MyAdminConfig",
     "tools",
     "platform_apis",
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
     "history",
     "musicdata",
     "deezerdata",
+    "api",
+    "frontend",
 ]
 
 MIDDLEWARE = [
@@ -126,7 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
-LANGUAGE_CODE = "fr"
+LANGUAGE_CODE = "en"
 
 TIME_ZONE = "Europe/Paris"
 
@@ -156,7 +159,7 @@ SECURE_HSTS_PRELOAD = True
 
 LOGIN_URL = "/accounts/login/"
 
-LOGIN_REDIRECT_URL = "history:overview"
+LOGIN_REDIRECT_URL = "/"
 
 LOGOUT_REDIRECT_URL = "/accounts/login/"
 
@@ -182,6 +185,7 @@ ADMINS = (
 
 APPEND_SLASH = True
 
+MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
 SESSION_COOKIE_AGE = 365 * 24 * 3600
 

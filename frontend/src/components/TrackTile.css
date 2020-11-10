@@ -1,0 +1,76 @@
+.track {
+    display: flex;
+    margin: 5px auto 15px auto;
+}
+
+.album_cover img {
+    width: 80px;
+    margin: auto 10px auto auto;
+    border-radius: 3px;
+}
+
+.album_cover img.play_extract {
+    cursor: pointer;
+}
+
+p {
+    margin: 0;
+}
+
+.track_metadata {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: -2px;
+    max-width: 100%;
+}
+
+.track_title, .artists, .album_name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track_title {
+    font-size: 1.4em;
+    padding: 0;
+    margin: 0px 0;
+    line-height: 120%;
+}
+
+.track_title_refine {
+    font-size: 0.7em;
+    margin-left: 3px;
+}
+
+.track_metadata .artist_name {
+    font-size: 0.9em;
+    line-height: 100%;
+    position: relative;
+    top: -5px;
+}
+
+.artist_name_role_feat {
+    color: #777;
+}
+
+.album_name {
+    font-size: 0.8em;
+    position: relative;
+    top: -7px;
+}
+
+.album_name .album_hard_text {
+    color: #111;
+}
+
+.additional_info {
+    display: flex;
+    margin-top: 2px;
+    font-size: 0.8em;
+    color: #777;
+    position: relative;
+    top: -9px;
+}
+
+

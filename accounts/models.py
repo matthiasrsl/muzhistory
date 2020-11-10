@@ -25,6 +25,9 @@ class Profile(models.Model):
     """
 
     version = models.IntegerField(default=settings.MH_VERSION)
+    showcase_profile = models.BooleanField(
+        default=False
+    )  # Whether the profile is used to showcase the app to anonymous users.
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     track_location = models.BooleanField(default=False)
 
@@ -108,16 +111,20 @@ class Profile(models.Model):
         Get the current crush of the user:
         the recording most listened to recently.
         """
-        crush = (
-            Recording.objects.filter(
-                track__historyentry__profile=self,
-                track__historyentry__entry_type="listening",
-                track__historyentry__listening_datetime__gte=(
-                    tz.now() - dt.timedelta(days=14)
-                ),
+        try:
+            crush = (
+                Recording.objects.filter(
+                    track__historyentry__profile=self,
+                    track__historyentry__entry_type="listening",
+                    track__historyentry__listening_datetime__gte=(
+                        tz.now() - dt.timedelta(days=14)
+                    ),
+                )
+                .annotate(entry_count=Count("track__historyentry"))
+                .order_by("-entry_count", "track")[0]
             )
-            .annotate(entry_count=Count("track__historyentry"))
-            .order_by("-entry_count", "track")[0]
-        )
+            print(type(crush))
+        except IndexError:
+            return None
 
         return crush

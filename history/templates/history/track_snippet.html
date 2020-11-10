@@ -1,0 +1,89 @@
+<div class="track" id="track_{{ track.id }}" 
+  {% if track.deezertrack %}
+    data-duration="{{ track.deezertrack.duration }}"
+    data-audio-src="{{ track.deezertrack.preview }}"
+  {% endif %}
+>
+  {% if track.deezertrack %}
+    <div class='album_cover' 
+      {% if track.deezertrack.preview %}
+        onclick="play({{ track.deezertrack.id }});"
+      {% endif %}
+    >
+      <img crossorigin=""
+      {% if track.deezertrack.deezermp3 %}
+          src="{{ DEFAULT_ALBUM_COVER_URL }}"
+          alt="Generic album cover" 
+          title="Pas d'extrait disponible" 
+      {% else %}
+        {% if track.deezertrack.preview %}
+            class="play_extract"
+        {% endif %}
+        {% if track.deezertrack.release.cover_medium %}
+            src="{{ track.deezertrack.release.cover_medium }}"
+        {% else %}
+            src="{{ DEFAULT_ALBUM_COVER_URL }}"
+        {% endif %}
+          alt="
+          Album cover: 
+          {{ track.deezertrack.release.release_group.title }}
+          " 
+        {% if track.deezertrack.preview %}
+            title="Écouter un extrait" 
+        {% else %}
+            title="Pas d'extrait disponible"
+        {% endif %}
+      {% endif %}
+      />
+    </div>
+
+    <div class='track_metadata'>
+      <p class='track_title' 
+          title="{{ track.deezertrack.title_short }} {{ track.deezertrack.title_version }}"
+      >
+        {{ track.deezertrack.title_short }}
+        <span class="track_title_version">
+          {{ track.deezertrack.title_version}}
+        </span>
+      </p>
+
+      <p class='artists'>
+        {% if track.deezertrack %}
+          {% if track.deezertrack.deezermp3 %}
+            {{ track.deezertrack.deezermp3.artist_name }}
+          {% else %}
+            {% for contrib in track.recording.recordingcontribution_set.all %}
+              <span class='
+                  artist_name artist_name_role_{{ contrib.role }}
+              '>
+                {{ contrib.artist.name }}{% if not forloop.last %}, 
+                {% endif %}
+              </span>
+            {% endfor %}
+          {% endif %}
+        {% endif %}
+      </p>
+
+      {% if not as_recording %}
+        <p class="album_name">
+          {% if track.deezertrack %}
+            {% if track.deezertrack.deezermp3 %}
+              {% if track.deezertrack.deezermp3.album_name %}
+                <span class="album_hard_text">Album </span>
+                {{ track.deezertrack.deezermp3.album_name }}
+              {% endif %}
+            {% else %}
+              {% if  track.deezertrack.release.release_group.title %}
+                {{ track.deezertrack.release.release_group.title }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+        </p>
+      {% endif %}
+      <div class='additional_info' title="{{ label }}">
+        {% if icon %}{% include icon %}{% endif %}
+        <p>{{ additional_info }}</p>
+      </div>
+    </div>
+  {% endif %}
+</div>

@@ -1,0 +1,20 @@
+{% load static music_elements %}
+<section class="player">
+  {% track empty_track "" "" "" %}
+  <div class="player_time_infos">
+    <div class="progress_container"></div>
+    <div>
+      <p class="player_label">30 secondes d'extrait</p>
+      <p class="player_time">
+        <span id="player_current_time">00:30</span> / 
+        <span id="player_total_time">5:19</span>
+      </p>
+    </div>
+  </div>
+  <audio class="player_audio" src="" data-currently-playing-id=""
+      data-begin-time="">
+  </audio> 
+</section>
+<script src="{% static 'history/js/vibrant.min.js' %}"></script>
+<script src="{% static 'history/js/progressbar.min.js' %}"></script>
+<script src="{% static 'history/js/tinycolor.js' %}"></script>

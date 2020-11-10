@@ -1,15 +1,16 @@
 <!-- -*- mode: html; indent-tabs-mode: nil; tab-width: 2 -*- -->
 
 {% extends 'base.html' %}
-{% load static humanize %}
+{% load static humanize music_elements %}
 
 {% block title %}Statistiques{% endblock %}
 
 {% block static %}
-<link rel="stylesheet" href="{% static 'history/style.css'%}" />
+  <link rel="stylesheet" href="{% static 'history/css/common.css'%}" />
+  <link rel="stylesheet" href="{% static 'history/css/statistics.css'%}" />
 {% endblock %}
 
-{% block section %}
+{% block page %}
 <h1>Statistiques</h1>
 <a href="{% url 'history:overview' %}">Historique</a>
 <a href="{% url 'accounts:display-profile' %}">Profil</a>
@@ -57,65 +58,7 @@
           <div class="rank">
             <p>#{{ recording.rank }}</p>
           </div>
-          <div class='album_cover' onclick="playaudio({{ recording.id }});">
-            {% if recording.deezer_track %}
-              <img 
-                {% if recording.deezer_track.deezermp3 %}
-                  src="{{ DEFAULT_ALBUM_COVER_URL }}"
-                  alt="Generic album cover" 
-                  title="Pas d'extrait disponible" 
-                {% else %}
-                  {% if recording.deezer_track.preview %}
-                    class="play_extract"
-                  {% endif %}
-                  {% if recording.deezer_track.release.cover_medium %}
-                    src="{{ recording.deezer_track.release.cover_medium }}"
-                  {% else %}
-                    src="{{ DEFAULT_ALBUM_COVER_URL }}"
-                  {% endif %}
-                  alt="
-                    Album cover: {{ recording.deezer_track.release.release_group.title }}
-                  " 
-                  {% if recording.deezer_track.preview %}
-                    title="Écouter un extrait" 
-                  {% else %}
-                    title="Pas d'extrait disponible"
-                  {% endif %} 
-                {% endif %}
-              />
-            {% endif %}
-          </div>
-          <div class='track_metadata'>
-            <p class='track_title' title="{{ recording.title }}">
-                {{ recording.deezer_track.title_short }}
-            </p>
-            <p class='artist_and_album'>
-                {% if recording.deezer_track %}
-                  {% if recording.deezer_track.deezermp3 %}
-                    {{recording.deezer_track.deezermp3.artist_name }}
-                  {% else %}
-                    {% for contrib in recording.recordingcontribution_set.all %}
-                      <span class='
-                          artist_name artist_name_role_{{ contrib.role }}
-                      '>
-                        {{ contrib.artist.name }}{% if not forloop.last %}, 
-                        {% endif %}
-                      </span>
-                    {% endfor %}
-                  {% endif %}
-                {% endif %}
-            </p>
-            <p class='listenings_count'>
-              {{ recording.entry_count }} 
-              écoute{{ recording.entry_count|pluralize }}
-            </p>
-            {% if recording.deezer_track %}
-              <audio id={{ recording.id }} 
-                  src="{{ recording.deezer_track.preview }}" 
-                  preload='none'>
-              </audio>
-            {% endif %}
-          </div>
+          {% stats_recording recording %}
         </li>
         {% empty %}
         <p>Vous n'avez rien écouté.</p>
