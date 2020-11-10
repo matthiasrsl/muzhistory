@@ -126,15 +126,20 @@
 <p id="playing_track_infos">Title</p>
 
 <script>
+  var canPlayExtracts = false;
+
+  function anyClick(e) {
+    canPlayExtracts = true;
+    document.removeEventListener("click");
+  }
+
   function playaudio(e) {
     var id = "audio_" + e.target.id;
     var audio = document.getElementById(id);
-    fadeIn(audio, 500, 0.2);
-    //audio.volume = 0.2;
-    audio.play();
-
+    
     var infos_p = document.querySelector("#playing_track_infos");
-    if (!audio.paused) {
+    if (canPlayExtracts) {
+      fadeIn(audio, 500, 0.2);
       infos_p.innerHTML = e.target.dataset.infos;
     } else {
       infos_p.innerHTML = "Click on the page to play the extracts"
@@ -146,7 +151,6 @@
     var id = "audio_" + e.target.id;
     var audio = document.getElementById(id);
     fadeOut(audio, 500);
-    //audio.pause()
 
     var infos_p = document.querySelector("#playing_track_infos");
     infos_p.style.opacity = 0;
@@ -158,6 +162,7 @@
       covers[i].addEventListener("mouseover", function (e) { playaudio(e); });
       covers[i].addEventListener("mouseout", function (e) { pauseaudio(e); });
     }
+    document.addEventListener("click", function(e) {anyClick(e);});
   }
 
   registerEvents();
