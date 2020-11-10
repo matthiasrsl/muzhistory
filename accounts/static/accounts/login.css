@@ -6,8 +6,15 @@
 }
 
 @font-face {
-    font-family: "Neonblitz";;
+    font-family: "Neonblitz";
     src: url('/static/fonts/Neonblitz.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Forced Square";
+    src: url('/static/fonts/FORCED\ SQUARE.ttf');
     font-weight: normal;
     font-style: normal;
 }
@@ -35,7 +42,7 @@ body, #page, #background, #foreground, #bg_login_and_links, #inner_login_and_lin
 }
 
 #page {
-    background: #cae7df;
+    background: #d1dde7;
     height: 1300px;
     width: 100vw;
     overflow: hidden;
@@ -67,28 +74,29 @@ video {
     left: 0;
     right: 0;
     width: 100%;
+    filter: grayscale(0%);
 }
 
 #colorblock0 {
     height: 65px;
-    background: rgba(56, 49, 97, 0.90);
+    background: rgba(41, 44, 78, 0.90);
     z-index: 10;
 }
 
 #colorblock1 {
     height: 500px;
-    background: rgba(42, 49, 102, 0.6);
+    background: rgba(41, 48, 78, 0.6);
 }
 
 #colorblock2 {
     height: 800px;
-    background: #cae7df;
+    background: #d1dde7;
     z-index: 10;
 }
 
 #colorblock3 {
     height: 500px;
-    background: #f4abaa;
+    background: #f0a8b1;
     z-index: 10;
 }
 
@@ -120,33 +128,33 @@ video {
     width: 110px;
 }
 
-#bglayer3 img:nth-child(2) { /* Best of 2019 */
+#bglayer3 img:nth-child(10) { /* Blinding Lights */
     top: 50px;
     right: 30px;
 }
 
-#bglayer3 img:nth-child(3) {  /* Hollywood Park */
+#bglayer3 img:nth-child(2) {  /* Best of 2019 */
     top: 200px;
     left: 220px;
     width: 90px;
 }
 
-#bglayer3 img:nth-child(4) {  /* Instant Crush */
+#bglayer3 img:nth-child(6) {  /* Sinking Ship */
     top: 880px;
     left: 80px;
     width: 250px;
 }
 
-#bglayer3 img:nth-child(5) {  /* Random Access Memories */
+#bglayer3 img:nth-child(5) {  /* Wolfgang Amadeus Phoenix */
     top: 630px;
     left: 250px;
     width: 60px;
 }
 
-#bglayer3 img:nth-child(6) {  /* Sinking Ship */
-    top: 360px;
+#bglayer3 img:nth-child(8) {  /* Hot Fuss */
+    top: 390px;
     left: 30px;
-    width: 200px;
+    width: 160px;
 }
 
 #bglayer3 img:nth-child(7) {  /* The Very Best Of The Osmonds */
@@ -155,23 +163,23 @@ video {
     width: 170px;
 }
 
-#bglayer3 img:nth-child(8) {  /* Hot Fuss */
+#bglayer3 img:nth-child(11) {  /* Brol */
     top: 720px;
     left: 50px;
 }
 
-#bglayer3 img:nth-child(9) {  /* The Division Bell */
+#bglayer3 img:nth-child(9) {  /* Random Access Memories */
     top: 780px;
     right: 240px;
     width: 60px;
 }
 
-#bglayer3 img:nth-child(10) {  /* Blinding Lights */
+#bglayer3 img:nth-child(3) {  /* Hollywood Park */
     top: 845px;
     right: 80px;
 }
 
-#bglayer3 img:nth-child(11) {  /* Brol */
+#bglayer3 img:nth-child(4) {  /* Instant Crush */
     top: 220px;
     right: 100px;
     width: 220px;
@@ -190,8 +198,8 @@ video {
 }
 
 #bglayer4 img:nth-child(2) {
-    position: absolute;
-    top: 520px;
+    position: fixed;
+    top: 380px;
     right: 0;
     width: 300px;
     z-index: 10;
@@ -211,38 +219,62 @@ h1 {
     font-family: Neonblitz;
     color: #e93b5e;
     font-size: 5.5em;
-    margin-top: 30px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    z-index: 3000;
+    pointer-events: all;
+    user-select: none;
+    line-height: 150px;
 }
 
 h1 ion-icon {
     position: relative;
-    top: 30px;
-    left: 3px;
-    font-size: 1.5em;
+    top: 11px;
+    font-size: 0.95em;
+    transition: all 1000ms ease;/*cubic-bezier(0, 0, 0, 1);*/
+}
+
+h1:hover ion-icon {
+    transform: rotate(360deg);
+    color: #8DA9C4;
+    font-size: 1.2em;
+    top: 23px;
 }
 
 #login_and_links {
     position: relative;
-    width: 500px;
+    width: 550px;
     height: 350px;
     top: 10px;
-    border-radius: 13px;
-    box-shadow: 5px 5px 8px rgba(68, 68, 68, 0.5);
-    background: #fff;
+    left: 25px;
+    border-radius: 1px;
+    background: transparent;
     pointer-events: all;
+}
+
+#bg_login_and_links {
+    border-bottom: 350px solid #fff;
+    border-left: 30px solid transparent;
+    border-right: 80px solid transparent;
+    height: 0;
+    width: 530px;
+    position: relative;
+    left: -50px;
+    top: 00px;
+    box-shadow: 0 10px 8px -8px rgba(68, 68, 68, 0.5);
 }
 
 
 #inner_login_and_links {
     display: flex;
     border-radius: 14px;
-    padding: 30px;
+    padding: 30px 20px;
     background: transparent;
 }
 
 form {
     width: 40%;
-    border-right: 3px solid #2a3166;
+    border-right: 3px solid #25213e;
     padding-right: 30px;
 }
 
@@ -260,11 +292,11 @@ form {
 #form_inner input {
     height: 30px;
     padding: 5px;
-    border: 1px solid #2a3166;
+    border: 1px solid #25213e;
     border-radius: 15px;
 }
 
-#form_inner button, .showcase_links a {
+#form_inner button, a.showcase_link {
     color: #fff;
     border: none;
     padding: 10px 10px 8px 10px;
@@ -274,13 +306,13 @@ form {
 }
 
 #form_inner button {
-    background-color: #ec393c;
+    background-color: #D7263D;
 }
 
 #inner_login_and_links p {
     font-size: 2em;
     font-family: Cocogoose;
-    color: #04126d;
+    color: #25213e;
     position: relative;
     top: -10px;
 }
@@ -296,24 +328,24 @@ form {
 .showcase_links img {
     position: relative;
     top: -40px;
-    left: -55px;
+    left: 55px;
     width: 100px;
     transition: all 100ms ease;
 }
 
 .showcase_links img:hover {
     width: 110px;
-    left: -60px;
+    left: 50px;
     top: -45px;
 }
 
 a.showcase_link {
     color: white;
-    background-color: #f58032;
+    background-color: #F46036;
     position: absolute;
     margin: auto;
-    bottom: 60px;
-    right: 68px;
+    bottom: 80px;
+    right: 88px;
     width: 113px;
     text-decoration: none;
 }
@@ -321,9 +353,23 @@ a.showcase_link {
 p.footer_text {
     font-family: Arial, Helvetica, sans-serif;
     position: absolute;
-    bottom: -5px;
-    right: 15px;
-    color: #15182e;
+    bottom: 55px;
+    right: -55px;
+    transform: rotate(-90deg);
+    color: #12101f;
     font-size: 0.8em;
 }
 
+p#playing_track_infos {
+    position: fixed;
+    bottom: -20px;
+    left: 0;
+    color: white;
+    background: black;
+    padding: 7px 20px 5px 20px;
+    z-index: 2000;
+    font-family: "Forced Square";
+    font-size: 1em;
+    opacity: 0;
+    transition: opacity 500ms;
+}
