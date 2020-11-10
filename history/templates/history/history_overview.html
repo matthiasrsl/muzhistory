@@ -1,153 +1,88 @@
 {% extends 'base.html' %}
-{% load static humanize %}
+{% load static humanize music_elements pagination_links %}
 
 {% block title %}
 Historique de {{ profile.user.username }} - MuzHistory
 {% endblock %}
 
 {% block static %}
-  <link rel="stylesheet" href="{% static 'history/style.css'%}" />
+  <link rel="stylesheet" href="{% static 'history/css/common.css'%}" />
+  <link rel="stylesheet" 
+      href="{% static 'history/css/pagination_links.css' %}" />
+    <link rel="stylesheet" href="{% static 'history/css/player.css'%}" />
+  <link rel="stylesheet" href="{% static 'history/css/overview.css'%}" />
 {% endblock %}
 
-{% block section %}
-<h1>Historique d'écoute de {{ profile.user.username }}</h1>
-<a href="{% url 'history:statistics' %}">Statistiques</a>
-<a href="{% url 'accounts:display-profile' %}">Profil</a>
-<p>Dernière mise à jour:
-  <!-- text "le" is inside the filter parameter to avoid displaying
-       it if the filters displays "yesterday" or such values. -->
-  {{ last_history_request|naturalday:"\l\e j F Y" }}
-  à {{ last_history_request|time }}</p>
-<br />
-{% if entries %}
-<p><strong>{{ paginator.count }} écoutes</strong> depuis
-  {{ date_first_entry|naturalday:"\l\e j F Y" }}, soit plus de
-  <strong>
-    {{ total_listening_duration_hours }} 
-    heure{{ total_listening_duration_hours|pluralize }}
-  </strong>
-</p>
-<br />
-<p>Page {{ page.number }} de {{ page.paginator.num_pages }}: du
-  {{ first_entry.listening_datetime|date:"j F Y" }} au
-  {{ last_entry.listening_datetime|date:"j F Y" }}
-</p>
-<p>
-  <a href="{% url 'history:overview' %}">Première page</a>
-  {% if page.has_previous %}
-  - <a href="{% url 'history:overview' %}?page=
-              {{ page.previous_page_number }}">
-    Page précédente</a>
-  {% endif %}
-  {% if page.has_next %}
-  - <a href="{% url 'history:overview' %}?page={{ page.next_page_number }}">
-    Page suivante</a>
-  {% endif %}
-  {% endif %}
-  <br />
-
-  <ul class='history_overview'>
-    {% for entry in page %}
-    {% if entry.entry_type == 'ellipsis_deezer' %}
-    <li>Oups... Il y a des écoutes perdues.</li>
-    {% elif entry.entry_type == 'listening' and  entry.deezer_account %}
-    <li>
-      <div class='album_cover' onclick="playaudio({{ entry.id }});">
-        {% if entry.track.deezertrack %}
-          <img 
-            {% if entry.track.deezertrack.deezermp3 %}
-              src="{{ DEFAULT_ALBUM_COVER_URL }}"
-              alt="Generic album cover" 
-              title="Pas d'extrait disponible" 
-            {% else %}
-              {% if entry.track.deezertrack.preview %}
-                class="play_extract"
-              {% endif %}
-              {% if entry.track.deezertrack.release.cover_medium %}
-                src="{{ entry.track.deezertrack.release.cover_medium }}"
-              {% else %}
-                src="{{ DEFAULT_ALBUM_COVER_URL }}"
-              {% endif %}
-              alt="
-                Album cover: 
-                {{ entry.track.deezertrack.release.release_group.title }}
-              " 
-              {% if entry.track.deezertrack.preview %}
-                title="Écouter un extrait" 
-              {% else %}
-                title="Pas d'extrait disponible"
-              {% endif %}
-            {% endif %}
-          />
-        {% endif %}
+{% block page %}
+<header>
+  <div class="inner_header">
+    <div class="heading_and_links">
+      <h1>Historique de {{ profile.user.username }}</h1>
+      <div class="links">
+        <a href="{% url 'history:statistics' %}" title="Statistiques">
+          {% include "history/svg/icon_stats.svg" %}
+        </a>
+        <a href="{% url 'accounts:display-profile' %}" title="Profil">
+          {% include "history/svg/icon_profile.svg" %}
+        </a>
       </div>
-      <div class='track_metadata'>
-        <p class='track_title'>
-          {{ entry.track.deezertrack.title_short }}
-          <span class="track_title_version">
-            {{ entry.track.deezertrack.title_version}}
+    </div>
+    <div class="history_infos">
+      {% if entries %}
+        <p class="history_info" title="Nombre total d'écoutes">
+          {% include "history/svg/icon_number.svg" %}
+          <span>
+            {{ paginator.count }} écoutes
           </span>
         </p>
-        <p class='artist_and_album'>
-          {% if entry.track.deezertrack %}
-            {% if entry.track.deezertrack.deezermp3 %}
-              {{ entry.track.deezertrack.deezermp3.artist_name }}
-            {% else %}
-              {% for contrib in entry.track.recording.recordingcontribution_set.all %}
-                <span class='
-                    artist_name artist_name_role_{{ contrib.role }}
-                '>
-                  {{ contrib.artist.name }}{% if not forloop.last %}, 
-                  {% endif %}
-                </span>
-              {% endfor %}
-            {% endif %}
+        <p class="history_info" title="Durée d'écoute totale">
+          {% include "history/svg/icon_time.svg" %}
+          <span>
+            {{ total_listening_duration_hours }} heures
+          </span>
+        </p>
+        <p class="history_info" title="Dernière mise à jour">
+          {% include "history/svg/icon_clock.svg" %}
+          <span>
+            {{ last_history_request|naturalday:"\l\e j F Y" }}
+            à {{ last_history_request|time }}
+          </span>
+        </p>
+      {% else %}
+        <p class="empty_history_message">Votre historique d'écoute est vide.</p>
+      {% endif %}
+    </div>
+    {% if current_crush %}
+      <aside class="current_crush">
+          {% if current_crush.deezer_track %}
+            {% track current_crush.deezer_track "Votre titre du moment" "" "" True %}
           {% endif %}
-          <span class='album_name'>
-            {% if entry.track.deezertrack %}
-              {% if entry.track.deezertrack.deezermp3 %}
-                {% if entry.track.deezertrack.deezermp3.album_name %}
-                  - {{ entry.track.deezertrack.deezermp3.album_name }}
-                {% endif %}
-              {% else %}
-                {% if  entry.track.deezertrack.release.release_group.title %}
-                  - {{ entry.track.deezertrack.release.release_group.title }}
-                {% endif %}
-              {% endif %}
-            {% endif %}
-          </span>
-        </p>
-        <p class='listening_datetime'>Écouté
-          {{ entry.listening_datetime|naturalday:"\l\e j F Y" }} à
-          {{ entry.listening_datetime|time }}</p>
-        {% if entry.track.deezertrack %}
-          <audio id={{ entry.id }} src="{{ entry.track.deezertrack.preview }}" 
-              preload='none'>
-          </audio>
-        {% endif %}
-      </div>
-    </li>
+      </aside>
     {% endif %}
-    {% empty %}
-    <p class="empty_history_message">
-      Votre historique d'écoute est vide.</p>
-    {% endfor %}
-  </ul>
+  </div>
+</header>
+<section class="entries_wrapper">
+  {% if entries %}
+    {% page_links paginator page_number 'history:overview' %}
+    <ul class='entries'>
+      {% for entry in page %}
+        {% if entry.entry_type == 'ellipsis_deezer' %}
+          <li>Oups... Il y a des écoutes perdues.</li>
+        {% elif entry.entry_type == 'listening' and  entry.deezer_account %}
+          {% with date=entry.listening_datetime|naturalday:"\L\e j F Y" time=entry.listening_datetime|time %} 
+            {% track entry.track date|add:" à "|add:time "history/svg/icon_clock.svg" "Date d'écoute" False %}
+          {% endwith %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+
+    {% page_links paginator page_number 'history:overview' %}
+  {% endif %}
+</section>
+
+{% include 'history/player.html' %}
 {% endblock %}
 
 {% block scripts %}
-<script>
-  function playaudio(id) {
-      var allaudios = document.querySelectorAll('audio');
-      var audio = document.getElementById(id);
-      if (audio.paused) {
-          for (var i = 0; i < allaudios.length; i++) {
-              allaudios[i].pause();
-          }
-          audio.play();
-      } else {
-          audio.pause();
-      }
-  }
-</script>
+<script src="{% static 'history/js/player.js' %}"></script>
 {% endblock %}

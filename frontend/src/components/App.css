@@ -1,0 +1,36 @@
+.ion-page {
+    background: #f6fafa;
+}
+
+img {
+    max-width: initial;
+}
+
+
+ion-tab-bar {
+    background: #f4abaa;
+}
+
+ion-tab-button {
+    background: rgba(255, 255, 255, 0);
+}
+
+ion-tab-bar {
+    border: 0;
+    height: 40px;
+}
+
+ion-router-outlet {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+ion-router-outlet::-webkit-scrollbar {
+    display: none;
+}
+
+p > ion-icon {
+    position: relative;
+    top: 3px;
+    margin-right: 3px;
+}

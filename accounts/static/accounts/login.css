@@ -1,0 +1,375 @@
+@font-face {
+    font-family: 'Cocogoose';
+    src: url('/static/fonts/Cocogoose-Classic-Medium-trial.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Neonblitz";
+    src: url('/static/fonts/Neonblitz.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Forced Square";
+    src: url('/static/fonts/FORCED\ SQUARE.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+* {
+    scrollbar-width: none;
+    font-family: Cocogoose;
+    outline: none;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+body {
+    margin: 0;
+}
+
+body, #page, #background, #foreground, #bg_login_and_links, #inner_login_and_links, .background_layer {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#page {
+    background: #d1dde7;
+    height: 1300px;
+    width: 100vw;
+    overflow: hidden;
+}
+
+#bglayer2 {
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes colorblock_move {
+    0% { top: -700px; }
+    50% { top: -780px; }
+    100% { top: -700px; }
+}
+
+.colorblock {
+    width: 200vw;
+    transform: rotate(-10deg);
+    position: relative;
+    top: -170px;
+    left: -380px;
+    flex-shrink: 0;
+}
+
+video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    filter: grayscale(0%);
+}
+
+#colorblock0 {
+    height: 65px;
+    background: rgba(41, 44, 78, 0.90);
+    z-index: 10;
+}
+
+#colorblock1 {
+    height: 500px;
+    background: rgba(41, 48, 78, 0.6);
+}
+
+#colorblock2 {
+    height: 800px;
+    background: #d1dde7;
+    z-index: 10;
+}
+
+#colorblock3 {
+    height: 500px;
+    background: #f0a8b1;
+    z-index: 10;
+}
+
+/* Album covers */
+
+@keyframes albumcovers {
+    0% {top: 0}
+    45% {top: -600px}
+    50% {top: -600px}
+    95% {top: 0}
+    100% {top: 0}
+}
+
+#bglayer3 {
+    animation: albumcovers 60s cubic-bezier(0.15, 0.03, 0.85, 0.97);
+    animation-delay: 0.0s;
+    animation-iteration-count: infinite;
+}
+
+#bglayer3 img {
+    position: absolute;
+    width: 100px;
+    border-radius: 3px;
+}
+
+#bglayer3 img:nth-child(1) {  /* Dreams */
+    top: 70px;
+    left: 20px;
+    width: 110px;
+}
+
+#bglayer3 img:nth-child(10) { /* Blinding Lights */
+    top: 50px;
+    right: 30px;
+}
+
+#bglayer3 img:nth-child(2) {  /* Best of 2019 */
+    top: 200px;
+    left: 220px;
+    width: 90px;
+}
+
+#bglayer3 img:nth-child(6) {  /* Sinking Ship */
+    top: 880px;
+    left: 80px;
+    width: 250px;
+}
+
+#bglayer3 img:nth-child(5) {  /* Wolfgang Amadeus Phoenix */
+    top: 630px;
+    left: 250px;
+    width: 60px;
+}
+
+#bglayer3 img:nth-child(8) {  /* Hot Fuss */
+    top: 390px;
+    left: 30px;
+    width: 160px;
+}
+
+#bglayer3 img:nth-child(7) {  /* The Very Best Of The Osmonds */
+    top: 550px;
+    right: 50px;
+    width: 170px;
+}
+
+#bglayer3 img:nth-child(11) {  /* Brol */
+    top: 720px;
+    left: 50px;
+}
+
+#bglayer3 img:nth-child(9) {  /* Random Access Memories */
+    top: 780px;
+    right: 240px;
+    width: 60px;
+}
+
+#bglayer3 img:nth-child(3) {  /* Hollywood Park */
+    top: 845px;
+    right: 80px;
+}
+
+#bglayer3 img:nth-child(4) {  /* Instant Crush */
+    top: 220px;
+    right: 100px;
+    width: 220px;
+}
+
+#bglayer4 {
+    pointer-events: none;
+}
+
+#bglayer4 img:nth-child(1) {
+    position: absolute;
+    top: 600px;
+    left: 000px;
+    width: 800px;
+    z-index: 10;
+}
+
+#bglayer4 img:nth-child(2) {
+    position: fixed;
+    bottom: -30px;
+    right: 0;
+    width: 300px;
+    z-index: 10;
+}
+
+
+
+#foreground {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+h1 {
+    font-family: Neonblitz;
+    color: #e93b5e;
+    font-size: 5.5em;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    z-index: 3000;
+    pointer-events: all;
+    user-select: none;
+    line-height: 150px;
+}
+
+h1 ion-icon {
+    position: relative;
+    top: 11px;
+    font-size: 0.95em;
+    transition: all 1000ms ease;/*cubic-bezier(0, 0, 0, 1);*/
+}
+
+h1:hover ion-icon {
+    transform: rotate(360deg);
+    color: #8DA9C4;
+    font-size: 1.2em;
+    top: 23px;
+}
+
+#login_and_links {
+    position: relative;
+    width: 550px;
+    height: 350px;
+    top: 10px;
+    left: 25px;
+    border-radius: 1px;
+    background: transparent;
+    pointer-events: all;
+}
+
+#bg_login_and_links {
+    border-bottom: 350px solid #fff;
+    border-left: 30px solid transparent;
+    border-right: 80px solid transparent;
+    height: 0;
+    width: 530px;
+    position: relative;
+    left: -50px;
+    top: 00px;
+    box-shadow: 0 10px 8px -8px rgba(68, 68, 68, 0.5);
+}
+
+
+#inner_login_and_links {
+    display: flex;
+    border-radius: 14px;
+    padding: 30px 20px;
+    background: transparent;
+}
+
+form {
+    width: 40%;
+    border-right: 3px solid #25213e;
+    padding-right: 30px;
+}
+
+#form_inner {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    top: -40px;
+}
+
+#form_inner label {
+    margin-top: 15px;
+}
+
+#form_inner input {
+    height: 30px;
+    padding: 5px;
+    border: 1px solid #25213e;
+    border-radius: 15px;
+}
+
+#form_inner button, a.showcase_link {
+    color: #fff;
+    border: none;
+    padding: 10px 10px 8px 10px;
+    width: 100px;    
+    margin: 30px 0 30px 90px;
+    font-size: 1.2em;
+}
+
+#form_inner button {
+    background-color: #D7263D;
+}
+
+#inner_login_and_links p {
+    font-size: 2em;
+    font-family: Cocogoose;
+    color: #25213e;
+    position: relative;
+    top: -10px;
+}
+
+.showcase_links {
+    padding: 0px 30px;
+}
+
+.showcase_links p {
+    width: 150px;
+}
+
+.showcase_links img {
+    position: relative;
+    top: -40px;
+    left: 55px;
+    width: 100px;
+    transition: all 100ms ease;
+}
+
+.showcase_links img:hover {
+    width: 110px;
+    left: 50px;
+    top: -45px;
+}
+
+a.showcase_link {
+    color: white;
+    background-color: #F46036;
+    position: absolute;
+    margin: auto;
+    bottom: 80px;
+    right: 88px;
+    width: 113px;
+    text-decoration: none;
+}
+
+p.footer_text {
+    font-family: Arial, Helvetica, sans-serif;
+    position: absolute;
+    bottom: 55px;
+    right: -55px;
+    transform: rotate(-90deg);
+    color: #12101f;
+    font-size: 0.8em;
+}
+
+p#playing_track_infos {
+    position: fixed;
+    bottom: -20px;
+    left: 0;
+    color: white;
+    background: black;
+    padding: 7px 20px 5px 20px;
+    z-index: 2000;
+    font-family: "Forced Square";
+    font-size: 1em;
+    opacity: 0;
+    transition: opacity 500ms;
+}

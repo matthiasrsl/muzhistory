@@ -1,0 +1,100 @@
+/* Statistics */
+
+.stat_section {
+    display: flex;
+    flex-direction: column;
+    max-width: 1200px;
+}
+
+.stat_subsection ol {
+    padding: 0;
+}
+.subsection_artists ol {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.subsection_artists li {
+    display: flex;
+    flex: 1 0 30%;
+    max-width: 32%;
+    margin: 5px;
+}
+
+.subsection_tracks ol {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+}
+
+.subsection_tracks li {
+    display: flex;
+    justify-content: start;
+    margin: 5px;
+    width: 48%;
+}
+
+.subsection_tracks .track {
+    flex: 1;
+    margin: 0;
+    margin-left: 5px;
+}
+
+div.rank {
+    min-width: 65px;
+    margin: 5px;
+}
+
+.subsection_artists div.rank {
+    margin: 0 0 0 15px;;
+}
+
+.rank p {
+    font-size: 2.5em;
+    color: #ccc;
+}
+
+.subsection_tracks .rank p {
+    position: relative;
+    top: 10px;
+}
+
+.subsection_artists .rank p {
+    position: relative;
+    top: 17px;
+}
+
+.artist_image img {
+    width: 80px;
+    margin: auto 15px auto auto;
+    border: 1px solid white;
+    border-radius: 40px;
+}
+
+.artist_metadata {
+    position: relative;
+    top: 22px;
+    max-width: 55%;
+}
+
+.artist_metadata .artist_name {
+    font-size: 1.4em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.subsection_tracks .track_metadata {
+    max-width: 65%;
+}
+
+.subsection_tracks .track_title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.listenings_count {
+    font-size: 0.9em;
+    color: #777;
+}
