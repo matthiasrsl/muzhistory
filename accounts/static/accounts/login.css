@@ -61,7 +61,7 @@ body, #page, #background, #foreground, #bg_login_and_links, #inner_login_and_lin
 
 .colorblock {
     width: 200vw;
-    rotate: -10deg;
+    transform: rotate(-10deg);
     position: relative;
     top: -170px;
     left: -380px;
@@ -199,7 +199,7 @@ video {
 
 #bglayer4 img:nth-child(2) {
     position: fixed;
-    top: 380px;
+    bottom: -30px;
     right: 0;
     width: 300px;
     z-index: 10;

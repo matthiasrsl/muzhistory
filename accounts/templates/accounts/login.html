@@ -23,11 +23,11 @@
       title="" id="cover_2" alt="album cover: Pomplamoose: Best of 2019" />
     <img src="https://cdns-images.dzcdn.net/images/cover/549d889629afc71d698f4274173d5496/250x250-000000-80-0-0.jpg" data-infos="The Airborne Toxic Event  //  Come On Out  //  Hollywood Park"
       title="" id="cover_3" alt="album cover: The Airborne Toxic Event: Hollywood Park" />
-    <img src="https://cdns-images.dzcdn.net/images/cover/69b7dbf04ac2f1b429d2ec35a11b74ff/250x250-000000-80-0-0.jpg" data-infos="Pomplamoose  //  Instant Crush  //  Instant Crush"
+    <img src="http://e-cdn-images.deezer.com/images/cover/69b7dbf04ac2f1b429d2ec35a11b74ff/500x500-000000-80-0-0.jpg" data-infos="Pomplamoose  //  Instant Crush  //  Instant Crush"
       title="" id="cover_4" alt="album cover: Pomplamoose: Instant Crush" />
     <img src="http://e-cdn-images.deezer.com/images/cover/5bfd635c3bf252c6c0d3e3e4b8f53794/250x250-000000-80-0-0.jpg" data-infos="Phoenix  //  Lisztomania  //  Wolfgang Amadeus Phoenix"
       title="" id="cover_5" alt="album cover: Phoenix: Wolfgang Amadeus Phoenix" />
-    <img src="https://e-cdns-images.dzcdn.net/images/cover/f47c0aa413d2f3fcf571f249f265ff1e/250x250-000000-80-0-0.jpg" data-infos="CAKE  //  Sinking Ship  //  Sinking Ship"
+    <img src="http://cdn-images.deezer.com/images/cover/f47c0aa413d2f3fcf571f249f265ff1e/500x500-000000-80-0-0.jpg" data-infos="CAKE  //  Sinking Ship  //  Sinking Ship"
       title="" id="cover_6" alt="album cover: CAKE: Sinking Ship" />
     <img src="https://cdns-images.dzcdn.net/images/cover/ff84ff9cc326dcb829caca09b3da8561/250x250-000000-80-0-0.jpg" data-infos="The Osmonds  //  Down By The Lazy River  //  Very Best of The Osmonds"
       title="" id="cover_7" alt="album cover: The Osmonds: Very Best of The OSmonds" />
@@ -132,7 +132,11 @@
     fadeIn(audio, 500, 0.2);
 
     var infos_p = document.querySelector("#playing_track_infos");
-    infos_p.innerHTML = e.target.dataset.infos;
+    if (!audio.paused) {
+      infos_p.innerHTML = e.target.dataset.infos;
+    } else {
+      infos_p.innerHTML = "Click on the page to play the extracts"
+    }
     infos_p.style.opacity = 1;
   }
 
