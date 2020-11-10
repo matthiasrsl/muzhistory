@@ -110,8 +110,6 @@ fadeOut = function (audio, rampTime, targetVolume, tick) {
         } else {
             audio.pause();
 
-            // Reset audio volume so audio can be played again
-            setTimeout( function(audio) {audio.volume = orignalVolume;}, 50);
         }
     }
 

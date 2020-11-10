@@ -87,8 +87,7 @@ video {
 #colorblock1 {
     height: 500px;
     background: rgba(41, 48, 78, 0.6);
-    position: relative;
-    top: 10px;
+    top: -860px;
 }
 
 #colorblock2 {
