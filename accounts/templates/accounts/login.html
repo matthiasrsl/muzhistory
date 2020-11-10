@@ -130,7 +130,7 @@
 
   function anyClick(e) {
     canPlayExtracts = true;
-    document.removeEventListener("click");
+    document.removeEventListener("click", anyClick);
   }
 
   function playaudio(e) {
