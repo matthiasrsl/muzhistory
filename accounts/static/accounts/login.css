@@ -44,6 +44,7 @@ body, #page, #background, #foreground, #bg_login_and_links, #inner_login_and_lin
 #page {
     background: #d1dde7;
     height: 1300px;
+    min-height: 100vh;
     width: 100vw;
     overflow: hidden;
 }
@@ -63,7 +64,7 @@ body, #page, #background, #foreground, #bg_login_and_links, #inner_login_and_lin
     width: 200vw;
     transform: rotate(-10deg);
     position: relative;
-    top: -170px;
+    top: -870px;
     left: -380px;
     flex-shrink: 0;
 }
@@ -78,7 +79,7 @@ video {
 }
 
 #colorblock0 {
-    height: 65px;
+    height: 765px;
     background: rgba(41, 44, 78, 0.90);
     z-index: 10;
 }
@@ -86,10 +87,12 @@ video {
 #colorblock1 {
     height: 500px;
     background: rgba(41, 48, 78, 0.6);
+    position: relative;
+    top: 10px;
 }
 
 #colorblock2 {
-    height: 800px;
+    height: 127vh;
     background: #d1dde7;
     z-index: 10;
 }
