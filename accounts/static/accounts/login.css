@@ -1,20 +1,20 @@
 @font-face {
     font-family: 'Cocogoose';
-    src: url('/static/fonts/Cocogoose-Classic-Medium-trial.ttf');
+    src: url('/static/accounts/fonts/Cocogoose-Classic-Medium-trial.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Neonblitz";
-    src: url('/static/fonts/Neonblitz.ttf');
+    src: url('/static/accounts/fonts/Neonblitz.ttf');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: "Forced Square";
-    src: url('/static/fonts/FORCED\ SQUARE.ttf');
+    src: url('/static/accounts/fonts/FORCED\ SQUARE.ttf');
     font-weight: normal;
     font-style: normal;
 }
