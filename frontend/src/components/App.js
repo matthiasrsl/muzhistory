@@ -1,72 +1,50 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import { Redirect, Route } from 'react-router-dom';
 import moment from 'moment';
 
+import { IonApp } from "@ionic/react";
 import {
-  IonApp,
   IonIcon,
-  IonLabel,
-  IonRouterOutlet,
-  IonTabBar,
-  IonTabButton,
-  IonTabs
 } from '@ionic/react';
-import { IonReactRouter } from '@ionic/react-router';
-import { timeOutline, barChartOutline } from 'ionicons/icons';
-import HistoryPage from './pages/HistoryPage';
-import StatsPage from './pages/StatsPage';
+import { timeOutline, barChartOutline, hourglassOutline } from 'ionicons/icons';
 import Player from "./Player.js";
 
-/* Core CSS required for Ionic components to work properly */
-import '@ionic/react/css/core.css';
+import TrackTile from "./TrackTile.js";
+import ListeningHistory from "./ListeningHistory.js";
+import empty_track from "./empty_track.js";
 
-/* Basic CSS for apps built with Ionic */
-import '@ionic/react/css/normalize.css';
-import '@ionic/react/css/structure.css';
-import '@ionic/react/css/typography.css';
+
 
 import './App.css';
 
-var empty_track = {
-  "id": 175,
-  "track_type": "empty",
-  "disc_number": null,
-  "track_number": null,
-  "duration": 600,
-  "album_title": "Album title",
-  "album_cover": "https://e-cdns-images.dzcdn.net/images/cover/d41d8cd98f00b204e9800998ecf8427e/380x380-000000-80-0-0.jpg",
-  "title": "Title ",
-  "title_refine": "(Title refine)",
-  "contributors": [
-    {
-      "name": "Main artist",
-      "role": "main"
-    },
-    {
-      "name": "Featured artist",
-      "role": "feat"
-    }
-  ],
-  "preview": ""
-};
+
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      data: [],
-      loaded: false,
-      placeholder: "Loading"
-    };
   }
 
   componentDidMount() {
-    this.setState({
-      track_playing: empty_track
-    })
-    moment.locale("en-US");
+    fetch("/api/profile")
+      .then(response => {
+        if (response.status > 400) {
+          return this.setState(() => {
+            return { placeholder: "Something went wrong!" };
+          });
+        }
+        return response.json();
+      })
+      .then(profile => {
+        this.setState(() => {
+          return {
+            profile,
+            loaded: true,
+            track_playing: empty_track
+          };
+        });
+      });
   }
+
 
   albumCoverClick(track) {
     this.player.click(track);
@@ -74,33 +52,58 @@ class App extends Component {
 
   render() {
     return (
-      <>
-        <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Route path="/history" component={
-                () => <HistoryPage albumCoverClick={
-                  (track) => { this.albumCoverClick(track); }
-                } />
-              } exact={true} />
-              <Route path="/stats" component={StatsPage} exact={true} />
-              <Route path="/" render={() => <Redirect to="/history" />} exact={true} />
-            </IonRouterOutlet>
-            <IonTabBar slot="top">
-              <IonTabButton layout="icon-start" tab="history" href="/history">
-                <IonIcon icon={timeOutline} />
-                <IonLabel>History</IonLabel>
-              </IonTabButton>
-              <IonTabButton layout="icon-start" tab="stats" href="/stats">
-                <IonIcon icon={barChartOutline} />
-                <IonLabel>Statistics</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </IonReactRouter>
-        <Player ref={ref => this.player = ref} />
-      </>
-    );
+      <ion-app>
+        <div id="app_inner">
+          <header>
+            <div className="inner_header">
+              {this.state &&
+                <>
+                  <div className="profile_infos">
+                    <h1>{
+                      this.state.profile.user.first_name ?
+                        this.state.profile.user.first_name
+                        : this.state.profile.user.username
+                    }'s listening history
+                  </h1>
+                  </div>
+                  <div className="lower_header">
+                    <div className="history_metadata">
+                      <p title="Number of listenings">
+                        {this.state.profile.nb_listenings} listenings
+                    </p>
+                      <p title="Total listening time">
+                        <IonIcon icon={hourglassOutline} />
+                        {Math.floor(this.state.profile.listening_duration / 3600)} hours
+                    </p>
+                      <p title="Last update">
+                        <IonIcon icon={timeOutline} />
+                        {moment(this.state.profile.last_update).calendar(
+                          null,
+                          { sameElse: "LL" }
+                        ).toLowerCase()}
+                      </p>
+                    </div>
+                    {this.state.profile.current_crush ?
+                      <aside className="current_crush">
+                        <TrackTile track={this.state.profile.current_crush}
+                          albumCoverClick={(track) => this.albumCoverClick(track)}
+                          additionalInfo="Your current crush" />
+                      </aside> : undefined
+                    }
+                  </div>
+                </>
+              }
+            </div>
+          </header>
+          <div className="main_content">
+            <ListeningHistory albumCoverClick={
+              (track) => { this.albumCoverClick(track); }
+            } />
+          </div>
+        </div>
+          <Player ref={ref => this.player = ref} />
+      </ion-app>
+    )
   }
 }
 

@@ -1,36 +1,99 @@
-.ion-page {
-    background: #f6fafa;
-}
+/* General element properties */
 
 img {
     max-width: initial;
-}
-
-
-ion-tab-bar {
-    background: #f4abaa;
-}
-
-ion-tab-button {
-    background: rgba(255, 255, 255, 0);
-}
-
-ion-tab-bar {
-    border: 0;
-    height: 40px;
-}
-
-ion-router-outlet {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-}
-
-ion-router-outlet::-webkit-scrollbar {
-    display: none;
 }
 
 p > ion-icon {
     position: relative;
     top: 3px;
     margin-right: 3px;
+}
+
+/* General layout */
+
+body {
+    margin: 0;
+}
+
+#app_inner {
+}
+
+/* Header */
+
+header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 200px;
+    background: #f4abaa;
+    border-bottom: 1px solid #db8785;
+    padding: 70px 20px 20px 60px;
+    margin-bottom: 50px;
+}
+
+header h1, header p, header ion-icon {
+    color: #2a3166;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.lower_header {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+}
+
+.profile_infos {
+    position: relative;
+    top: -20px;
+}
+
+.history_metadata {
+    text-align: end;
+    position: relative;
+    top: 6px;
+}
+
+.inner_header > p {
+    font-size: 0.8em;
+}
+
+.current_crush .track_title {
+    font-size: 1.5em;
+}
+
+.current_crush .artist_name {
+    font-size: 1.05em;
+}
+
+.current_crush .additional_info {
+    font-size: 0.8em;
+    color: #1d585a;
+}
+
+.current_crush img {
+    width: 120px;
+}
+
+/* Section */
+
+.main_content {
+    padding: 50px 0 50px 500px;
+    position: absolute;
+    top:0;
+    left: 0;
+}
+
+.listening_history {
+    margin: 0px 100px 200px 100px;
+}
+
+.listening_history * {
+    color: #2a3166;
 }
