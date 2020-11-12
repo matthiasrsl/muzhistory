@@ -91,10 +91,10 @@ class App extends Component {
                 <IonIcon icon={timeOutline} />
                 <IonLabel>History</IonLabel>
               </IonTabButton>
-              <IonTabButton layout="icon-start" tab="stats" href="/stats">
+              {/*<IonTabButton layout="icon-start" tab="stats" href="/stats">
                 <IonIcon icon={barChartOutline} />
                 <IonLabel>Statistics</IonLabel>
-              </IonTabButton>
+              </IonTabButton>*/}
             </IonTabBar>
           </IonTabs>
         </IonReactRouter>

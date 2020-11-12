@@ -80,6 +80,7 @@ class HistoryPage extends Component {
                 </div>
                 <div className="lower_header">
                   <div className="history_metadata">
+                    <a className="stats_link" href="/oldhistory/stats/">Statistics</a>
                     <p title="Number of listenings">
                       {this.state.data.profile.nb_listenings} listenings
                     </p>

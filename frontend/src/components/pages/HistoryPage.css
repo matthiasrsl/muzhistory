@@ -5,18 +5,22 @@ ion-router-outlet {
     overflow-y: scroll;
 }
 
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 /* Header */
 
 header {
     height: 135px;
-    background: #f4abaa;
-    border-bottom: 1px solid #db8785;
+    background: #b3c6d8;
+    border-bottom: 1px solid #95afc8;
     padding: 20px 20px 20px 120px;
     margin-bottom: 50px;
 }
 
-header h1, header p, header ion-icon {
-    color: #2a3166;
+header h1, header p, header ion-icon, header a {
+    color: #2E294E;
 }
 
 header h1 {
@@ -36,14 +40,25 @@ header h1 {
     top: -20px;
 }
 
+.stats_link {
+    position: relative;
+    top: -30px;
+    font-size: 1em;
+}
+
 .history_metadata {
     text-align: end;
     position: relative;
-    top: 6px;
+    top: -12px;
 }
 
 .inner_header > p {
     font-size: 0.8em;
+}
+
+.current_crush .track_metadata {
+    position: relative;
+    top: 4px;
 }
 
 .current_crush .track_title {
@@ -51,12 +66,12 @@ header h1 {
 }
 
 .current_crush .artist_name {
-    font-size: 1.05em;
+    font-size: 1.2em;
 }
 
 .current_crush .additional_info {
     font-size: 0.8em;
-    color: #1d585a;
+    color: #777;
 }
 
 .current_crush img {
@@ -65,9 +80,5 @@ header h1 {
 
 
 .listening_history {
-    margin: 0px 100px 200px 400px;
-}
-
-.listening_history * {
-    color: #2a3166;
+    margin: 60px 100px 200px 300px;
 }

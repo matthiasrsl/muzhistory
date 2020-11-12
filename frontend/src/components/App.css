@@ -1,14 +1,18 @@
 .ion-page {
-    background: #f6fafa;
+    background: #e8eef3;
 }
 
 img {
     max-width: initial;
 }
 
+* {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
 
 ion-tab-bar {
-    background: #f4abaa;
+    background: #b3c6d8;
 }
 
 ion-tab-button {

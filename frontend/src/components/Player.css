@@ -4,15 +4,15 @@
     align-items: flex-end;
     width: auto;
     padding: 12px 50px 10px 30px;
-    background: #cae7df;
-    border-top: 1px solid #9acebf;
+    background: #b3c6d8;
+    border-top: 1px solid #95afc8;
     position: fixed;
     bottom: -200px;
     max-height: 200px;
     left: 0;
     right: 0;
     transition: bottom 0.15s;
-    color: #2a3166;
+    color: #2E294E;
 }
 
 .player .track {
@@ -28,12 +28,17 @@
 .player .track_metadata {
     position: relative;
     max-width: 100%;
+    top: 3px;
 }
 
 .player .track_title, .player .artists, .player .album_name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.player .track_metadata .additional_info {
+    color: #666;
 }
 
 .player_time_infos {
