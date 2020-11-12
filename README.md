@@ -1,6 +1,6 @@
 # Muzhistory
 
-This web app retrieves your listening history from the Deezer API and displays it neatly. You can browse your entire listening history! You can also see the artists, albums and tracks you listened to the most during the past week, month or year.
+This web app retrieves the user's listening history from the Deezer API and displays it neatly. The user can browse their listening history from the date they sign up on the site. You can also see the artists, albums and tracks you listened to the most during the past week, month or year.
 
 **The website is available: [Muzhistory](https://muzhistory.eu.pythonanywhere.com)**
 
