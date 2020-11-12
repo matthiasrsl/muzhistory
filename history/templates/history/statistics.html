@@ -12,7 +12,11 @@
 
 {% block page %}
 <h1>Statistiques</h1>
-<a href="/history">Historique</a>
+{% if request.user.is_authenticated %}
+  <a href="/history">Historique</a>
+{% else %}
+<a href="/history?showcase=1">Historique</a>
+{% endif %}
 <a href="{% url 'accounts:display-profile' %}">Profil</a>
 {% if empty_history %}
 <p>Votre historique d'écoute est vide.</p>

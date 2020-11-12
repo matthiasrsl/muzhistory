@@ -92,7 +92,7 @@ class HistoryOverview(LoginRequiredMixin, View):
         return response
 
 
-class Statistics(LoginRequiredMixin, View):
+class Statistics(View):
     """
     Statistics regarding the complete history.
     """
@@ -115,7 +115,11 @@ class Statistics(LoginRequiredMixin, View):
 
     def get(self, request):
         DEFAULT_ALBUM_COVER_URL = settings.DEFAULT_ALBUM_COVER_URL
-        profile = request.user.profile
+        if request.user.is_authenticated:
+            profile = request.user.profile
+        else:
+            profile = Profile.objects.filter(showcase_profile=True)[0]
+
         entries = HistoryEntry.objects.filter(profile=profile)
         if not entries:
             empty_history = True
