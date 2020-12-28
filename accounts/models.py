@@ -17,6 +17,7 @@ from platform_apis.models import (
     DeezerRefusedAccessError,
     Market,
 )
+from history.models import HistoryEntry
 
 
 class Profile(models.Model):
@@ -124,6 +125,8 @@ class Profile(models.Model):
                 .order_by("-entry_count", "track")[0]
             )
         except IndexError:
-            return None
+            crush = HistoryEntry.objects.filter(profile=self).order_by(
+                "-listening_datetime"
+            )[0].track.recording
 
         return crush
