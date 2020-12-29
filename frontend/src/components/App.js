@@ -39,7 +39,7 @@ class App extends Component {
           return {
             profile,
             loaded: true,
-            track_playing: empty_track
+            track_playing: profile.current_crush
           };
         });
       });
@@ -53,20 +53,20 @@ class App extends Component {
   render() {
     return (
       <ion-app>
-        <div id="app_inner">
-          <header>
-            <div className="inner_header">
-              {this.state &&
-                <>
-                  <div className="profile_infos">
-                    <h1>{
-                      this.state.profile.user.first_name ?
-                        this.state.profile.user.first_name
-                        : this.state.profile.user.username
-                    }'s listening history
-                  </h1>
-                  </div>
-                  <div className="lower_header">
+        {this.state &&
+          <>
+            <div id="app_inner">
+              <header>
+                {this.state &&
+                  <>
+                    <div className="profile_infos">
+                      <h1>{
+                        this.state.profile.user.first_name ?
+                          this.state.profile.user.first_name
+                          : this.state.profile.user.username}
+                      </h1>
+                    </div>
+
                     <div className="history_metadata">
                       <p title="Number of listenings">
                         {this.state.profile.nb_listenings} listenings
@@ -83,25 +83,20 @@ class App extends Component {
                         ).toLowerCase()}
                       </p>
                     </div>
-                    {this.state.profile.current_crush ?
-                      <aside className="current_crush">
-                        <TrackTile track={this.state.profile.current_crush}
-                          albumCoverClick={(track) => this.albumCoverClick(track)}
-                          additionalInfo="Your current crush" />
-                      </aside> : undefined
-                    }
-                  </div>
-                </>
-              }
+
+                  </>
+                }
+              </header>
+
+              <div className="main_content">
+                <ListeningHistory albumCoverClick={
+                  (track) => { this.albumCoverClick(track); }
+                } />
+              </div>
             </div>
-          </header>
-          <div className="main_content">
-            <ListeningHistory albumCoverClick={
-              (track) => { this.albumCoverClick(track); }
-            } />
-          </div>
-        </div>
-          <Player ref={ref => this.player = ref} />
+            <Player track={this.state.profile.current_crush} ref={ref => this.player = ref} />
+          </>
+        }
       </ion-app>
     )
   }

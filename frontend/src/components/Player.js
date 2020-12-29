@@ -134,7 +134,7 @@ class Player extends Component {
         />
         <div className="player_time_infos">
           <div className="progress_container">
-            <IonProgressBar color="primary"
+            <IonProgressBar color="primary" value={0.5}
               ref={ref => this.progressBar = ref}>
             </IonProgressBar>
           </div>

@@ -46,25 +46,28 @@ class ListeningHistory extends Component {
       <>
         {
           this.state &&
-          <div className="listening_history">
-            {this.state.data.data.map((entry) =>
-              <TrackTile track={entry.track} key={entry.id}
-                albumCoverClick={(track) => this.albumCoverClick(track)}
-                clickable={true}
-                additionalInfo={
-                  <>
-                    <IonIcon icon={timeOutline} />
-                    <span>
-                      Listened to {moment(entry.listening_datetime).calendar(
-                      null,
-                      { sameElse: "[on] LL" }
-                    ).toLowerCase()}
-                    </span>
-                  </>
-                }
-              />
-            )}
-          </div>
+          <>
+            <h2>Your listening history</h2>
+            <div className="listening_history">
+              {this.state.data.data.map((entry) =>
+                <TrackTile track={entry.track} key={entry.id}
+                  albumCoverClick={(track) => this.albumCoverClick(track)}
+                  clickable={true}
+                  additionalInfo={
+                    <>
+                      <IonIcon icon={timeOutline} />
+                      <span>
+                        Listened to {moment(entry.listening_datetime).calendar(
+                        null,
+                        { sameElse: "[on] LL" }
+                      ).toLowerCase()}
+                      </span>
+                    </>
+                  }
+                />
+              )}
+            </div>
+          </>
         }
       </>
     )
