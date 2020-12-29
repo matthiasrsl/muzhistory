@@ -42,7 +42,11 @@ function formatDuration(duration) {
 class Player extends Component {
   constructor(props) {
     super(props);
-    this.state = { track: empty_track, position: 0, loaded: false };
+    this.state = { track: this.props.track, position: 0, loaded: false };
+  }
+
+  componentDidMount() {
+    this.changeTrack(this.props.track, false);
   }
 
   click(track) {
@@ -52,7 +56,7 @@ class Player extends Component {
     this.show();
   }
 
-  changeTrack(track) {
+  changeTrack(track, play = true) {
     var audio = this.audio;
     if (audio.src != track.preview) {
       this.setState({ loaded: false });
@@ -61,7 +65,7 @@ class Player extends Component {
       this.progressBar.value = (
         this.audio.dataset.beginTime / this.state.track.duration
       );
-      audio.oncanplay = (event) => { this.audioLoaded(); }
+      audio.oncanplay = (event) => { this.audioLoaded(play); }
       audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
       audio.onended = (event) => { this.hide(); };
     }
@@ -90,13 +94,15 @@ class Player extends Component {
     playerElement.style.bottom = "-200px";
   }
 
-  audioLoaded() {
-    this.audio.play();
-    this.setState({ playing: true });
-    this.progressBar.type = "determinate";
-    this.totalTimeElement.firstChild.replaceWith(
-      formatDuration(this.state.track.duration)
-    );
+  audioLoaded(play = true) {
+    if (play) {
+      this.audio.play();
+      this.setState({ playing: true });
+      this.progressBar.type = "determinate";
+      this.totalTimeElement.firstChild.replaceWith(
+        formatDuration(this.state.track.duration)
+      );
+    }
     this.setState({ loaded: true });
   }
 
@@ -115,7 +121,7 @@ class Player extends Component {
   render() {
     return (
       <div className="player">
-        <audio id="player_audio" src="#" data-currently-playing-id=""
+        <audio id="player_audio" src="" data-currently-playing-id=""
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
         <TrackTile track={this.state.track} coverClick={(track) => { }}
