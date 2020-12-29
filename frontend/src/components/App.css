@@ -31,22 +31,7 @@ header {
     width: 200px;
     z-index: 1000;
     padding: 20px;
-    background: #fff;
-    border-right: 1px solid #ddd;
-}
-
-
-header h1, header p, header ion-icon {
-    color: #020912;
-}
-
-header h1 {
-
-}
-
-
-.profile_infos {
-    
+    border-right: 1px solid;
 }
 
 /* Body */
@@ -56,27 +41,6 @@ header h1 {
     color: #888;
 }
 
-.current_crush {
-    width: 500px;
-    transition: background 0.5s ease;
-}
-
-.current_crush:hover {
-    background: #fff;
-}
-
-.current_crush .track_metadata {
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.current_crush .album_cover:hover + .track_metadata {
-    opacity: 1;
-}
-
-.current_crush img {
-    width: 120px;
-}
 
 /* Section */
 
@@ -86,7 +50,6 @@ header h1 {
     top:0;
     left: 0;
     right: 0;
-    background-color: #fafafa;
 }
 
 .main_content h2 {
@@ -95,8 +58,4 @@ header h1 {
 
 .listening_history {
     margin: 0;/*0px 100px 200px 0px;*/
-}
-
-.listening_history * {
-    color: #020912;
 }

@@ -17,6 +17,10 @@ import empty_track from "./empty_track.js";
 
 import './App.css';
 
+import { ThemeProvider } from "styled-components";
+import { lightTheme, darkTheme } from "./themes.js";
+import { GlobalStyles } from "./globalStyles.js";
+
 
 
 class App extends Component {
@@ -54,7 +58,8 @@ class App extends Component {
     return (
       <ion-app>
         {this.state &&
-          <>
+          <ThemeProvider theme={lightTheme}>
+            <GlobalStyles />
             <div id="app_inner">
               <header>
                 {this.state &&
@@ -95,7 +100,7 @@ class App extends Component {
               </div>
             </div>
             <Player track={this.state.profile.current_crush} ref={ref => this.player = ref} />
-          </>
+          </ThemeProvider>
         }
       </ion-app>
     )

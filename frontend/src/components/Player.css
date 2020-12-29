@@ -4,16 +4,13 @@
     align-items: flex-end;
     width: auto;
     padding: 12px 50px 10px 30px;
-    background: #fff;
-    xborder-top: 1px solid #ddd;
-    box-shadow: 0px -3px 15px #eee;
+    border-top: 1px solid;
     position: fixed;
     bottom: 0px;
     max-height: 200px;
     left: 0;
     right: 0;
     transition: bottom 0.15s;
-    color: #020912;
     z-index: 2000;
 }
 
@@ -62,7 +59,6 @@
 
 .playpause-icon {
     font-size: 22px;
-    color: #222;
     position: relative;
     top: 6px;
     left: -4px;
