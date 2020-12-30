@@ -1,10 +1,10 @@
 .track {
     display: flex;
-    margin: 5px auto 15px auto;
+    margin: 8px auto;
 }
 
 .album_cover img {
-    width: 80px;
+    width: 70px;
     margin: auto 10px auto auto;
     border-radius: 3px;
 }
@@ -21,7 +21,7 @@ p {
     display: flex;
     flex-direction: column;
     position: relative;
-    top: -2px;
+    top: 4px;
     max-width: 100%;
 }
 
@@ -32,10 +32,12 @@ p {
 }
 
 .track_title {
-    font-size: 1.4em;
+    font-size: 1em;
     padding: 0;
     margin: 0px 0;
     line-height: 120%;
+    position: relative;
+    top: 2px;
 }
 
 .track_title_refine {
@@ -44,10 +46,9 @@ p {
 }
 
 .track_metadata .artist_name {
-    font-size: 0.9em;
+    font-size: 0.8em;
     line-height: 100%;
     position: relative;
-    top: -5px;
 }
 
 .artist_name_role_feat {
@@ -57,7 +58,6 @@ p {
 .album_name {
     font-size: 0.8em;
     position: relative;
-    top: -7px;
 }
 
 .album_name .album_hard_text {
@@ -67,10 +67,12 @@ p {
 .additional_info {
     display: flex;
     margin-top: 2px;
-    font-size: 0.8em;
+    font-size: 0.7em;
     color: #777;
     position: relative;
-    top: -9px;
 }
 
-
+.additional_info ion-icon {
+    position: relative;
+    top: 2px;
+}

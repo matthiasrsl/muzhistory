@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { IonIcon, IonProgressBar } from '@ionic/react';
+import { IonIcon, IonRange } from '@ionic/react';
 
-import { play, pause } from 'ionicons/icons';
+import { play, pause, volumeMedium } from 'ionicons/icons';
 
 
 import TrackTile from "./TrackTile.js";
@@ -49,13 +49,12 @@ class Player extends Component {
 
   componentDidMount() {
     this.changeTrack(this.props.track, false);
-    //this.updateProgressBar();
+    this.audio.volume = 0.5;
   }
 
   click(track) {
     this.changeTrack(track);
     this.playPause();
-    this.show();
   }
 
   createProgressBar() {
@@ -64,7 +63,7 @@ class Player extends Component {
       this.progressBar.destroy();
     }
     var bar = new ProgressBar.Line(progress_container, {
-      strokeWidth: 4,
+      strokeWidth: 6,
       easing: 'easeInOut',
       duration: 1,
       color: this.state.color1,
@@ -80,27 +79,23 @@ class Player extends Component {
     var vibrant = Vibrant.from(track.album_cover);
     var newPalette;
     vibrant.getPalette((err, palette) => {
-      this.setState({color1: palette.Vibrant.hex}, this.createProgressBar);
+      this.setState({ color1: palette.Vibrant.hex }, this.createProgressBar);
     })
   }
 
   initProgressBar(track) {
-    this.getPalette(track);    
+    this.getPalette(track);
   }
 
   changeTrack(track, play = true) {
-    var audio = this.audio;this.setState((prevState, props) => ({ track: track }));
+    var audio = this.audio; this.setState((prevState, props) => ({ track: track }));
     this.setState((prevState, props) => ({ track: track }));
     if (audio.src != track.preview) {
       this.setState({ loaded: false });
       audio.src = track.preview;
       audio.load();
-      /*this.progressBar.value = (
-        this.audio.dataset.beginTime / this.state.track.duration
-      );*/
       audio.oncanplay = (event) => { this.audioLoaded(play); }
       audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
-      audio.onended = (event) => { this.hide(); };
       this.initProgressBar(track);
     }
   }
@@ -117,16 +112,6 @@ class Player extends Component {
         this.setState({ playing: false });
       }
     }
-  }
-
-  show() {
-    var playerElement = document.querySelector(".player");
-    playerElement.style.bottom = "0";
-  }
-
-  hide() {
-    var playerElement = document.querySelector(".player");
-    playerElement.style.bottom = "-200px";
   }
 
   audioLoaded(play = true) {
@@ -153,48 +138,55 @@ class Player extends Component {
 
   }
 
+  changeVolume(e) {
+    var audio = this.audio;
+    audio.volume = e.detail.value / 100;
+  }
+
   render() {
     return (
       <div className="player">
         <audio id="player_audio" src="" data-currently-playing-id=""
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
+
         <TrackTile track={this.state.track} coverClick={(track) => { }}
-          clickable={false}
-          additionalInfo={
-            this.state.loaded ?
-              this.state.playing ? "Now playing" : "Paused"
-              : "Loading..."
-          }
+          clickable={false} showAlbum={false}
         />
+
         <div className="player_time_infos">
-          <div className="progress_container" ref={
-            ref => this.progress_container = ref
-          }>
-            {/*<IonProgressBar color="primary" value={0.5}
-              ref={ref => this.progressBar = ref}>
-        </IonProgressBar>*/}
-          </div>
-          <div>
-            <p className="player_label">30-second extract</p>
-            <p className="player_time">
-              <span id="player_current_time"
-                ref={ref => this.currentTimeElement = ref}
-              >0:00</span> / <span id="player_total_time"
-                ref={ref => this.totalTimeElement = ref}
-              > 0:00</span>
-            </p>
-          </div>
           {this.state.playing ?
-            <IonIcon className="playpause-icon" icon={pause} onClick={
+            <IonIcon className="playpause-icon pause" icon={pause} onClick={
               () => this.playPause()
             } />
-            : <IonIcon className="playpause-icon" icon={play} onClick={
+            : <IonIcon className="playpause-icon play" icon={play} onClick={
               () => this.playPause()
             } />
           }
+
+          <div className="player_progress">
+            <p id="player_current_time"
+              ref={ref => this.currentTimeElement = ref}
+            >0:00</p>
+            <div className="progress_container" ref={
+              ref => this.progress_container = ref
+            }>
+            </div>
+            <p id="player_total_time"
+              ref={ref => this.totalTimeElement = ref}
+            > 0:00</p>
+          </div>
         </div>
-      </div>
+
+        <div className="player_options">
+          <IonIcon icon={volumeMedium} />
+          <div className="volume_slider">
+            <IonRange value={50} onIonChange={e => this.changeVolume(e)} />
+          </div>
+
+        </div>
+
+      </div >
     )
   }
 }

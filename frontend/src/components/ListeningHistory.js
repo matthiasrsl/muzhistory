@@ -52,14 +52,14 @@ class ListeningHistory extends Component {
               {this.state.data.data.map((entry) =>
                 <TrackTile track={entry.track} key={entry.id}
                   albumCoverClick={(track) => this.albumCoverClick(track)}
-                  clickable={true}
+                  clickable={true} showAlbum={true}
                   additionalInfo={
                     <>
                       <IonIcon icon={timeOutline} />
                       <span>
-                        Listened to {moment(entry.listening_datetime).calendar(
+                        {moment(entry.listening_datetime).calendar(
                         null,
-                        { sameElse: "[on] LL" }
+                        { sameElse: "LL" }
                       ).toLowerCase()}
                       </span>
                     </>

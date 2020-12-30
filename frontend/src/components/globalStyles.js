@@ -1,8 +1,12 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
-    * {
+    p, h1, h2, ion-icon {
         color: ${({ theme }) => theme.main_text};
+    }
+
+    body {
+        background: ${({ theme }) => theme.main_bg};
     }
 
     header {
@@ -15,7 +19,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     .player {
-        background: ${({ theme }) => theme.header_bg};
+        background: ${({ theme }) => theme.player_bg};
         border-top-color: ${({ theme }) => theme.borders};
         box-shadow: ${({ theme }) => theme.player_shadow};
     }

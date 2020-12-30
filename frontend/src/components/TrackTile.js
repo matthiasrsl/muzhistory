@@ -13,34 +13,36 @@ class TrackTile extends Component {
         <div className="album_cover" onClick={
           () => this.props.albumCoverClick(this.props.track)
         }>
-          <img className={this.props.track.preview && "play_extract"} 
+          <img className={this.props.track.preview && "play_extract"}
             title={
-              this.props.clickable && 
-              this.props.track.preview ? 
-              "Play extract" : undefined
-            } 
-            src={this.props.track.album_cover} alt="album" 
+              this.props.clickable &&
+                this.props.track.preview ?
+                "Play extract" : undefined
+            }
+            src={this.props.track.album_cover} alt="album"
           />
         </div>
         <div className="track_metadata">
           <p className="track_title">
-            {this.props.track.title} 
+            {this.props.track.title}
             <span className="track_title_refine">
               {this.props.track.title_refine}
             </span>
           </p>
           <p className="artists">
             {this.props.track.contributors.map((contrib, i, contribArray) =>
-              <span 
-                  className={`artist_name artist_name_role_${contrib.role}`} 
-                  key={i}
+              <span
+                className={`artist_name artist_name_role_${contrib.role}`}
+                key={i}
               >
                 {contrib.name}
                 {i != contribArray.length - 1 && <span>, </span>}
               </span>
-            )}
+            )} {this.props.showAlbum && <> - <span className="album_name">{
+              this.props.track.album_title}
+            </span> </>}
           </p>
-          <p className="album_name">{this.props.track.album_title}</p>
+
           <p className="additional_info">{this.props.additionalInfo}</p>
         </div>
       </div>

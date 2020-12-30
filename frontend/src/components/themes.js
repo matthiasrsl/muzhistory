@@ -9,6 +9,7 @@ export const lightTheme = {
 export const darkTheme = {
     main_bg: '#222',
     header_bg: '#111',
+    player_bg: "#333",
     main_text: "#fff",
     borders: "#333",
     player_shadow: "none"

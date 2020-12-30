@@ -1,32 +1,36 @@
 .player {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    /*align-items: flex-end;*/
     width: auto;
-    padding: 12px 50px 10px 30px;
+    padding: 5px 5px 5px 15px;
     border-top: 1px solid;
     position: fixed;
     bottom: 0px;
-    max-height: 200px;
+    height: 70px;
     left: 0;
     right: 0;
     transition: bottom 0.15s;
     z-index: 2000;
 }
 
+
 .player .track {
     margin: 0;
-    width: 50%;
+    margin-top: 5px;
+    width: 25%;
 }
 
 .player img.play_extract {
     cursor: default;
-    width: 80px;
+    width: 60px;
 }
 
 .player .track_metadata {
     position: relative;
-    max-width: 100%;
+    max-width: 80%;
+    top: 0;
+    margin: 5px 0;
 }
 
 .player .track_title, .player .artists, .player .album_name {
@@ -35,31 +39,85 @@
     text-overflow: ellipsis;
 }
 
-.player_time_infos {
+.player .track_title {
+    font-size: 0.9rem;
+}
+
+.player .artist_name {
+    font-size: 0.8rem;
+}
+
+.player div.player_time_infos {
     display: flex;
-    width: 40%;
+    width: 45%;
     flex-direction: column;
-    padding: 15px;
 }
 
 .player_time_infos div {
     display: flex;
-    width: 100%; /* Do not add margins or paddings on the x axis,
-                    use the parent element. */
+    width: 100%; 
     justify-content: space-between;
 }
 
 .player .progress_container {
-    height: 3px;
+    height: 5px;
     width: 100%; /* Do not add margins or paddings on the x axis,
                     use the parent element. */
     margin: auto 0 12px 0;
     border: none;
 }
 
+.player_progress p {
+    color: #ccc;
+    font-size: 0.65em;
+    margin: auto 5px;
+    position: relative;
+    top: -6px
+}
+
 .playpause-icon {
-    font-size: 22px;
+    font-size: 18px;
     position: relative;
     top: 6px;
     left: -4px;
+    margin: 0 auto 20px auto;
+    padding: 3px;
+    border: 1px solid #ccc;
+    color: #ccc;
+    border-radius: 20px;
+}
+
+.playpause-icon.play {
+    padding-left: 4px;
+}
+
+.player_options {
+    width: 25%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right: 40px;
+}
+
+.player_options ion-icon {
+    font-size: 22px;
+    margin-right: 15px;
+}
+
+.player_options .volume_slider {
+    width: 40%;
+    height: 12px;
+}
+
+.player_options ion-range {
+    --height: 12px;
+    padding: 0;
+}
+
+.player_options ion-range::part(bar) {
+    background: #ccc;
+}
+
+.player_options ion-range::part(bar-active) {
+    background: #f00;
 }
