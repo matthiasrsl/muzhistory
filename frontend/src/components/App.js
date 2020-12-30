@@ -58,7 +58,7 @@ class App extends Component {
     return (
       <ion-app>
         {this.state &&
-          <ThemeProvider theme={lightTheme}>
+          <ThemeProvider theme={darkTheme}>
             <GlobalStyles />
             <div id="app_inner">
               <header>

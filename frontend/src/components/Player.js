@@ -3,12 +3,14 @@ import { IonIcon, IonProgressBar } from '@ionic/react';
 
 import { play, pause } from 'ionicons/icons';
 
+
 import TrackTile from "./TrackTile.js";
 
 import "./Player.css";
 
 var Tinycolor = require("tinycolor2");
 var Vibrant = require("node-vibrant");
+var ProgressBar = require("progressbar.js");
 
 var empty_track = {
   "id": 175,
@@ -47,29 +49,62 @@ class Player extends Component {
 
   componentDidMount() {
     this.changeTrack(this.props.track, false);
+    //this.updateProgressBar();
   }
 
   click(track) {
-    this.setState((prevState, props) => ({ track: track }));
     this.changeTrack(track);
     this.playPause();
     this.show();
   }
 
+  createProgressBar() {
+    var progress_container = this.progress_container;
+    if (this.progressBar) {
+      this.progressBar.destroy();
+    }
+    var bar = new ProgressBar.Line(progress_container, {
+      strokeWidth: 4,
+      easing: 'easeInOut',
+      duration: 1,
+      color: this.state.color1,
+      trailColor: "#eee",
+      trailWidth: 1,
+      svgStyle: { width: '100%', height: '100%' }
+    });
+    this.progressBar = bar;
+    this.updateProgressBar();
+  }
+
+  getPalette(track) {
+    var vibrant = Vibrant.from(track.album_cover);
+    var newPalette;
+    vibrant.getPalette((err, palette) => {
+      this.setState({color1: palette.Vibrant.hex}, this.createProgressBar);
+    })
+  }
+
+  initProgressBar(track) {
+    this.getPalette(track);    
+  }
+
   changeTrack(track, play = true) {
-    var audio = this.audio;
+    var audio = this.audio;this.setState((prevState, props) => ({ track: track }));
+    this.setState((prevState, props) => ({ track: track }));
     if (audio.src != track.preview) {
       this.setState({ loaded: false });
       audio.src = track.preview;
       audio.load();
-      this.progressBar.value = (
+      /*this.progressBar.value = (
         this.audio.dataset.beginTime / this.state.track.duration
-      );
+      );*/
       audio.oncanplay = (event) => { this.audioLoaded(play); }
       audio.ontimeupdate = (event) => { this.updateProgressBar(event); }
       audio.onended = (event) => { this.hide(); };
+      this.initProgressBar(track);
     }
   }
+
 
   playPause() {
     var audio = this.audio;
@@ -98,11 +133,10 @@ class Player extends Component {
     if (play) {
       this.audio.play();
       this.setState({ playing: true });
-      this.progressBar.type = "determinate";
-      this.totalTimeElement.firstChild.replaceWith(
-        formatDuration(this.state.track.duration)
-      );
     }
+    this.totalTimeElement.firstChild.replaceWith(
+      formatDuration(this.state.track.duration)
+    );
     this.setState({ loaded: true });
   }
 
@@ -115,7 +149,8 @@ class Player extends Component {
     this.currentTimeElement.firstChild.replaceWith(
       formatDuration(current_time)
     );
-    this.progressBar.value = (current_time / duration);
+    this.progressBar.set(current_time / duration);
+
   }
 
   render() {
@@ -133,10 +168,12 @@ class Player extends Component {
           }
         />
         <div className="player_time_infos">
-          <div className="progress_container">
-            <IonProgressBar color="primary" value={0.5}
+          <div className="progress_container" ref={
+            ref => this.progress_container = ref
+          }>
+            {/*<IonProgressBar color="primary" value={0.5}
               ref={ref => this.progressBar = ref}>
-            </IonProgressBar>
+        </IonProgressBar>*/}
           </div>
           <div>
             <p className="player_label">30-second extract</p>
