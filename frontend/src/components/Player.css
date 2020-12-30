@@ -1,16 +1,14 @@
 .player {
     display: flex;
     justify-content: space-between;
-    /*align-items: flex-end;*/
     width: auto;
     padding: 5px 5px 5px 15px;
-    border-top: 1px solid;
     position: fixed;
     bottom: 0px;
     height: 70px;
     left: 0;
     right: 0;
-    transition: bottom 0.15s;
+    transition: background 0.4s;
     z-index: 2000;
 }
 
@@ -115,9 +113,12 @@
 }
 
 .player_options ion-range::part(bar) {
-    background: #ccc;
+    background: rgba(136, 136, 136, 0.5);
 }
 
 .player_options ion-range::part(bar-active) {
-    background: #f00;
+    background: #eee;
+}
+.player_options ion-range::part(knob) {
+    background: #eee;
 }

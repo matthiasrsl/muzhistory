@@ -12,28 +12,6 @@ var Tinycolor = require("tinycolor2");
 var Vibrant = require("node-vibrant");
 var ProgressBar = require("progressbar.js");
 
-var empty_track = {
-  "id": 175,
-  "track_type": "empty",
-  "disc_number": null,
-  "track_number": null,
-  "duration": 600,
-  "album_title": "Album title",
-  "album_cover": "https://e-cdns-images.dzcdn.net/images/cover/d41d8cd98f00b204e9800998ecf8427e/380x380-000000-80-0-0.jpg",
-  "title": "Title ",
-  "title_refine": "(Title refine)",
-  "contributors": [
-    {
-      "name": "Main artist",
-      "role": "main"
-    },
-    {
-      "name": "Featured artist",
-      "role": "feat"
-    }
-  ],
-  "preview": "https://cdns-preview-7.dzcdn.net/stream/c-79a4f779d296204d674a37c8eb002978-5.mp3"
-};
 
 
 function formatDuration(duration) {
@@ -44,7 +22,19 @@ function formatDuration(duration) {
 class Player extends Component {
   constructor(props) {
     super(props);
-    this.state = { track: this.props.track, position: 0, loaded: false };
+    this.state = { 
+      track: this.props.track, 
+      position: 0, 
+      loaded: false,
+      palette: {
+        vibrant: "#000",
+        lightVibrant: "#000",
+        darkVibrant: "#000",
+        muted: "#000",
+        lightMuted: "#000",
+        darkMuted: "#000"
+      }
+    };
   }
 
   componentDidMount() {
@@ -66,20 +56,31 @@ class Player extends Component {
       strokeWidth: 6,
       easing: 'easeInOut',
       duration: 1,
-      color: this.state.color1,
-      trailColor: "#eee",
+      color: this.state.palette.vibrant,
+      trailColor: this.state.palette.lightMuted,
       trailWidth: 1,
       svgStyle: { width: '100%', height: '100%' }
     });
     this.progressBar = bar;
+
+
+
     this.updateProgressBar();
   }
 
   getPalette(track) {
     var vibrant = Vibrant.from(track.album_cover);
-    var newPalette;
     vibrant.getPalette((err, palette) => {
-      this.setState({ color1: palette.Vibrant.hex }, this.createProgressBar);
+      this.setState({
+        palette: {
+          vibrant: palette.Vibrant.hex,
+          lightVibrant: palette.LightVibrant.hex,
+          darkVibrant: palette.DarkVibrant.hex,
+          muted: palette.Muted.hex,
+          lightMuted: palette.LightMuted.hex,
+          darkMuted: palette.DarkMuted.hex
+        }
+      }, this.createProgressBar);
     })
   }
 
@@ -145,7 +146,7 @@ class Player extends Component {
 
   render() {
     return (
-      <div className="player">
+      <div className="player" style={{ background: this.state.palette.darkMuted}}>
         <audio id="player_audio" src="" data-currently-playing-id=""
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
@@ -181,7 +182,8 @@ class Player extends Component {
         <div className="player_options">
           <IonIcon icon={volumeMedium} />
           <div className="volume_slider">
-            <IonRange value={50} onIonChange={e => this.changeVolume(e)} />
+            <IonRange value={50} onIonChange={e => this.changeVolume(e)} 
+              ref={ref => this.volumeSlider = ref}/>
           </div>
 
         </div>
