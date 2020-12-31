@@ -1,17 +1,18 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import moment from 'moment';
 
-import { IonApp, IonToggle, IonLabel } from "@ionic/react";
+import { IonToggle, IonLabel } from "@ionic/react";
 import {
   IonIcon,
 } from '@ionic/react';
+import {
+  BrowserRouter as Router, Switch, Route, Link, Redirect
+} from "react-router-dom";
 
 import Player from "./Player.js";
 
-import TrackTile from "./TrackTile.js";
 import ListeningHistory from "./ListeningHistory.js";
-import empty_track from "./empty_track.js";
+import StatsPage from "./StatsPage.js"
 
 
 
@@ -90,7 +91,7 @@ class App extends Component {
 
   render() {
     return (
-      <ion-app>
+      <Router>
         {this.state &&
           <ThemeProvider theme={this.state.theme}>
             <GlobalStyles />
@@ -98,7 +99,7 @@ class App extends Component {
               <header>
                 {this.state &&
                   <>
-                    <div className="color_tile" style={{ 
+                    <div className="color_tile" style={{
                       background: this.state.palette.background,
                     }}>
 
@@ -124,9 +125,21 @@ class App extends Component {
               </header>
 
               <div className="main_content">
-                <ListeningHistory albumCoverClick={
-                  (track) => { this.albumCoverClick(track); }
-                } />
+                <Switch>
+                  <Route path="/history">
+                    <ListeningHistory albumCoverClick={
+                      (track) => { this.albumCoverClick(track); }
+                    } />
+                  </Route>
+                  <Route path="/stats">
+                    <StatsPage albumCoverClick={
+                      (track) => { this.albumCoverClick(track); }
+                    } />
+                  </Route>
+                  <Route path="/">
+                    <Redirect to="/history" />
+                  </Route>
+                </Switch>
               </div>
             </div>
             <Player track={this.state.profile.current_crush}
@@ -137,7 +150,7 @@ class App extends Component {
             />
           </ThemeProvider>
         }
-      </ion-app>
+      </Router>
     )
   }
 }

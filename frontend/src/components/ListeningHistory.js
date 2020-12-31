@@ -33,7 +33,6 @@ class ListeningHistory extends Component {
           return {
             data,
             loaded: true,
-            track_playing: empty_track
           };
         });
       });
