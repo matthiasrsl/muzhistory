@@ -32,4 +32,7 @@ export const GlobalStyles = createGlobalStyle`
     .player_options ion-range::part(bar-active), .player_options ion-range::part(knob) {
         background: ${({ theme }) => theme.muted_bg};
     }
+    .player ion-icon {
+        color: ${({ theme }) => theme.muted_bg};
+    }
 `
