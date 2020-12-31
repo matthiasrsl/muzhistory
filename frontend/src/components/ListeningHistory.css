@@ -1,0 +1,24 @@
+.history_page h2 {
+    font-size: 2em;
+}
+
+.page_header {
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid #777;
+    display: flex;
+    justify-content: space-between;
+}
+
+.history_metadata {
+    margin-top: 20px;
+    font-size: 0.9em;
+}
+
+.history_metadata ion-icon {
+    margin-right: 6px;
+}
+
+.listening_history {
+    margin: 0;
+}

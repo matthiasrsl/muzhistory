@@ -6,7 +6,7 @@ import { IonApp, IonToggle, IonLabel } from "@ionic/react";
 import {
   IonIcon,
 } from '@ionic/react';
-import { timeOutline, barChartOutline, hourglassOutline } from 'ionicons/icons';
+
 import Player from "./Player.js";
 
 import TrackTile from "./TrackTile.js";
@@ -20,6 +20,7 @@ import './App.css';
 import { ThemeProvider } from "styled-components";
 import { lightTheme, darkTheme } from "./themes.js";
 import { GlobalStyles } from "./globalStyles.js";
+var Tinycolor = require("tinycolor2");
 
 
 
@@ -44,7 +45,12 @@ class App extends Component {
             profile,
             loaded: true,
             track_playing: profile.current_crush,
-            theme: lightTheme
+            theme: darkTheme,
+            palette: {
+              background: "#222",
+              text: "#fff",
+              vibrant: "#fff"
+            }
           };
         });
       });
@@ -56,7 +62,30 @@ class App extends Component {
   }
 
   toggleTheme(event) {
-    this.setState({theme: event.detail.checked ? darkTheme : lightTheme });
+    this.setState({ theme: event.detail.checked ? darkTheme : lightTheme });
+    this.updatePalette(this.state.vibrantPalette);
+  }
+
+  updatePalette(palette) {
+    var workingPalette = {
+      vibrant: palette.Vibrant.hex,
+      lightVibrant: palette.LightVibrant.hex,
+      darkVibrant: palette.DarkVibrant.hex,
+      muted: palette.Muted.hex,
+      lightMuted: Tinycolor(palette.LightMuted.hex).getBrightness() > 150 ?
+        palette.LightMuted.hex :
+        "#" + Tinycolor(
+          palette.LightMuted.hex
+        ).lighten(50).desaturate(60).toHex(),
+      darkMuted: palette.DarkMuted.hex
+    };
+
+    var newPalette = {
+      background: this.state.theme == lightTheme ? workingPalette.lightMuted : workingPalette.darkMuted,
+      text: this.state.theme == lightTheme ? workingPalette.darkMuted : workingPalette.lightMuted,
+      vibrant: workingPalette.vibrant,
+    }
+    this.setState({ palette: newPalette, vibrantPalette: palette });
   }
 
   render() {
@@ -69,6 +98,11 @@ class App extends Component {
               <header>
                 {this.state &&
                   <>
+                    <div className="color_tile" style={{ 
+                      background: this.state.palette.background,
+                    }}>
+
+                    </div>
                     <div className="profile_infos">
                       <h1>{
                         this.state.profile.user.first_name ?
@@ -77,26 +111,12 @@ class App extends Component {
                       </h1>
                     </div>
 
-                    <div className="history_metadata">
-                      <p title="Number of listenings">
-                        {this.state.profile.nb_listenings} listenings
-                    </p>
-                      <p title="Total listening time">
-                        <IonIcon icon={hourglassOutline} />
-                        {Math.floor(this.state.profile.listening_duration / 3600)} hours
-                    </p>
-                      <p title="Last update">
-                        <IonIcon icon={timeOutline} />
-                        {moment(this.state.profile.last_update).calendar(
-                          null,
-                          { sameElse: "LL" }
-                        ).toLowerCase()}
-                      </p>
-                    </div>
+
 
                     <div className="config">
                       <IonLabel>Dark theme</IonLabel>
-                      <IonToggle onIonChange={e => this.toggleTheme(e)}/>
+                      <IonToggle checked={this.state.theme == darkTheme}
+                        onIonChange={e => this.toggleTheme(e)} />
                     </div>
 
                   </>
@@ -109,8 +129,12 @@ class App extends Component {
                 } />
               </div>
             </div>
-            <Player track={this.state.profile.current_crush} 
-              darkTheme={this.state.theme == darkTheme} ref={ref => this.player = ref} />
+            <Player track={this.state.profile.current_crush}
+              darkTheme={this.state.theme == darkTheme}
+              ref={ref => this.player = ref}
+              updatePalette={(palette) => { this.updatePalette(palette) }}
+              palette={this.state.palette}
+            />
           </ThemeProvider>
         }
       </ion-app>

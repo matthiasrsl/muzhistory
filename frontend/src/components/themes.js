@@ -1,6 +1,6 @@
 export const lightTheme = {
-    main_bg: '#fafafa',
-    header_bg: '#ffffff',
+    main_bg: '#eee',
+    header_bg: '#fafafa',
     muted_bg: "#333",
     main_text: "#111",
     muted_text: "#444",
@@ -9,7 +9,7 @@ export const lightTheme = {
 }
 
 export const darkTheme = {
-    main_bg: '#222',
+    main_bg: '#1c1c1c',
     header_bg: '#111',
     player_bg: "#333",
     muted_bg: "#eee",

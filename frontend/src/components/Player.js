@@ -22,18 +22,10 @@ function formatDuration(duration) {
 class Player extends Component {
   constructor(props) {
     super(props);
-    this.state = { 
-      track: this.props.track, 
-      position: 0, 
+    this.state = {
+      track: this.props.track,
+      position: 0,
       loaded: false,
-      palette: {
-        vibrant: "#000",
-        lightVibrant: "#000",
-        darkVibrant: "#000",
-        muted: "#000",
-        lightMuted: "#000",
-        darkMuted: "#000"
-      }
     };
   }
 
@@ -60,8 +52,8 @@ class Player extends Component {
       strokeWidth: 6,
       easing: 'easeInOut',
       duration: 1,
-      color: this.props.darkTheme ? this.state.palette.vibrant : this.state.palette.vibrant,
-      trailColor: this.props.darkTheme ? this.state.palette.lightMuted : this.state.palette.darkMuted,
+      color: this.props.palette.vibrant,
+      trailColor: this.props.palette.text,
       trailWidth: 1,
       svgStyle: { width: '100%', height: '100%' }
     });
@@ -75,21 +67,8 @@ class Player extends Component {
   getPalette(track) {
     var vibrant = Vibrant.from(track.album_cover);
     vibrant.getPalette((err, palette) => {
-      this.setState({
-        palette: {
-          vibrant: palette.Vibrant.hex,
-          lightVibrant: palette.LightVibrant.hex,
-          darkVibrant: palette.DarkVibrant.hex,
-          muted: palette.Muted.hex,
-          lightMuted: Tinycolor(palette.LightMuted.hex).getBrightness() > 150 ? 
-              palette.LightMuted.hex : 
-              "#"+Tinycolor(
-                palette.LightMuted.hex
-              ).lighten(50).desaturate(60).toHex(),
-          darkMuted: palette.DarkMuted.hex
-        }
-      }, this.createProgressBar);
-    })
+      this.props.updatePalette(palette);
+    }, this.createProgressBar);
   }
 
   initProgressBar(track) {
@@ -154,7 +133,7 @@ class Player extends Component {
 
   render() {
     return (
-      <div className="player" style={{ background: this.props.darkTheme ? this.state.palette.darkMuted : this.state.palette.lightMuted}}>
+      <div className="player" style={{ background: this.props.palette.background }}>
         <audio id="player_audio" src="" data-currently-playing-id=""
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
@@ -190,8 +169,8 @@ class Player extends Component {
         <div className="player_options">
           <IonIcon icon={volumeMedium} />
           <div className="volume_slider">
-            <IonRange value={50} onIonChange={e => this.changeVolume(e)} 
-              ref={ref => this.volumeSlider = ref}/>
+            <IonRange value={50} onIonChange={e => this.changeVolume(e)}
+              ref={ref => this.volumeSlider = ref} />
           </div>
 
         </div>
