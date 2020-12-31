@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { render } from "react-dom";
 import moment from 'moment';
 
-import { IonApp } from "@ionic/react";
+import { IonApp, IonToggle, IonLabel } from "@ionic/react";
 import {
   IonIcon,
 } from '@ionic/react';
@@ -43,7 +43,8 @@ class App extends Component {
           return {
             profile,
             loaded: true,
-            track_playing: profile.current_crush
+            track_playing: profile.current_crush,
+            theme: lightTheme
           };
         });
       });
@@ -54,11 +55,15 @@ class App extends Component {
     this.player.click(track);
   }
 
+  toggleTheme(event) {
+    this.setState({theme: event.detail.checked ? darkTheme : lightTheme });
+  }
+
   render() {
     return (
       <ion-app>
         {this.state &&
-          <ThemeProvider theme={darkTheme}>
+          <ThemeProvider theme={this.state.theme}>
             <GlobalStyles />
             <div id="app_inner">
               <header>
@@ -89,6 +94,11 @@ class App extends Component {
                       </p>
                     </div>
 
+                    <div class="config">
+                      <IonLabel>Dark theme</IonLabel>
+                      <IonToggle onIonChange={e => this.toggleTheme(e)}/>
+                    </div>
+
                   </>
                 }
               </header>
@@ -99,7 +109,8 @@ class App extends Component {
                 } />
               </div>
             </div>
-            <Player track={this.state.profile.current_crush} ref={ref => this.player = ref} />
+            <Player track={this.state.profile.current_crush} 
+              darkTheme={this.state.theme == darkTheme} ref={ref => this.player = ref} />
           </ThemeProvider>
         }
       </ion-app>

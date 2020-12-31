@@ -32,7 +32,7 @@ class TrackTile extends Component {
           <p className="artists">
             {this.props.track.contributors.map((contrib, i, contribArray) =>
               <span
-                className={`artist_name artist_name_role_${contrib.role}`}
+                className={`artist_name artist_name_role_${contrib.role} ${contrib.role == 'feat' ? 'muted_text' : ''}`}
                 key={i}
               >
                 {contrib.name}
@@ -43,7 +43,7 @@ class TrackTile extends Component {
             </span> </>}
           </p>
 
-          <p className="additional_info">{this.props.additionalInfo}</p>
+          <p className="additional_info muted_text">{this.props.additionalInfo}</p>
         </div>
       </div>
     )

@@ -42,6 +42,10 @@ class Player extends Component {
     this.audio.volume = 0.5;
   }
 
+  componentDidUpdate() {
+    this.createProgressBar()
+  }
+
   click(track) {
     this.changeTrack(track);
     this.playPause();
@@ -56,8 +60,8 @@ class Player extends Component {
       strokeWidth: 6,
       easing: 'easeInOut',
       duration: 1,
-      color: this.state.palette.vibrant,
-      trailColor: this.state.palette.lightMuted,
+      color: this.props.darkTheme ? this.state.palette.vibrant : this.state.palette.darkVibrant,
+      trailColor: this.props.darkTheme ? this.state.palette.lightMuted : this.state.palette.darkMuted,
       trailWidth: 1,
       svgStyle: { width: '100%', height: '100%' }
     });
@@ -146,7 +150,7 @@ class Player extends Component {
 
   render() {
     return (
-      <div className="player" style={{ background: this.state.palette.darkMuted}}>
+      <div className="player" style={{ background: this.props.darkTheme ? this.state.palette.darkMuted : this.state.palette.lightVibrant}}>
         <audio id="player_audio" src="" data-currently-playing-id=""
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>

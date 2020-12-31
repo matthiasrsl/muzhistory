@@ -1,8 +1,9 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
-    p, h1, h2, ion-icon {
+    p, h1, h2, ion-icon, ion-label {
         color: ${({ theme }) => theme.main_text};
+        border-color: ${({ theme }) => theme.main_text};
     }
 
     body {
@@ -22,5 +23,13 @@ export const GlobalStyles = createGlobalStyle`
         background: ${({ theme }) => theme.player_bg};
         border-top-color: ${({ theme }) => theme.borders};
         box-shadow: ${({ theme }) => theme.player_shadow};
+    }
+
+    .muted_text {
+        color: ${({ theme }) => theme.muted_text};
+    }
+
+    .player_options ion-range::part(bar-active), .player_options ion-range::part(knob) {
+        background: ${({ theme }) => theme.muted_bg};
     }
 `

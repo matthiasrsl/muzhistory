@@ -34,6 +34,21 @@ header {
     border-right: 1px solid;
 }
 
+.config {
+    position: absolute;
+    bottom: 100px;
+    left: 50px;
+}
+
+.config ion-label {
+    padding: 0;
+}
+
+.config ion-toggle {
+    position: relative;
+    top: 14px;
+}
+
 /* Body */
 
 .history_metadata {

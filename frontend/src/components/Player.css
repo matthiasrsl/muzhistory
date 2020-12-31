@@ -66,9 +66,8 @@
 }
 
 .player_progress p {
-    color: #ccc;
     font-size: 0.65em;
-    margin: auto 5px;
+    margin: auto 8px;
     position: relative;
     top: -6px
 }
@@ -80,13 +79,13 @@
     left: -4px;
     margin: 0 auto 20px auto;
     padding: 3px;
-    border: 1px solid #ccc;
-    color: #ccc;
+    border: 1px solid;
     border-radius: 20px;
 }
 
 .playpause-icon.play {
     padding-left: 4px;
+    padding-right: 2px;
 }
 
 .player_options {
@@ -116,9 +115,4 @@
     background: rgba(136, 136, 136, 0.5);
 }
 
-.player_options ion-range::part(bar-active) {
-    background: #eee;
-}
-.player_options ion-range::part(knob) {
-    background: #eee;
-}
+

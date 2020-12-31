@@ -51,10 +51,6 @@ p {
     position: relative;
 }
 
-.artist_name_role_feat {
-    color: #777;
-}
-
 .album_name {
     font-size: 0.8em;
     position: relative;
@@ -68,7 +64,6 @@ p {
     display: flex;
     margin-top: 2px;
     font-size: 0.7em;
-    color: #777;
     position: relative;
 }
 
