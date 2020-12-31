@@ -53,21 +53,23 @@ p {
 
 .album_name {
     font-size: 0.8em;
-    position: relative;
+    font-style: italic;
 }
 
-.album_name .album_hard_text {
-    color: #111;
-}
 
 .additional_info {
     display: flex;
     margin-top: 2px;
     font-size: 0.7em;
-    position: relative;
+    font-weight: 300;
 }
 
 .additional_info ion-icon {
+    position: relative;
+    top: 2px;
+}
+
+span.bullet {
     position: relative;
     top: 2px;
 }

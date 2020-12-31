@@ -77,7 +77,7 @@ class ListeningHistory extends Component {
                   clickable={true} showAlbum={true}
                   additionalInfo={
                     <>
-                      <IonIcon icon={timeOutline} />
+                      <IonIcon icon={timeOutline} title="Listened on" />
                       <span>
                         {moment(entry.listening_datetime).calendar(
                           null,

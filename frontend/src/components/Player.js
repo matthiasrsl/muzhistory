@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { IonIcon, IonRange } from '@ionic/react';
+import { IonIcon, IonRange, IonSpinner } from '@ionic/react';
 
 import { play, pause, volumeMedium } from 'ionicons/icons';
 
@@ -139,17 +139,19 @@ class Player extends Component {
         </audio>
 
         <TrackTile track={this.state.track} coverClick={(track) => { }}
-          clickable={false} showAlbum={false}
+          clickable={false} showAlbum={true}
         />
 
         <div className="player_time_infos">
-          {this.state.playing ?
-            <IonIcon className="playpause-icon pause" icon={pause} onClick={
-              () => this.playPause()
-            } />
-            : <IonIcon className="playpause-icon play" icon={play} onClick={
-              () => this.playPause()
-            } />
+          {this.state.loaded ?
+            (this.state.playing ?
+              <IonIcon className="playpause-icon pause" icon={pause} onClick={
+                () => this.playPause()
+              } />
+              : <IonIcon className="playpause-icon play" icon={play} onClick={
+                () => this.playPause()
+              } />)
+            : <IonSpinner className="playpause-icon loading" name="crescent" />
           }
 
           <div className="player_progress">

@@ -1,3 +1,50 @@
+/* Font declarations */
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Regular.ttf');
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Light.ttf');
+    font-weight: 300;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Thin.ttf');
+    font-weight: 100;
+}
+
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Medium.ttf');
+    font-weight: 500;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Bold.ttf');
+    font-weight: 700;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Black.ttf');
+    font-weight: 900;
+}
+
+@font-face {
+    font-family: Roboto;
+    src: url('../../resources/fonts/roboto/Roboto-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+}
+
+
 /* General element properties */
 
 * {
@@ -12,6 +59,14 @@ p > ion-icon {
     position: relative;
     top: 3px;
     margin-right: 3px;
+}
+
+.muted_text {
+    font-weight: 100;
+}
+
+.semi_muted_text {
+    font-weight: 300;
 }
 
 /* General layout */

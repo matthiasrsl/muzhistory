@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
-    p, h1, h2, ion-icon, ion-label {
+    p, h1, h2, ion-icon, ion-label, ion-spinner {
         color: ${({ theme }) => theme.main_text};
         border-color: ${({ theme }) => theme.main_text};
     }
@@ -26,7 +26,7 @@ export const GlobalStyles = createGlobalStyle`
     }
 
     .muted_text {
-        color: ${({ theme }) => theme.muted_text};
+        xcolor: ${({ theme }) => theme.muted_text};
     }
 
     .player_options ion-range::part(bar-active), .player_options ion-range::part(knob) {

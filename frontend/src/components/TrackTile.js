@@ -38,12 +38,12 @@ class TrackTile extends Component {
                 {contrib.name}
                 {i != contribArray.length - 1 && <span>, </span>}
               </span>
-            )} {this.props.showAlbum && <> - <span className="album_name">{
+            )} {(this.props.showAlbum && this.props.track.album_title) && <> <span className="bullet">•</span> <span className="album_name">{
               this.props.track.album_title}
             </span> </>}
           </p>
 
-          <p className="additional_info muted_text">{this.props.additionalInfo}</p>
+          <p className="additional_info">{this.props.additionalInfo}</p>
         </div>
       </div>
     )
