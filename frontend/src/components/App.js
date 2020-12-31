@@ -94,7 +94,7 @@ class App extends Component {
                       </p>
                     </div>
 
-                    <div class="config">
+                    <div className="config">
                       <IonLabel>Dark theme</IonLabel>
                       <IonToggle onIonChange={e => this.toggleTheme(e)}/>
                     </div>

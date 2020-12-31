@@ -24,6 +24,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "@ctrl/tinycolor": "^3.3.1",
     "@ionic/react": "^5.3.1",
     "@ionic/react-router": "^5.3.1",
     "css-loader": "^4.1.1",

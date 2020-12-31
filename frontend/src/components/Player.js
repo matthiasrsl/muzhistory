@@ -60,7 +60,7 @@ class Player extends Component {
       strokeWidth: 6,
       easing: 'easeInOut',
       duration: 1,
-      color: this.props.darkTheme ? this.state.palette.vibrant : this.state.palette.darkVibrant,
+      color: this.props.darkTheme ? this.state.palette.vibrant : this.state.palette.vibrant,
       trailColor: this.props.darkTheme ? this.state.palette.lightMuted : this.state.palette.darkMuted,
       trailWidth: 1,
       svgStyle: { width: '100%', height: '100%' }
@@ -81,7 +81,11 @@ class Player extends Component {
           lightVibrant: palette.LightVibrant.hex,
           darkVibrant: palette.DarkVibrant.hex,
           muted: palette.Muted.hex,
-          lightMuted: palette.LightMuted.hex,
+          lightMuted: Tinycolor(palette.LightMuted.hex).getBrightness() > 150 ? 
+              palette.LightMuted.hex : 
+              "#"+Tinycolor(
+                palette.LightMuted.hex
+              ).lighten(50).desaturate(60).toHex(),
           darkMuted: palette.DarkMuted.hex
         }
       }, this.createProgressBar);
@@ -150,7 +154,7 @@ class Player extends Component {
 
   render() {
     return (
-      <div className="player" style={{ background: this.props.darkTheme ? this.state.palette.darkMuted : this.state.palette.lightVibrant}}>
+      <div className="player" style={{ background: this.props.darkTheme ? this.state.palette.darkMuted : this.state.palette.lightMuted}}>
         <audio id="player_audio" src="" data-currently-playing-id=""
           data-begin-time="30" ref={ref => this.audio = ref}>
         </audio>
