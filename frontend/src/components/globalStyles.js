@@ -1,7 +1,7 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
-    p, h1, h2, ion-icon, ion-label, ion-spinner, a, a:hover {
+    p, h1, h2, h3, ion-icon, ion-label, ion-spinner, a, a:hover {
         color: ${({ theme }) => theme.main_text};
     }
 

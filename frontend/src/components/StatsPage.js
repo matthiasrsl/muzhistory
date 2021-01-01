@@ -10,7 +10,7 @@ import { timeOutline, barChartOutline, hourglassOutline, listOutline } from 'ion
 import TrackTile from "./TrackTile.js";
 import empty_track from "./empty_track.js";
 
-import './ListeningHistory.css';
+import './StatsPage.css';
 
 
 class StatsPage extends Component {
@@ -19,7 +19,7 @@ class StatsPage extends Component {
   }
 
   componentDidMount() {
-    fetch("/api/history")
+    fetch("/api/stats")
       .then(response => {
         if (response.status > 400) {
           return this.setState(() => {
@@ -50,6 +50,19 @@ class StatsPage extends Component {
           <div className="stats_page">
             <div className="page_header">
               <h2>Your statistics</h2>
+            </div>
+
+            <div className="page_content">
+              <div className="stats_section stats_all_time">
+                <h3>All time</h3>
+                {this.state.data.tracks_all_time.map(
+                  (track) =>
+                    <TrackTile track={track} key={track.rank}
+                      albumCoverClick={(track) => this.albumCoverClick(track)}
+                      clickable={true} showAlbum={false}
+                      additionalInfo={track.entry_count + " listenings"} />
+                )}
+              </div>
             </div>
           </div>
         }
