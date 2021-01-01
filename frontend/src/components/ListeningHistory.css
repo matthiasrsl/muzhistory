@@ -1,17 +1,5 @@
-.history_page h2 {
-    font-size: 2em;
-}
-
-.page_header {
-    padding-bottom: 10px;
-    margin-bottom: 30px;
-    border-bottom: 1px solid #777;
-    display: flex;
-    justify-content: space-between;
-}
-
 .history_metadata {
-    margin-top: 20px;
+    margin-top: 12px;
     font-size: 0.9em;
 }
 
@@ -20,5 +8,5 @@
 }
 
 .listening_history {
-    margin: 0;
+    margin: 90px auto auto auto;
 }

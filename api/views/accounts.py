@@ -23,10 +23,12 @@ class ProfileAPI(APIView):
     Only authenticated users can access this view.
     """
     authentication_classes = [authentication.SessionAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = []
 
     def get(self, request):
-
-        profile = Profile.objects.get(user=request.user)
+        if request.user.is_authenticated:
+            profile = Profile.objects.get(user=request.user)
+        else:
+            profile = Profile.objects.filter(showcase_profile=True)[0]
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)

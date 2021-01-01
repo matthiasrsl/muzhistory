@@ -6,7 +6,7 @@ import {
   IonIcon,
 } from '@ionic/react';
 import {
-  BrowserRouter as Router, Switch, Route, Link, Redirect
+  BrowserRouter as Router, Switch, Route, NavLink, Redirect
 } from "react-router-dom";
 
 import Player from "./Player.js";
@@ -23,6 +23,13 @@ import { lightTheme, darkTheme } from "./themes.js";
 import { GlobalStyles } from "./globalStyles.js";
 var Tinycolor = require("tinycolor2");
 
+
+var navlinks = [
+  { label: "History", to: "/history" },
+  { label: "Statistics", to: "/stats" },
+  { label: "Year playlist", to: "/yearplaylist" },
+  { label: "Profile", to: "/profile" }
+]
 
 
 class App extends Component {
@@ -78,13 +85,17 @@ class App extends Component {
         "#" + Tinycolor(
           palette.LightMuted.hex
         ).lighten(50).desaturate(60).toHex(),
-      darkMuted: palette.DarkMuted.hex
+      darkMuted: palette.DarkMuted.hex,
+      softVibrant: "#" + Tinycolor(
+        palette.Vibrant.hex
+      ).desaturate(30).toHex()
     };
 
     var newPalette = {
       background: this.state.theme == lightTheme ? workingPalette.lightMuted : workingPalette.darkMuted,
       text: this.state.theme == lightTheme ? workingPalette.darkMuted : workingPalette.lightMuted,
       vibrant: workingPalette.vibrant,
+      softVibrant: workingPalette.softVibrant
     }
     this.setState({ palette: newPalette, vibrantPalette: palette });
   }
@@ -112,7 +123,27 @@ class App extends Component {
                       </h1>
                     </div>
 
-
+                    <nav>
+                      <ul>
+                        {navlinks.map((page) =>
+                          <li>
+                            <NavLink className="navbar_link"
+                                activeClassName="navbar_link_active"
+                                style={{ 
+                                  text: this.state.palette.text,
+                                  borderColor: this.state.palette.softVibrant
+                                }}
+                                activeStyle={{ 
+                                  background: this.state.palette.background, 
+                                  
+                                }}
+                                to={page.to}>
+                              {page.label}
+                            </NavLink>
+                          </li>
+                        )}
+                      </ul>
+                    </nav>
 
                     <div className="config">
                       <IonLabel>Dark theme</IonLabel>

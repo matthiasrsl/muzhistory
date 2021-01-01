@@ -1,9 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
 export const GlobalStyles = createGlobalStyle`
-    p, h1, h2, ion-icon, ion-label, ion-spinner {
+    p, h1, h2, ion-icon, ion-label, ion-spinner, a, a:hover {
         color: ${({ theme }) => theme.main_text};
-        border-color: ${({ theme }) => theme.main_text};
     }
 
     body {
@@ -15,7 +14,7 @@ export const GlobalStyles = createGlobalStyle`
         border-right-color: ${({ theme }) => theme.borders};
     }
 
-    .main_content, body {
+    .main_content, body, .page_header {
         background: ${({ theme }) => theme.main_bg};
     }
 
