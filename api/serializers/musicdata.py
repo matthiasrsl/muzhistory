@@ -13,10 +13,17 @@ from musicdata.models import (
 from deezerdata.models.deezer_objects import DeezerMp3
 
 
-class ArtistSerializer(serializers.HyperlinkedModelSerializer):
+class OldArtistSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Artist
         fields = ("id", "name", "image_url_deezer_medium")
+
+class ArtistSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    image_url_deezer_medium = serializers.CharField()
+    entry_count = serializers.IntegerField()
+    rank = serializers.IntegerField()
 
 
 class ReleaseGroupSerializer(serializers.ModelSerializer):
@@ -43,6 +50,8 @@ class RecordingSerializer(serializers.Serializer):
     album_cover = serializers.SerializerMethodField("get_album_cover")
     preview = serializers.SerializerMethodField("get_preview")
     duration = serializers.SerializerMethodField("get_duration")
+    entry_count = serializers.SerializerMethodField("get_entry_count")
+    rank = serializers.SerializerMethodField("get_rank")
 
     def get_title(self, obj):
         if obj.deezer_track:
@@ -88,6 +97,22 @@ class RecordingSerializer(serializers.Serializer):
             return obj.deezer_track.duration
         else:
             return 0
+
+
+    # Statistics-related atributes
+
+    def get_entry_count(self, obj):
+        try:
+            return obj.entry_count
+        except AttributeError:
+            return None
+
+    def get_rank(self, obj):
+        try:
+            return obj.rank
+        except AttributeError:
+            return None
+    
 
 class TrackSerializer(serializers.Serializer):
     id = serializers.IntegerField()
