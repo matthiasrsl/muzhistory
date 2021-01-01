@@ -1,0 +1,25 @@
+.artist {
+    display: flex;
+    align-items: center;
+    margin: 10px auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.artist_image {
+    width: 80px;
+    border-radius: 300px;
+}
+.artist_info {
+    margin-left: 10px;
+    position: relative;
+    top: -2px;
+}
+
+.artist_name {
+    font-size: 1.2em;
+}
+
+.additional_info {
+    font-size: 0.8em;
+}

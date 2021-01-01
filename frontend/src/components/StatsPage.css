@@ -1,3 +1,69 @@
 .page_content {
     margin: 90px auto auto auto;
 }
+
+.stats_section {
+    margin: 10px 0 80px 0;
+}
+
+.stats_section h3 {
+    font-size: 1.5em;
+}
+
+.stats_artists {
+    margin-bottom: 50px;
+}
+
+.artists_top3 {
+    display: flex;
+}
+
+.artists_top3 .additional_info {
+    font-size: 0.85em;
+}
+
+.artist_rank1 {
+    width: 55%;
+}
+
+.artist_rank1 .artist {
+    margin: 25px 30px auto 0;
+}
+
+.artist_rank1 .artist_image {
+    width: 170px
+}
+
+.artist_rank1 .artist_name {
+    font-size: 1.5em;
+}
+
+
+.artists_rank23 .artist_image {
+    width: 110px;
+}
+
+.artists_rank23 .artist_name {
+    font-size: 1.3em;
+}
+
+.artists_remaining {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.artists_remaining .artist {
+    width: 30%;
+}
+
+.stats_tracks {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.stats_tracks .track {
+    width: 47%;
+    margin-right: 20px;
+    margin-left: 0;
+}

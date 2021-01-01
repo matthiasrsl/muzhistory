@@ -39,7 +39,7 @@ class StatsAPI(APIView):
         Sorts elements and assign a rank to each, taking care of
         ex aequos.
         """
-        rank, count, previous, result = 0, 0, None, {}
+        rank, count, previous = 0, 0, None
         for elt in queryset:
             count += 1
             if elt.entry_count != previous:

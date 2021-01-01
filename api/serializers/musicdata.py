@@ -13,18 +13,15 @@ from musicdata.models import (
 from deezerdata.models.deezer_objects import DeezerMp3
 
 
-class OldArtistSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Artist
-        fields = ("id", "name", "image_url_deezer_medium")
-
 class ArtistSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
-    image_url_deezer_medium = serializers.CharField()
+    image = serializers.SerializerMethodField("get_image")
     entry_count = serializers.IntegerField()
     rank = serializers.IntegerField()
 
+    def get_image(self, obj):
+        return obj.image_url_deezer_medium
 
 class ReleaseGroupSerializer(serializers.ModelSerializer):
     contributors = ArtistSerializer(many=True)

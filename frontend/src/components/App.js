@@ -127,17 +127,18 @@ class App extends Component {
                       <ul>
                         {navlinks.map((page) =>
                           <li>
-                            <NavLink className="navbar_link"
-                                activeClassName="navbar_link_active"
-                                style={{ 
-                                  text: this.state.palette.text,
-                                  borderColor: this.state.palette.softVibrant
-                                }}
-                                activeStyle={{ 
-                                  background: this.state.palette.background, 
-                                  
-                                }}
-                                to={page.to}>
+                            <NavLink key={page.id}
+                              className="navbar_link"
+                              activeClassName="navbar_link_active"
+                              style={{
+                                text: this.state.palette.text,
+                                borderColor: this.state.palette.softVibrant
+                              }}
+                              activeStyle={{
+                                background: this.state.palette.background,
+
+                              }}
+                              to={page.to}>
                               {page.label}
                             </NavLink>
                           </li>

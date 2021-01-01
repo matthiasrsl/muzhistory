@@ -23,12 +23,14 @@ p {
     position: relative;
     top: 4px;
     max-width: 100%;
+    overflow: hidden;
 }
 
 .track_title, .artists, .album_name {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    max-width: 100%;
 }
 
 .track_title {
@@ -41,7 +43,8 @@ p {
 }
 
 .track_title_refine {
-    font-size: 0.7em;
+    font-size: 0.85em;
+    font-weight: 100;
     margin-left: 3px;
 }
 

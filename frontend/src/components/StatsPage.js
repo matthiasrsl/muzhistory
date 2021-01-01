@@ -1,14 +1,7 @@
 import React, { Component } from "react";
 import { render } from "react-dom";
-import moment from 'moment';
 
-import {
-  IonIcon,
-} from '@ionic/react';
-import { timeOutline, barChartOutline, hourglassOutline, listOutline } from 'ionicons/icons';
-
-import TrackTile from "./TrackTile.js";
-import empty_track from "./empty_track.js";
+import StatSection from "./stats/StatSection.js"
 
 import './StatsPage.css';
 
@@ -53,16 +46,29 @@ class StatsPage extends Component {
             </div>
 
             <div className="page_content">
-              <div className="stats_section stats_all_time">
-                <h3>All time</h3>
-                {this.state.data.tracks_all_time.map(
-                  (track) =>
-                    <TrackTile track={track} key={track.rank}
-                      albumCoverClick={(track) => this.albumCoverClick(track)}
-                      clickable={true} showAlbum={false}
-                      additionalInfo={track.entry_count + " listenings"} />
-                )}
-              </div>
+              <StatSection title="Past 7 days"
+                key={1}
+                artists={this.state.data.artists_7_days}
+                tracks={this.state.data.tracks_7_days}
+                albumCoverClick={(track) => this.albumCoverClick(track)} />
+
+              <StatSection title="Past 30 days"
+                key={2}
+                artists={this.state.data.artists_30_days}
+                tracks={this.state.data.tracks_30_days}
+                albumCoverClick={(track) => this.albumCoverClick(track)} />
+
+              <StatSection title="This year"
+                key={3}
+                artists={this.state.data.artists_this_year}
+                tracks={this.state.data.tracks_this_year}
+                albumCoverClick={(track) => this.albumCoverClick(track)} />
+
+              <StatSection title="All time"
+                key={4}
+                artists={this.state.data.artists_all_time}
+                tracks={this.state.data.tracks_all_time}
+                albumCoverClick={(track) => this.albumCoverClick(track)} />
             </div>
           </div>
         }

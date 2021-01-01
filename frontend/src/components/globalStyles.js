@@ -24,10 +24,6 @@ export const GlobalStyles = createGlobalStyle`
         box-shadow: ${({ theme }) => theme.player_shadow};
     }
 
-    .muted_text {
-        xcolor: ${({ theme }) => theme.muted_text};
-    }
-
     .player_options ion-range::part(bar-active), .player_options ion-range::part(knob) {
         background: ${({ theme }) => theme.muted_bg};
     }
